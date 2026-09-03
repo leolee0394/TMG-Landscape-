@@ -483,11 +483,10 @@ function csvUrl(){return localStorage.getItem('tmg_csvUrl')||DEFAULT_CSV;}
 async function loadData(){
   const msg=document.getElementById('loadingMsg');
   msg.style.display='block';
-  msg.textContent='Loading landscape data…';
   document.querySelectorAll('.section-wrap').forEach(s=>s.classList.remove('active'));
   const url=csvUrl();
   const proxies=[
-    {name:'direct',fn:u=>u},
+    {name:'Direct',fn:u=>u},
     {name:'corsproxy.io',fn:u=>`https://corsproxy.io/?${encodeURIComponent(u)}`},
     {name:'allorigins',fn:u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`},
     {name:'thingproxy',fn:u=>`https://thingproxy.freeboard.io/fetch/${u}`},
@@ -495,48 +494,56 @@ async function loadData(){
   let ok=false;
   for(const px of proxies){
     try{
-      msg.textContent=`Loading via ${px.name}…`;
+      msg.innerHTML=`<div style="font-size:14px">Trying ${px.name}…</div>`;
+      await new Promise(r=>setTimeout(r,80));// allow repaint
       const controller=new AbortController();
       const timer=setTimeout(()=>controller.abort(),8000);
       const r=await fetch(px.fn(url+'&t='+Date.now()),{signal:controller.signal});
       clearTimeout(timer);
-      if(!r.ok)continue;
+      if(!r.ok){console.log(px.name,'bad status',r.status);continue;}
       const t=await r.text();
-      if(!t.includes('Company Name'))continue;
+      console.log(px.name,'response length',t.length,'preview',t.slice(0,80));
+      if(!t.includes('Company Name')){console.log(px.name,'no Company Name header');continue;}
       const p=parseCSV(t);
-      if(!p.length)continue;
-      sheetData=p;ok=true;break;
-    }catch(e){continue;}
+      if(!p.length){console.log(px.name,'parsed 0 rows');continue;}
+      sheetData=p;ok=true;
+      console.log('Loaded',p.length,'rows via',px.name);
+      break;
+    }catch(e){console.log(px.name,'error:',e.message);continue;}
   }
   if(!ok){
     msg.innerHTML=`
-      <div style="max-width:480px;margin:0 auto;text-align:left">
-        <div style="font-size:16px;font-weight:600;margin-bottom:8px">⚠️ Could not load sheet data</div>
-        <div style="font-size:13px;color:#4a6070;margin-bottom:16px">All proxies failed. Try these fixes:</div>
-        <ol style="font-size:13px;color:#4a6070;padding-left:20px;line-height:2">
-          <li>Make sure your Google Sheet is <strong>published</strong>: File → Share → Publish to web → CSV</li>
-          <li>Click <strong>⚙ Settings</strong> above and verify the CSV URL is correct</li>
-          <li>Try opening in a different browser (Chrome recommended)</li>
-        </ol>
-        <button onclick="loadData()" style="margin-top:16px;padding:9px 20px;background:#e07535;color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit">↻ Try Again</button>
-        <button onclick="loadOffline()" style="margin-top:16px;margin-left:8px;padding:9px 20px;background:#162535;color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit">Continue Without Sheet Data</button>
+      <div style="max-width:500px;margin:0 auto;text-align:left;background:var(--white);padding:28px;border-radius:12px;border:1px solid var(--border)">
+        <div style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:6px">⚠️ Could not connect to Google Sheet</div>
+        <div style="font-size:13px;color:var(--ink-soft);margin-bottom:16px">All proxies failed. You can paste your CSV data directly as a workaround:</div>
+        <textarea id="csvPaste" placeholder="Open your Google Sheet → File → Download → CSV → open in Notepad → paste everything here" style="width:100%;height:140px;padding:10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:monospace;resize:vertical;outline:none;margin-bottom:10px"></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button onclick="loadFromPaste()" style="padding:9px 18px;background:var(--orange);color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600">Load Pasted Data</button>
+          <button onclick="loadData()" style="padding:9px 18px;background:var(--navy);color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit">↻ Retry</button>
+          <button onclick="loadOffline()" style="padding:9px 18px;background:none;border:1px solid var(--border);color:var(--ink-soft);border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit">Continue Offline</button>
+        </div>
+        <div style="margin-top:14px;font-size:11px;color:var(--ink-muted)">Tip: Open browser console (F12) to see which proxy failed and why.</div>
       </div>`;
     return;
   }
+  finishLoad();
+}
+function loadFromPaste(){
+  const text=document.getElementById('csvPaste')?.value?.trim();
+  if(!text){alert('Please paste CSV data first');return;}
+  if(!text.includes('Company Name')){alert('This doesn\'t look like the right CSV — make sure you copied from the Landscape tab');return;}
+  const p=parseCSV(text);
+  if(!p.length){alert('Could not parse any companies from the pasted data');return;}
+  sheetData=p;
+  finishLoad();
+}
+function loadOffline(){sheetData=[];finishLoad();}
+function finishLoad(){
+  const msg=document.getElementById('loadingMsg');
   msg.style.display='none';
   allData=mergeData();
-  populateCmpSelects();
-  applyView();
-  showSection(curSection,true);
-  document.getElementById('lastUpd').textContent='Updated '+new Date().toLocaleTimeString();
-}
-function loadOffline(){
-  // load with just local data
-  sheetData=[];
-  allData=mergeData();
-  document.getElementById('loadingMsg').style.display='none';
   populateCmpSelects();applyView();showSection(curSection,true);
-  document.getElementById('lastUpd').textContent='Offline mode — local data only';
+  document.getElementById('lastUpd').textContent=sheetData.length?'Updated '+new Date().toLocaleTimeString():'Offline mode';
 }
 
 function mergeData(){
