@@ -15,32 +15,30 @@
   --white:#fff;--slate:#f2f5f8;--border:#dde4ec;
   --green:#2a7f5f;--green-light:#e0f5ec;
   --rose:#b85050;--rose-light:#f5e0e0;
-  --priority:#2a7f5f;--interested:#e07535;--watch:#aabbcc;
+  --purple:#6a3fa0;--purple-light:#f0e8fe;
 }
 body{font-family:'DM Sans',sans-serif;background:var(--slate);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden}
 
 /* HEADER */
-header{background:var(--navy);height:60px;display:flex;align-items:center;padding:0 32px;gap:24px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.logo{display:flex;align-items:center;gap:10px;margin-right:16px;text-decoration:none}
-.logo-box{width:34px;height:34px;border:2px solid var(--orange);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;color:var(--orange);font-size:15px}
+header{background:var(--navy);height:60px;display:flex;align-items:center;padding:0 32px;gap:20px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.logo{display:flex;align-items:center;gap:10px;margin-right:12px;text-decoration:none}
+.logo-box{width:34px;height:34px;border:2px solid var(--orange);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;color:var(--orange);font-size:15px;flex-shrink:0}
 .logo-text{color:var(--white);font-size:14px;font-weight:500;line-height:1.2}
 .logo-sub{color:var(--ink-muted);font-size:10px;font-weight:300}
-nav{display:flex;gap:4px}
-.nav-btn{background:none;border:none;color:#7a9ab0;font-size:13px;font-family:inherit;padding:7px 14px;border-radius:6px;cursor:pointer;font-weight:500;transition:.15s}
+nav{display:flex;gap:3px}
+.nav-btn{background:none;border:none;color:#7a9ab0;font-size:13px;font-family:inherit;padding:7px 13px;border-radius:6px;cursor:pointer;font-weight:500;transition:.15s;white-space:nowrap}
 .nav-btn:hover{color:var(--white);background:rgba(255,255,255,.08)}
 .nav-btn.active{color:var(--white);background:var(--orange)}
-.header-right{margin-left:auto;display:flex;align-items:center;gap:8px}
-.h-btn{background:none;border:1px solid #2a4560;color:#7a9ab0;padding:6px 12px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;transition:.15s}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:7px}
+.h-btn{background:none;border:1px solid #2a4560;color:#7a9ab0;padding:6px 11px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;transition:.15s;white-space:nowrap}
 .h-btn:hover{border-color:var(--orange);color:var(--orange)}
 .h-btn.primary{background:var(--orange);border-color:var(--orange);color:var(--white)}
 .h-btn.primary:hover{background:var(--orange2)}
-.last-upd{font-size:11px;color:#4a6070}
+.last-upd{font-size:11px;color:#4a6070;white-space:nowrap}
 
 /* MAIN */
 main{max-width:1320px;margin:0 auto;padding:28px 32px 60px}
-
-/* PAGE HEADER */
-.page-hdr{margin-bottom:24px}
+.page-hdr{margin-bottom:22px}
 .page-hdr h1{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--ink)}
 .page-hdr p{font-size:13px;color:var(--ink-soft);margin-top:3px;font-weight:300}
 
@@ -50,82 +48,68 @@ main{max-width:1320px;margin:0 auto;padding:28px 32px 60px}
 .vt-btn.active{background:var(--navy);color:var(--white)}
 
 /* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
 .stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px 22px;border-top:3px solid var(--orange)}
-.stat-card.s2{border-top-color:var(--navy)}
-.stat-card.s3{border-top-color:var(--green)}
-.stat-card.s4{border-top-color:var(--rose)}
+.stat-card.s2{border-top-color:var(--navy)}.stat-card.s3{border-top-color:var(--green)}.stat-card.s4{border-top-color:var(--rose)}
 .stat-val{font-family:'DM Serif Display',serif;font-size:34px;color:var(--ink);line-height:1}
 .stat-lbl{font-size:12px;color:var(--ink-muted);margin-top:4px}
 
 /* CHARTS */
-.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
 .chart-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:22px}
-.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.chart-title{font-size:13px;font-weight:600;color:var(--ink)}
-.btn-dl{background:none;border:1px solid var(--border);color:var(--ink-muted);padding:4px 10px;border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit;transition:.15s}
-.btn-dl:hover{border-color:var(--orange);color:var(--orange)}
+.chart-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:14px}
 .chart-wrap{position:relative;height:210px}
 
 /* AI PANEL */
-.ai-panel{background:var(--navy);border-radius:10px;padding:26px 30px;margin-bottom:24px;color:var(--white)}
-.ai-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.ai-panel{background:var(--navy);border-radius:10px;padding:24px 28px;margin-bottom:22px;color:var(--white)}
+.ai-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .ai-title{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400}
 .ai-badge{font-size:11px;color:var(--orange);font-weight:500;display:flex;align-items:center;gap:5px}
 .ai-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--orange);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.ai-options{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.ai-opt{padding:7px 14px;border:1px solid #2a4560;background:none;color:#7a9ab0;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:.15s}
+.ai-options{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
+.ai-opt{padding:6px 13px;border:1px solid #2a4560;background:none;color:#7a9ab0;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:.15s}
 .ai-opt:hover,.ai-opt.active{border-color:var(--orange);color:var(--orange);background:rgba(224,117,53,.08)}
-.ai-key-row{display:flex;gap:8px;margin-bottom:12px;align-items:center}
+.ai-key-row{display:flex;gap:8px;margin-bottom:11px;align-items:center}
 .ai-key-lbl{font-size:11px;color:#4a6070;white-space:nowrap}
 .ai-key-input{flex:1;background:rgba(255,255,255,.05);border:1px solid #2a4560;color:var(--white);padding:7px 12px;border-radius:6px;font-size:12px;font-family:inherit;outline:none}
 .ai-key-input:focus{border-color:var(--orange)}
-.ai-key-save{padding:7px 14px;background:var(--orange);border:none;color:var(--white);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit}
-.ai-output{background:rgba(255,255,255,.04);border:1px solid #2a4560;border-radius:8px;padding:18px;min-height:80px;font-size:13px;line-height:1.7;color:#cce0ee;font-weight:300;white-space:pre-wrap}
+.ai-key-save{padding:7px 13px;background:var(--orange);border:none;color:var(--white);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit}
+.ai-output{background:rgba(255,255,255,.04);border:1px solid #2a4560;border-radius:8px;padding:16px;min-height:70px;font-size:13px;line-height:1.7;color:#cce0ee;font-weight:300;white-space:pre-wrap}
 .ai-output.idle{color:#4a6070;font-style:italic}
-.ai-actions{display:flex;gap:8px;margin-top:12px}
-.btn-gen{padding:8px 20px;background:var(--orange);color:var(--white);border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:.15s}
-.btn-gen:hover{background:var(--orange2)}
-.btn-gen:disabled{opacity:.5;cursor:not-allowed}
-.btn-copy{padding:8px 14px;background:none;border:1px solid #2a4560;color:#7a9ab0;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit;transition:.15s}
-.btn-copy:hover{border-color:var(--orange);color:var(--orange)}
+.ai-actions{display:flex;gap:8px;margin-top:11px}
+.btn-gen{padding:8px 20px;background:var(--orange);color:var(--white);border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.btn-gen:hover{background:var(--orange2)}.btn-gen:disabled{opacity:.5;cursor:not-allowed}
+.btn-copy-ai{padding:8px 13px;background:none;border:1px solid #2a4560;color:#7a9ab0;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit;transition:.15s}
+.btn-copy-ai:hover{border-color:var(--orange);color:var(--orange)}
 
-/* FILTERS */
-.filters-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
-.f-input,.f-select{padding:8px 12px;border:1px solid var(--border);border-radius:7px;background:var(--white);font-size:13px;color:var(--ink);font-family:inherit;outline:none}
-.f-input:focus,.f-select:focus{border-color:var(--orange)}
-.f-input{width:200px}
+/* FILTERS / TABLE */
+.filters-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.f-input,.f-select{padding:8px 11px;border:1px solid var(--border);border-radius:7px;background:var(--white);font-size:13px;color:var(--ink);font-family:inherit;outline:none}
+.f-input:focus,.f-select:focus{border-color:var(--orange)}.f-input{width:190px}
 .f-count{font-size:12px;color:var(--ink-muted);margin-left:auto}
-.bar-actions{display:flex;gap:8px;margin-bottom:14px}
+.bar-actions{display:flex;gap:8px;margin-bottom:12px}
 .btn-sm{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid var(--border);background:var(--white);color:var(--ink);transition:.15s}
 .btn-sm:hover{border-color:var(--orange);color:var(--orange)}
 .btn-sm.primary{background:var(--orange);border-color:var(--orange);color:var(--white)}
 .btn-sm.primary:hover{background:var(--orange2)}
-
-/* TABLE */
-.tbl-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:24px}
+.tbl-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:22px}
 table{width:100%;border-collapse:collapse}
 thead th{background:var(--navy);color:var(--white);padding:11px 14px;text-align:left;font-size:11px;font-weight:500;letter-spacing:.03em;white-space:nowrap;cursor:pointer;user-select:none}
 thead th:hover{background:var(--navy2)}
 tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:.1s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:var(--orange-pale)}
-td{padding:11px 14px;font-size:13px;vertical-align:middle}
+td{padding:10px 14px;font-size:13px;vertical-align:middle}
 .co-name{font-weight:600;color:var(--ink)}
 .co-sub{font-size:11px;color:var(--ink-muted);font-weight:300;margin-top:1px}
 
 /* BADGES */
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
-.b-pn{background:#fce0cc;color:#a04000}
-.b-ih{background:#ddeaf4;color:#1d4d6e}
-.b-fm{background:var(--rose-light);color:var(--rose)}
-.b-startup{background:#e8f0fe;color:#1a56a0}
-.b-incumbent{background:#f0e8fe;color:#5a1a9a}
-.b-acquirer{background:#fee8e8;color:#9a1a1a}
-.b-priority{background:var(--green-light);color:var(--green)}
-.b-interested{background:#fce0cc;color:#a04000}
-.b-watch{background:#f0f4f8;color:#7a9ab0}
+.b-pn{background:#fce0cc;color:#a04000}.b-ih{background:#ddeaf4;color:#1d4d6e}.b-fm{background:var(--rose-light);color:var(--rose)}
+.b-startup{background:#e8f0fe;color:#1a56a0}.b-incumbent{background:var(--purple-light);color:var(--purple)}.b-acquirer{background:#fee8e8;color:#9a1a1a}
+.b-priority{background:var(--green-light);color:var(--green)}.b-interested{background:#fce0cc;color:#a04000}.b-watch{background:#f0f4f8;color:#7a9ab0}
+.local-tag{display:inline-block;padding:1px 5px;background:#e8f0fe;color:#1a56a0;border-radius:4px;font-size:10px;font-weight:600;margin-left:4px;vertical-align:middle}
 
 /* SCORE BAR */
 .sbar{display:flex;align-items:center;gap:6px}
@@ -136,89 +120,156 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
 /* DETAIL PANEL */
 .panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;opacity:0;pointer-events:none;transition:.2s}
 .panel-overlay.open{opacity:1;pointer-events:all}
-.detail-panel{position:fixed;right:0;top:0;bottom:0;width:520px;background:var(--white);z-index:301;transform:translateX(100%);transition:.25s ease;overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.15)}
+.detail-panel{position:fixed;right:0;top:0;bottom:0;width:540px;background:var(--white);z-index:301;transform:translateX(100%);transition:.25s ease;overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.15)}
 .detail-panel.open{transform:translateX(0)}
-.dp-header{background:var(--navy);padding:24px 28px;color:var(--white)}
-.dp-close{position:absolute;top:20px;right:24px;background:none;border:none;color:#7a9ab0;font-size:20px;cursor:pointer;line-height:1}
+.dp-header{background:var(--navy);padding:22px 26px;color:var(--white);position:relative}
+.dp-close{position:absolute;top:18px;right:22px;background:none;border:none;color:#7a9ab0;font-size:20px;cursor:pointer;line-height:1}
 .dp-close:hover{color:var(--white)}
+.dp-actions{display:flex;gap:8px;margin-top:14px}
+.dp-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;border:none;transition:.15s}
+.dp-btn.edit{background:rgba(255,255,255,.15);color:var(--white)}.dp-btn.edit:hover{background:var(--orange)}
+.dp-btn.del{background:rgba(184,80,80,.3);color:#ffaaaa}.dp-btn.del:hover{background:var(--rose);color:var(--white)}
 .dp-co-name{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:6px}
-.dp-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.dp-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
 .dp-website{font-size:12px;color:var(--orange);text-decoration:none}
 .dp-website:hover{text-decoration:underline}
-.dp-body{padding:24px 28px}
-.dp-section{margin-bottom:22px}
+.dp-body{padding:22px 26px}
+.dp-section{margin-bottom:20px}
 .dp-section-title{font-size:11px;font-weight:600;color:var(--ink-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dp-field label{font-size:11px;color:var(--ink-muted);font-weight:500;display:block;margin-bottom:2px}
-.dp-field span{font-size:13px;color:var(--ink);font-weight:400}
+.dp-field span{font-size:13px;color:var(--ink)}
 .dp-field.full{grid-column:1/-1}
-.dp-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.dp-score-item{text-align:center;padding:14px;background:var(--slate);border-radius:8px}
+.dp-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.dp-score-item{text-align:center;padding:13px;background:var(--slate);border-radius:8px}
 .dp-score-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--orange)}
 .dp-score-lbl{font-size:11px;color:var(--ink-muted);margin-top:2px}
 
-/* COMPARE VIEW */
-.compare-selectors{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
-.cmp-select{flex:1;min-width:200px;padding:10px 14px;border:1px solid var(--border);border-radius:8px;background:var(--white);font-size:13px;color:var(--ink);font-family:inherit;outline:none}
+/* NOTES SECTION */
+.notes-area{width:100%;padding:10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;resize:vertical;min-height:80px;outline:none;color:var(--ink)}
+.notes-area:focus{border-color:var(--orange)}
+.links-list{list-style:none;margin-bottom:10px}
+.links-list li{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--slate);border-radius:6px;margin-bottom:6px;font-size:13px}
+.links-list a{color:var(--orange);text-decoration:none;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.links-list a:hover{text-decoration:underline}
+.link-del{background:none;border:none;color:var(--ink-muted);cursor:pointer;font-size:14px;padding:0 4px}
+.link-del:hover{color:var(--rose)}
+.link-add-row{display:flex;gap:6px;margin-top:8px}
+.link-add-row input{flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--ink)}
+.link-add-row input:focus{border-color:var(--orange)}
+.btn-add-link{padding:7px 12px;background:var(--orange);border:none;color:var(--white);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.save-notes-btn{padding:7px 16px;background:var(--navy);border:none;color:var(--white);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;margin-top:10px}
+.save-notes-btn:hover{background:var(--navy2)}
+
+/* COMPARE */
+.compare-selectors{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.cmp-select{flex:1;min-width:180px;padding:10px 13px;border:1px solid var(--border);border-radius:8px;background:var(--white);font-size:13px;color:var(--ink);font-family:inherit;outline:none}
 .cmp-select:focus{border-color:var(--orange)}
 .cmp-table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden}
 .cmp-table{width:100%;border-collapse:collapse}
-.cmp-table th{background:var(--navy);color:var(--white);padding:12px 18px;text-align:left;font-size:12px;font-weight:500}
-.cmp-table th.co-th{background:var(--navy2);text-align:center}
-.cmp-table td{padding:11px 18px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
+.cmp-table th{background:var(--navy);color:var(--white);padding:12px 16px;text-align:left;font-size:12px;font-weight:500}
+.cmp-table th.co-th{text-align:center}
+.cmp-table td{padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
 .cmp-table td.attr{font-weight:500;color:var(--ink-soft);background:var(--slate);font-size:12px}
 .cmp-table td.val{text-align:center}
 .cmp-table tr:last-child td{border-bottom:none}
-.cmp-best{color:var(--green);font-weight:700}
-.cmp-worst{color:var(--rose)}
+.cmp-best{color:var(--green);font-weight:700}.cmp-worst{color:var(--rose)}
 .cmp-empty{text-align:center;padding:60px;color:var(--ink-muted);font-size:13px}
 
-/* ADD COMPANY MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:none;align-items:center;justify-content:center}
+/* VISUALS TAB */
+.vis-selector{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+.vis-btn{padding:9px 18px;border:2px solid var(--border);background:var(--white);color:var(--ink-soft);border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:.15s}
+.vis-btn:hover{border-color:var(--orange);color:var(--orange)}
+.vis-btn.active{border-color:var(--orange);background:var(--orange-pale);color:var(--orange)}
+.vis-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:20px}
+.vis-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.vis-card-title{font-size:15px;font-weight:600;color:var(--ink)}
+.vis-card-desc{font-size:12px;color:var(--ink-muted);margin-bottom:20px}
+.vis-controls{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.vis-controls label{font-size:12px;color:var(--ink-soft);font-weight:500}
+.vis-controls select{padding:7px 11px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;outline:none;color:var(--ink)}
+.vis-controls select:focus{border-color:var(--orange)}
+.vis-render{overflow-x:auto;border:1px solid var(--border);border-radius:8px;background:var(--slate);padding:20px;min-height:320px}
+.btn-dl-vis{padding:8px 16px;background:var(--navy);border:none;color:var(--white);border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;transition:.15s}
+.btn-dl-vis:hover{background:var(--navy2)}
+
+/* VALUE CHAIN */
+.vc-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0;min-height:280px}
+.vc-col{display:flex;flex-direction:column}
+.vc-col-hdr{background:var(--navy);color:var(--white);padding:10px 12px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;text-align:center;border-right:1px solid var(--border)}
+.vc-col-hdr:last-child{border-right:none}
+.vc-col-body{flex:1;padding:12px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:7px;background:var(--white)}
+.vc-col-body:last-child{border-right:none}
+.vc-chip{padding:6px 10px;border-radius:6px;font-size:12px;font-weight:500;text-align:center;color:var(--white)}
+.vc-orange{background:var(--orange)}.vc-navy{background:var(--navy2)}.vc-green{background:var(--green)}.vc-rose{background:var(--rose)}
+
+/* TILE LANDSCAPE */
+.tile-section{margin-bottom:20px}
+.tile-section-title{font-size:12px;font-weight:600;color:var(--ink-soft);letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px;padding:6px 10px;border-radius:6px}
+.tile-section-title.pn{background:#fce0cc;color:#a04000}
+.tile-section-title.ih{background:#ddeaf4;color:#1d4d6e}
+.tile-section-title.fm{background:var(--rose-light);color:var(--rose)}
+.tiles-grid{display:flex;flex-wrap:wrap;gap:8px}
+.tile{padding:8px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:.15s;border:1px solid transparent}
+.tile:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.1)}
+.tile.pn{background:#fce0cc;color:#a04000;border-color:#f0c09a}
+.tile.ih{background:#ddeaf4;color:#1d4d6e;border-color:#b0d0e8}
+.tile.fm{background:var(--rose-light);color:var(--rose);border-color:#e8b0b0}
+.tile-stage{font-size:10px;font-weight:400;opacity:.7;margin-top:1px}
+
+/* 2x2 */
+.matrix-wrap{position:relative;width:100%;height:360px}
+
+/* HEATMAP */
+.heatmap-table{width:100%;border-collapse:collapse}
+.heatmap-table th{background:var(--navy);color:var(--white);padding:9px 12px;font-size:11px;font-weight:500;text-align:center}
+.heatmap-table th.row-hdr{text-align:left;background:var(--navy2)}
+.heatmap-table td{padding:12px;text-align:center;font-size:13px;font-weight:600;border:1px solid var(--white)}
+.hm-0{background:#f0f4f8;color:var(--ink-muted)}
+.hm-1{background:#fce8d0;color:#a04000}
+.hm-2{background:#f5c090;color:#804000}
+.hm-3{background:#e07535;color:var(--white)}
+.hm-4{background:#b05020;color:var(--white)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
-.modal{background:var(--white);border-radius:12px;width:680px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)}
-.modal-hdr{padding:24px 28px 0;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:1;padding-bottom:16px;border-bottom:1px solid var(--border)}
+.modal{background:var(--white);border-radius:12px;width:700px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.modal-hdr{padding:22px 26px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:1}
 .modal-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400}
 .modal-close{background:none;border:none;font-size:20px;color:var(--ink-muted);cursor:pointer;line-height:1}
-.modal-body{padding:24px 28px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.form-field{display:flex;flex-direction:column;gap:5px}
+.modal-body{padding:22px 26px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-field{display:flex;flex-direction:column;gap:4px}
 .form-field.full{grid-column:1/-1}
 .form-field label{font-size:12px;font-weight:500;color:var(--ink-soft)}
-.form-field input,.form-field select,.form-field textarea{padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;transition:.15s}
+.form-field input,.form-field select,.form-field textarea{padding:8px 11px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;transition:.15s}
 .form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--orange)}
-.form-field textarea{resize:vertical;min-height:60px}
-.modal-footer{padding:16px 28px 24px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);margin-top:8px}
-.btn-cancel{padding:9px 20px;background:none;border:1px solid var(--border);color:var(--ink-soft);border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit}
-.btn-save{padding:9px 22px;background:var(--orange);border:none;color:var(--white);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.form-field textarea{resize:vertical;min-height:56px}
+.modal-footer{padding:14px 26px 22px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);margin-top:6px}
+.btn-cancel{padding:8px 18px;background:none;border:1px solid var(--border);color:var(--ink-soft);border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit}
+.btn-save{padding:8px 20px;background:var(--orange);border:none;color:var(--white);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
 .btn-save:hover{background:var(--orange2)}
 
-/* SETTINGS MODAL */
-.settings-modal{background:var(--white);border-radius:12px;width:440px;max-width:95vw;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+/* SETTINGS */
+.settings-inner{background:var(--white);border-radius:12px;width:460px;max-width:100%;box-shadow:0 8px 40px rgba(0,0,0,.2)}
 
-/* SECTION TABS */
-.section-wrap{display:none}
-.section-wrap.active{display:block}
-
-/* EMPTY & LOADING */
+/* MISC */
+.section-wrap{display:none}.section-wrap.active{display:block}
 .center-msg{text-align:center;padding:60px;color:var(--ink-muted);font-size:14px}
-.local-tag{display:inline-block;padding:1px 6px;background:#e8f0fe;color:#1a56a0;border-radius:4px;font-size:10px;font-weight:600;margin-left:4px;vertical-align:middle}
 </style>
 </head>
 <body>
-
 <header>
   <a class="logo" href="#">
     <div class="logo-box">M</div>
-    <div>
-      <div class="logo-text">The March Group</div>
-      <div class="logo-sub">Market Intelligence</div>
-    </div>
+    <div><div class="logo-text">The March Group</div><div class="logo-sub">Market Intelligence</div></div>
   </a>
   <nav>
     <button class="nav-btn active" onclick="showSection('dashboard')">Dashboard</button>
     <button class="nav-btn" onclick="showSection('companies')">Companies</button>
     <button class="nav-btn" onclick="showSection('compare')">Compare</button>
+    <button class="nav-btn" onclick="showSection('visuals')">Visuals</button>
   </nav>
   <div class="header-right">
     <span class="last-upd" id="lastUpd">—</span>
@@ -233,39 +284,20 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
 
   <!-- DASHBOARD -->
   <div class="section-wrap" id="sec-dashboard">
-    <div class="page-hdr">
-      <h1>Consumer Healthspan Landscape</h1>
-      <p>Precision Nutrition · Intelligent Health · Food & Medicine</p>
-    </div>
+    <div class="page-hdr"><h1>Consumer Healthspan Landscape</h1><p>Precision Nutrition · Intelligent Health · Food & Medicine</p></div>
     <div class="view-toggle">
       <button class="vt-btn active" onclick="setView('targets',this)">Investment Targets</button>
       <button class="vt-btn" onclick="setView('landscape',this)">Full Landscape</button>
     </div>
     <div class="stats-row" id="statsRow"></div>
     <div class="charts-grid">
-      <div class="chart-card">
-        <div class="chart-hdr"><span class="chart-title">Companies by Focus Area</span><button class="btn-dl" onclick="dlChart('cFocus')">↓ PNG</button></div>
-        <div class="chart-wrap"><canvas id="cFocus"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-hdr"><span class="chart-title">Stage Distribution</span><button class="btn-dl" onclick="dlChart('cStage')">↓ PNG</button></div>
-        <div class="chart-wrap"><canvas id="cStage"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-hdr"><span class="chart-title">Healthspan Targets Coverage</span><button class="btn-dl" onclick="dlChart('cHealth')">↓ PNG</button></div>
-        <div class="chart-wrap"><canvas id="cHealth"></canvas></div>
-      </div>
-      <div class="chart-card">
-        <div class="chart-hdr"><span class="chart-title">Traction vs Differentiation</span><button class="btn-dl" onclick="dlChart('cScatter')">↓ PNG</button></div>
-        <div class="chart-wrap"><canvas id="cScatter"></canvas></div>
-      </div>
+      <div class="chart-card"><div class="chart-title">Companies by Focus Area</div><div class="chart-wrap"><canvas id="cFocus"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Stage Distribution</div><div class="chart-wrap"><canvas id="cStage"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Healthspan Target Coverage</div><div class="chart-wrap"><canvas id="cHealth"></canvas></div></div>
+      <div class="chart-card"><div class="chart-title">Traction vs Differentiation</div><div class="chart-wrap"><canvas id="cScatter"></canvas></div></div>
     </div>
-    <!-- AI PANEL -->
     <div class="ai-panel">
-      <div class="ai-hdr">
-        <span class="ai-title">AI Analysis</span>
-        <span class="ai-badge">Powered by Claude</span>
-      </div>
+      <div class="ai-hdr"><span class="ai-title">AI Analysis</span><span class="ai-badge">Powered by Claude</span></div>
       <div class="ai-options">
         <button class="ai-opt active" onclick="selPrompt(this,'newsletter')">Newsletter Summary</button>
         <button class="ai-opt" onclick="selPrompt(this,'whitespace')">White Space Analysis</button>
@@ -275,23 +307,20 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
       </div>
       <div class="ai-key-row">
         <span class="ai-key-lbl">Anthropic API Key:</span>
-        <input class="ai-key-input" type="password" id="apiKeyInput" placeholder="sk-ant-..." />
+        <input class="ai-key-input" type="password" id="apiKeyInput" placeholder="sk-ant-…">
         <button class="ai-key-save" onclick="saveKey()">Save</button>
       </div>
       <div class="ai-output idle" id="aiOutput">Select an analysis type above and click Generate.</div>
       <div class="ai-actions">
         <button class="btn-gen" id="btnGen" onclick="generateAI()">Generate</button>
-        <button class="btn-copy" onclick="copyAI()">Copy text</button>
+        <button class="btn-copy-ai" onclick="copyAI()">Copy text</button>
       </div>
     </div>
   </div>
 
   <!-- COMPANIES -->
   <div class="section-wrap" id="sec-companies">
-    <div class="page-hdr">
-      <h1>Company Database</h1>
-      <p>Click any row to view full company profile</p>
-    </div>
+    <div class="page-hdr"><h1>Company Database</h1><p>Click any row to view full profile · Edit or delete from the detail panel</p></div>
     <div class="view-toggle">
       <button class="vt-btn active" onclick="setView('targets',this)">Investment Targets</button>
       <button class="vt-btn" onclick="setView('landscape',this)">Full Landscape</button>
@@ -302,51 +331,29 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
     </div>
     <div class="filters-bar">
       <input class="f-input" type="text" placeholder="Search…" id="srch" oninput="applyFilters()">
-      <select class="f-select" id="fFocus" onchange="applyFilters()">
-        <option value="">All Focus Areas</option>
-        <option>Precision Nutrition</option>
-        <option>Intelligent Health</option>
-        <option>Food & Medicine</option>
-      </select>
-      <select class="f-select" id="fStage" onchange="applyFilters()">
-        <option value="">All Stages</option>
-        <option>Pre-seed</option><option>Seed</option>
-        <option>Series A</option><option>Series B</option><option>Public</option>
-      </select>
-      <select class="f-select" id="fInterest" onchange="applyFilters()">
-        <option value="">All Interest Levels</option>
-        <option>Priority</option><option>Interested</option><option>Watch</option>
-      </select>
-      <select class="f-select" id="fType" onchange="applyFilters()">
-        <option value="">All Types</option>
-        <option>Startup</option><option>Incumbent</option><option>Acquirer</option>
-      </select>
-      <select class="f-select" id="fHealth" onchange="applyFilters()">
-        <option value="">All Healthspan Targets</option>
-        <option>Metabolic Control</option><option>Gut Health</option>
-        <option>Cardiovascular Health</option><option>Neurological Health</option>
-        <option>Inflammation</option><option>Musculoskeletal</option>
-      </select>
+      <select class="f-select" id="fFocus" onchange="applyFilters()"><option value="">All Focus Areas</option><option>Precision Nutrition</option><option>Intelligent Health</option><option>Food & Medicine</option></select>
+      <select class="f-select" id="fStage" onchange="applyFilters()"><option value="">All Stages</option><option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Public</option></select>
+      <select class="f-select" id="fInterest" onchange="applyFilters()"><option value="">All Interest Levels</option><option>Priority</option><option>Interested</option><option>Watch</option></select>
+      <select class="f-select" id="fType" onchange="applyFilters()"><option value="">All Types</option><option>Startup</option><option>Incumbent</option><option>Acquirer</option></select>
+      <select class="f-select" id="fHealth" onchange="applyFilters()"><option value="">All Healthspan Targets</option><option>Metabolic Control</option><option>Gut Health</option><option>Cardiovascular Health</option><option>Neurological Health</option><option>Inflammation</option><option>Musculoskeletal</option></select>
       <span class="f-count" id="fCount"></span>
     </div>
     <div class="tbl-wrap">
       <table>
-        <thead>
-          <tr>
-            <th onclick="srt('Company Name')">Company</th>
-            <th onclick="srt('TMG Focus Area')">Focus Area</th>
-            <th onclick="srt('Sub-category')">Sub-category</th>
-            <th onclick="srt('Ecosystem Position')">Ecosystem</th>
-            <th onclick="srt('Business Model')">Model</th>
-            <th onclick="srt('Stage')">Stage</th>
-            <th onclick="srt('Funding Raised (USD)')">Funding</th>
-            <th onclick="srt('Geography')">Geo</th>
-            <th onclick="srt('Company Type')">Type</th>
-            <th onclick="srt('Market Traction (1-5)')">Traction</th>
-            <th onclick="srt('Product Differentiation (1-5)')">Diff.</th>
-            <th onclick="srt('TMG Interest Level')">Interest</th>
-          </tr>
-        </thead>
+        <thead><tr>
+          <th onclick="srt('Company Name')">Company</th>
+          <th onclick="srt('TMG Focus Area')">Focus Area</th>
+          <th onclick="srt('Sub-category')">Sub-category</th>
+          <th onclick="srt('Ecosystem Position')">Ecosystem</th>
+          <th onclick="srt('Business Model')">Model</th>
+          <th onclick="srt('Stage')">Stage</th>
+          <th onclick="srt('Funding Raised (USD)')">Funding</th>
+          <th onclick="srt('Geography')">Geo</th>
+          <th onclick="srt('Company Type')">Type</th>
+          <th onclick="srt('Market Traction (1-5)')">Traction</th>
+          <th onclick="srt('Product Differentiation (1-5)')">Diff.</th>
+          <th onclick="srt('TMG Interest Level')">Interest</th>
+        </tr></thead>
         <tbody id="tBody"></tbody>
       </table>
     </div>
@@ -354,16 +361,26 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
 
   <!-- COMPARE -->
   <div class="section-wrap" id="sec-compare">
-    <div class="page-hdr">
-      <h1>Competitive Comparison</h1>
-      <p>Select up to 3 companies to compare side-by-side across all attributes</p>
-    </div>
+    <div class="page-hdr"><h1>Competitive Comparison</h1><p>Select up to 3 companies to compare side-by-side</p></div>
     <div class="compare-selectors">
       <select class="cmp-select" id="cmp1" onchange="renderCompare()"><option value="">Select Company 1…</option></select>
       <select class="cmp-select" id="cmp2" onchange="renderCompare()"><option value="">Select Company 2…</option></select>
       <select class="cmp-select" id="cmp3" onchange="renderCompare()"><option value="">Select Company 3…</option></select>
     </div>
     <div id="cmpOutput"><div class="cmp-empty">Select companies above to compare them</div></div>
+  </div>
+
+  <!-- VISUALS -->
+  <div class="section-wrap" id="sec-visuals">
+    <div class="page-hdr"><h1>Market Visuals</h1><p>Strategic views of the landscape — download any visual for newsletters and reports</p></div>
+    <div class="vis-selector">
+      <button class="vis-btn active" onclick="setVis('valuechain',this)">Value Chain Map</button>
+      <button class="vis-btn" onclick="setVis('tile',this)">Tile Landscape</button>
+      <button class="vis-btn" onclick="setVis('matrix2x2',this)">2×2 Matrix</button>
+      <button class="vis-btn" onclick="setVis('heatmap',this)">Heatmap</button>
+      <button class="vis-btn" onclick="setVis('bubble',this)">Bubble Chart</button>
+    </div>
+    <div id="visContent"></div>
   </div>
 </main>
 
@@ -374,58 +391,39 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
   <div id="dpContent"></div>
 </div>
 
-<!-- ADD COMPANY MODAL -->
+<!-- ADD/EDIT MODAL -->
 <div class="modal-overlay" id="addModal">
   <div class="modal">
     <div class="modal-hdr">
-      <span class="modal-title">Add New Company</span>
+      <span class="modal-title" id="modalTitle">Add New Company</span>
       <button class="modal-close" onclick="closeAddModal()">✕</button>
     </div>
     <div class="modal-body">
+      <input type="hidden" id="f_editName">
       <div class="form-grid">
-        <div class="form-field full"><label>Company Name *</label><input id="f_name" type="text" placeholder="e.g. Zoe"></div>
+        <div class="form-field full"><label>Company Name *</label><input id="f_name" type="text" placeholder="e.g. ZOE"></div>
         <div class="form-field full"><label>One-liner *</label><textarea id="f_oneliner" placeholder="What they do in one sentence"></textarea></div>
-        <div class="form-field"><label>TMG Focus Area</label>
-          <select id="f_focus"><option value="">Select…</option><option>Precision Nutrition</option><option>Intelligent Health</option><option>Food & Medicine</option></select>
-        </div>
-        <div class="form-field"><label>Sub-category</label><input id="f_sub" type="text" placeholder="e.g. Personalised Nutrition"></div>
-        <div class="form-field"><label>Healthspan Target</label>
-          <select id="f_health"><option value="">Select…</option><option>Metabolic Control</option><option>Gut Health</option><option>Cardiovascular Health</option><option>Neurological Health</option><option>Inflammation</option><option>Musculoskeletal</option></select>
-        </div>
-        <div class="form-field"><label>Ecosystem Position</label>
-          <select id="f_eco"><option value="">Select…</option><option>Ingredient / Science</option><option>Platform</option><option>Brand</option><option>Distribution / Channel</option></select>
-        </div>
-        <div class="form-field"><label>Business Model</label>
-          <select id="f_biz"><option value="">Select…</option><option>B2C</option><option>B2B</option><option>B2B2C</option><option>Marketplace</option><option>SaaS</option></select>
-        </div>
-        <div class="form-field"><label>Company Type</label>
-          <select id="f_type"><option value="">Select…</option><option>Startup</option><option>Incumbent</option><option>Acquirer</option></select>
-        </div>
-        <div class="form-field"><label>Geography</label><input id="f_geo" type="text" placeholder="e.g. US, UK, Singapore"></div>
-        <div class="form-field"><label>Stage</label>
-          <select id="f_stage"><option value="">Select…</option><option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Public</option></select>
-        </div>
+        <div class="form-field"><label>TMG Focus Area</label><select id="f_focus"><option value="">Select…</option><option>Precision Nutrition</option><option>Intelligent Health</option><option>Food & Medicine</option></select></div>
+        <div class="form-field"><label>Sub-category</label><input id="f_sub" type="text"></div>
+        <div class="form-field"><label>Healthspan Target</label><select id="f_health"><option value="">Select…</option><option>Metabolic Control</option><option>Gut Health</option><option>Cardiovascular Health</option><option>Neurological Health</option><option>Inflammation</option><option>Musculoskeletal</option></select></div>
+        <div class="form-field"><label>Ecosystem Position</label><select id="f_eco"><option value="">Select…</option><option>Ingredient / Science</option><option>Platform</option><option>Brand</option><option>Distribution / Channel</option></select></div>
+        <div class="form-field"><label>Business Model</label><select id="f_biz"><option value="">Select…</option><option>B2C</option><option>B2B</option><option>B2B2C</option><option>Marketplace</option><option>SaaS</option></select></div>
+        <div class="form-field"><label>Company Type</label><select id="f_type"><option value="">Select…</option><option>Startup</option><option>Incumbent</option><option>Acquirer</option></select></div>
+        <div class="form-field"><label>Geography</label><input id="f_geo" type="text" placeholder="e.g. US, UK"></div>
+        <div class="form-field"><label>Stage</label><select id="f_stage"><option value="">Select…</option><option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Public</option></select></div>
         <div class="form-field"><label>Funding Raised (USD)</label><input id="f_funding" type="text" placeholder="e.g. $10M"></div>
-        <div class="form-field"><label>Key Investors</label><input id="f_investors" type="text" placeholder="e.g. a16z, Sequoia"></div>
-        <div class="form-field full"><label>Key Technology</label><input id="f_tech" type="text" placeholder="What makes them distinctive"></div>
-        <div class="form-field"><label>Pricing Model</label><input id="f_pricing" type="text" placeholder="e.g. Subscription, Per-test"></div>
-        <div class="form-field"><label>Target Customer</label><input id="f_customer" type="text" placeholder="Who they sell to"></div>
-        <div class="form-field full"><label>Core Moat</label><textarea id="f_moat" placeholder="What makes them defensible"></textarea></div>
-        <div class="form-field full"><label>Key Competitors</label><input id="f_competitors" type="text" placeholder="e.g. ZOE, Viome"></div>
-        <div class="form-field full"><label>Execution Risk</label><input id="f_risk" type="text" placeholder="Main risk in one line"></div>
+        <div class="form-field"><label>Key Investors</label><input id="f_investors" type="text"></div>
+        <div class="form-field full"><label>Key Technology</label><input id="f_tech" type="text"></div>
+        <div class="form-field"><label>Pricing Model</label><input id="f_pricing" type="text" placeholder="e.g. Subscription"></div>
+        <div class="form-field"><label>Target Customer</label><input id="f_customer" type="text"></div>
+        <div class="form-field full"><label>Core Moat</label><textarea id="f_moat"></textarea></div>
+        <div class="form-field full"><label>Key Competitors</label><input id="f_competitors" type="text"></div>
+        <div class="form-field full"><label>Execution Risk</label><input id="f_risk" type="text"></div>
         <div class="form-field full"><label>Website</label><input id="f_website" type="text" placeholder="https://…"></div>
-        <div class="form-field"><label>Market Traction (1–5)</label>
-          <select id="f_traction"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-        </div>
-        <div class="form-field"><label>Product Differentiation (1–5)</label>
-          <select id="f_diff"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-        </div>
-        <div class="form-field"><label>Capital Efficiency (1–5)</label>
-          <select id="f_capeff"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select>
-        </div>
-        <div class="form-field"><label>TMG Interest Level</label>
-          <select id="f_interest"><option value="">Select…</option><option>Priority</option><option>Interested</option><option>Watch</option></select>
-        </div>
+        <div class="form-field"><label>Market Traction (1–5)</label><select id="f_traction"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-field"><label>Product Differentiation (1–5)</label><select id="f_diff"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-field"><label>Capital Efficiency (1–5)</label><select id="f_capeff"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-field"><label>TMG Interest Level</label><select id="f_interest"><option value="">Select…</option><option>Priority</option><option>Interested</option><option>Watch</option></select></div>
       </div>
     </div>
     <div class="modal-footer">
@@ -437,21 +435,22 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
 
 <!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settingsModal">
-  <div class="settings-modal modal">
-    <div class="modal-hdr">
-      <span class="modal-title">Settings</span>
-      <button class="modal-close" onclick="closeSettings()">✕</button>
-    </div>
+  <div class="settings-inner modal">
+    <div class="modal-hdr"><span class="modal-title">Settings</span><button class="modal-close" onclick="closeSettings()">✕</button></div>
     <div class="modal-body">
-      <div class="form-field" style="margin-bottom:16px">
+      <div class="form-field" style="margin-bottom:14px">
         <label>Anthropic API Key</label>
-        <input id="s_apiKey" type="password" placeholder="sk-ant-…" style="margin-top:5px;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;width:100%;outline:none">
-        <span style="font-size:11px;color:var(--ink-muted);margin-top:4px;display:block">Required for AI Analysis. Stored locally in your browser only.</span>
+        <input id="s_apiKey" type="password" placeholder="sk-ant-…" style="margin-top:5px;padding:9px 11px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;width:100%;outline:none">
+        <span style="font-size:11px;color:var(--ink-muted);display:block;margin-top:4px">Stored locally in your browser. Get yours at console.anthropic.com</span>
+      </div>
+      <div class="form-field" style="margin-bottom:14px">
+        <label>Anthropic Workspace ID <span style="font-weight:400;color:var(--ink-muted)">(required for identity-linked API keys)</span></label>
+        <input id="s_workspaceId" type="text" placeholder="wrkspc-…" style="margin-top:5px;padding:9px 11px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;width:100%;outline:none">
+        <span style="font-size:11px;color:var(--ink-muted);display:block;margin-top:4px">Find this in console.anthropic.com → Settings → Workspaces → copy the Workspace ID</span>
       </div>
       <div class="form-field">
         <label>Google Sheet CSV URL</label>
-        <input id="s_csvUrl" type="text" placeholder="https://docs.google.com/…" style="margin-top:5px;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;width:100%;outline:none">
-        <span style="font-size:11px;color:var(--ink-muted);margin-top:4px;display:block">Update if you change your Google Sheet link.</span>
+        <input id="s_csvUrl" type="text" placeholder="https://docs.google.com/…" style="margin-top:5px;padding:9px 11px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;width:100%;outline:none">
       </div>
     </div>
     <div class="modal-footer">
@@ -462,117 +461,113 @@ td{padding:11px 14px;font-size:13px;vertical-align:middle}
 </div>
 
 <script>
-const DEFAULT_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8LViFyryNqnjbQxgOO3SKHjHWAzY-2-S5mERrp7xABQc8_y2iw4mK2DV6PX5HsCN6Yj1wL6HtMOiY/pub?output=csv';
-const COLS = ['Company Name','One-liner','TMG Focus Area','Sub-category','Healthspan Target','Ecosystem Position','Business Model','Company Type','Geography','Stage','Funding Raised (USD)','Key Investors','Key Technology','Pricing Model','Target Customer','Core Moat','Key Competitors','Execution Risk','Website','Market Traction (1-5)','Product Differentiation (1-5)','Capital Efficiency (1-5)','TMG Interest Level','Last Updated'];
+const DEFAULT_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vR8LViFyryNqnjbQxgOO3SKHjHWAzY-2-S5mERrp7xABQc8_y2iw4mK2DV6PX5HsCN6Yj1wL6HtMOiY/pub?output=csv';
+const COLS=['Company Name','One-liner','TMG Focus Area','Sub-category','Healthspan Target','Ecosystem Position','Business Model','Company Type','Geography','Stage','Funding Raised (USD)','Key Investors','Key Technology','Pricing Model','Target Customer','Core Moat','Key Competitors','Execution Risk','Website','Market Traction (1-5)','Product Differentiation (1-5)','Capital Efficiency (1-5)','TMG Interest Level','Last Updated'];
+let sheetData=[],localData=[],overrides={},hidden=[],allData=[],filteredData=[];
+let curView='targets',curSection='dashboard',sortCol='',sortDir=1,curPrompt='newsletter',curVis='valuechain';
+let charts={};
 
-let sheetData = [], localData = [], allData = [], filteredData = [];
-let curView = 'targets', curSection = 'dashboard';
-let sortCol = '', sortDir = 1, curPrompt = 'newsletter';
-let charts = {};
-
-// --- INIT ---
-function init() {
-  const k = localStorage.getItem('tmg_apiKey');
-  if (k) { document.getElementById('apiKeyInput').value = k; document.getElementById('s_apiKey').value = k; }
-  const u = localStorage.getItem('tmg_csvUrl');
-  if (u) document.getElementById('s_csvUrl').value = u;
-  localData = JSON.parse(localStorage.getItem('tmg_local') || '[]');
+function init(){
+  const k=localStorage.getItem('tmg_apiKey');
+  if(k){document.getElementById('apiKeyInput').value=k;document.getElementById('s_apiKey').value=k;}
+  const u=localStorage.getItem('tmg_csvUrl');
+  if(u)document.getElementById('s_csvUrl').value=u;
+  localData=JSON.parse(localStorage.getItem('tmg_local')||'[]');
+  overrides=JSON.parse(localStorage.getItem('tmg_overrides')||'{}');
+  hidden=JSON.parse(localStorage.getItem('tmg_hidden')||'[]');
   loadData();
 }
 
-// --- LOAD ---
-function csvUrl() { return localStorage.getItem('tmg_csvUrl') || DEFAULT_CSV; }
-async function loadData() {
-  document.getElementById('loadingMsg').style.display = 'block';
-  document.querySelectorAll('.section-wrap').forEach(s => s.classList.remove('active'));
-  const proxies = [u => u, u => `https://corsproxy.io/?${encodeURIComponent(u)}`, u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`];
-  let ok = false;
-  for (const px of proxies) {
-    try {
-      const r = await fetch(px(csvUrl() + '&t=' + Date.now()));
-      if (!r.ok) continue;
-      const t = await r.text();
-      if (!t.includes('Company Name')) continue;
-      const p = parseCSV(t);
-      if (!p.length) continue;
-      sheetData = p;
-      ok = true; break;
-    } catch(e) { continue; }
+function csvUrl(){return localStorage.getItem('tmg_csvUrl')||DEFAULT_CSV;}
+
+async function loadData(){
+  document.getElementById('loadingMsg').style.display='block';
+  document.querySelectorAll('.section-wrap').forEach(s=>s.classList.remove('active'));
+  const proxies=[u=>u,u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`];
+  let ok=false;
+  for(const px of proxies){
+    try{
+      const r=await fetch(px(csvUrl()+'&t='+Date.now()));
+      if(!r.ok)continue;
+      const t=await r.text();
+      if(!t.includes('Company Name'))continue;
+      const p=parseCSV(t);
+      if(!p.length)continue;
+      sheetData=p;ok=true;break;
+    }catch(e){continue;}
   }
-  if (!ok) { document.getElementById('loadingMsg').textContent = 'Could not load sheet data. Check Settings → CSV URL and ensure sheet is published.'; return; }
-  document.getElementById('loadingMsg').style.display = 'none';
-  allData = mergeData();
-  populateCompareSelects();
+  if(!ok){document.getElementById('loadingMsg').textContent='Could not load sheet data. Check Settings → CSV URL.';return;}
+  document.getElementById('loadingMsg').style.display='none';
+  allData=mergeData();
+  populateCmpSelects();
   applyView();
-  showSection(curSection, true);
-  document.getElementById('lastUpd').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  showSection(curSection,true);
+  document.getElementById('lastUpd').textContent='Updated '+new Date().toLocaleTimeString();
 }
 
-function mergeData() {
-  const names = sheetData.map(r => r['Company Name'].toLowerCase());
-  const locals = localData.filter(r => !names.includes(r['Company Name'].toLowerCase()));
-  return [...sheetData, ...locals];
+function mergeData(){
+  const processed=sheetData
+    .filter(r=>!hidden.includes(r['Company Name']))
+    .map(r=>overrides[r['Company Name']]?{...r,...overrides[r['Company Name']]}:r);
+  const names=processed.map(r=>r['Company Name'].toLowerCase());
+  const locals=localData.filter(r=>!names.includes(r['Company Name'].toLowerCase()));
+  return[...processed,...locals];
 }
 
-function parseCSV(txt) {
-  const lines = txt.trim().split('\n');
-  const hdrs = splitCSVLine(lines[0]);
-  return lines.slice(1).map(l => {
-    const v = splitCSVLine(l), obj = {};
-    hdrs.forEach((h, i) => obj[h.trim()] = (v[i] || '').trim());
+function parseCSV(txt){
+  const lines=txt.trim().split('\n');
+  const hdrs=splitLine(lines[0]);
+  return lines.slice(1).map(l=>{
+    const v=splitLine(l),obj={};
+    hdrs.forEach((h,i)=>obj[h.trim()]=(v[i]||'').trim());
     return obj;
-  }).filter(r => r['Company Name']);
+  }).filter(r=>r['Company Name']);
 }
-
-function splitCSVLine(line) {
-  const v = []; let cur = '', inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    if (line[i] === '"') inQ = !inQ;
-    else if (line[i] === ',' && !inQ) { v.push(cur); cur = ''; }
-    else cur += line[i];
+function splitLine(line){
+  const v=[];let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    if(line[i]==='"')inQ=!inQ;
+    else if(line[i]===','&&!inQ){v.push(cur);cur='';}
+    else cur+=line[i];
   }
-  v.push(cur); return v;
+  v.push(cur);return v;
 }
 
 // --- VIEW ---
-function setView(v, btn) {
-  curView = v;
-  document.querySelectorAll('.vt-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+function setView(v,btn){
+  curView=v;
+  // toggle all vt-btns in same parent
+  if(btn){
+    const siblings=btn.closest('.view-toggle').querySelectorAll('.vt-btn');
+    siblings.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
   applyView();
 }
-
-function applyView() {
-  const base = curView === 'targets' ? allData.filter(r => r['Company Type'] === 'Startup') : allData;
-  filteredData = base;
-  renderStats(base);
-  renderCharts(base);
-  applyFilters();
+function applyView(){
+  const base=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
+  filteredData=base;
+  renderStats(base);renderCharts(base);applyFilters();
 }
-
-function showSection(id, skipNav) {
-  curSection = id;
-  document.querySelectorAll('.section-wrap').forEach(s => s.classList.remove('active'));
-  const sec = document.getElementById('sec-' + id);
-  if (sec) sec.classList.add('active');
-  if (!skipNav) {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => { if (b.textContent.toLowerCase().includes(id.slice(0,4))) b.classList.add('active'); });
-  } else {
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    const map = {dashboard:0,companies:1,compare:2};
-    document.querySelectorAll('.nav-btn')[map[id]]?.classList.add('active');
-  }
-  if (id === 'compare') renderCompare();
+function showSection(id,skipNav){
+  curSection=id;
+  document.querySelectorAll('.section-wrap').forEach(s=>s.classList.remove('active'));
+  const sec=document.getElementById('sec-'+id);
+  if(sec)sec.classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const map={dashboard:0,companies:1,compare:2,visuals:3};
+  document.querySelectorAll('.nav-btn')[map[id]]?.classList.add('active');
+  if(id==='compare')renderCompare();
+  if(id==='visuals')renderVis();
 }
 
 // --- STATS ---
-function renderStats(data) {
-  const s = data.filter(r => r['Company Type'] === 'Startup').length;
-  const p = data.filter(r => r['TMG Interest Level'] === 'Priority').length;
-  const areas = [...new Set(data.map(r => r['TMG Focus Area']).filter(Boolean))].length;
-  const inc = data.filter(r => ['Incumbent','Acquirer'].includes(r['Company Type'])).length;
-  document.getElementById('statsRow').innerHTML = `
+function renderStats(data){
+  const s=data.filter(r=>r['Company Type']==='Startup').length;
+  const p=data.filter(r=>r['TMG Interest Level']==='Priority').length;
+  const areas=[...new Set(data.map(r=>r['TMG Focus Area']).filter(Boolean))].length;
+  const inc=data.filter(r=>['Incumbent','Acquirer'].includes(r['Company Type'])).length;
+  document.getElementById('statsRow').innerHTML=`
     <div class="stat-card"><div class="stat-val">${s}</div><div class="stat-lbl">Startups tracked</div></div>
     <div class="stat-card s2"><div class="stat-val">${p}</div><div class="stat-lbl">Priority targets</div></div>
     <div class="stat-card s3"><div class="stat-val">${areas}</div><div class="stat-lbl">Focus areas</div></div>
@@ -580,121 +575,99 @@ function renderStats(data) {
 }
 
 // --- CHARTS ---
-function cnt(data, key) {
-  return data.reduce((a, r) => { const v = r[key] || 'Unknown'; a[v] = (a[v]||0)+1; return a; }, {});
-}
-function renderCharts(data) {
-  Object.values(charts).forEach(c => c.destroy()); charts = {};
-  const ORG = '#e07535', NAV = '#162535', GRN = '#2a7f5f', RSE = '#b85050';
-
-  const fc = cnt(data, 'TMG Focus Area');
-  charts.cFocus = new Chart(document.getElementById('cFocus'), {
-    type:'bar', data:{ labels:Object.keys(fc), datasets:[{ data:Object.values(fc), backgroundColor:[ORG,NAV,GRN], borderRadius:6, borderSkipped:false }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false}}, y:{grid:{color:'#eef2f6'},ticks:{stepSize:1}} } }
-  });
-
-  const stgOrder = ['Pre-seed','Seed','Series A','Series B','Series D','Public'];
-  const sc = cnt(data, 'Stage');
-  const sl = stgOrder.filter(s => sc[s]);
-  charts.cStage = new Chart(document.getElementById('cStage'), {
-    type:'bar', data:{ labels:sl, datasets:[{ data:sl.map(s=>sc[s]||0), backgroundColor:NAV, borderRadius:6, borderSkipped:false }] },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false}}, y:{grid:{color:'#eef2f6'},ticks:{stepSize:1}} } }
-  });
-
-  const hc = cnt(data, 'Healthspan Target');
-  charts.cHealth = new Chart(document.getElementById('cHealth'), {
-    type:'bar', data:{ labels:Object.keys(hc), datasets:[{ data:Object.values(hc), backgroundColor:GRN, borderRadius:6, borderSkipped:false }] },
-    options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'#eef2f6'},ticks:{stepSize:1}}, y:{grid:{display:false},ticks:{font:{size:11}}} } }
-  });
-
-  const colorMap = {'Precision Nutrition':ORG+'cc','Intelligent Health':NAV+'cc','Food & Medicine':GRN+'cc'};
-  const pts = data.filter(r => r['Market Traction (1-5)'] && r['Product Differentiation (1-5)']);
-  const grp = {};
-  pts.forEach(r => { const a = r['TMG Focus Area']||'Other'; if(!grp[a]) grp[a]=[]; grp[a].push({x:+r['Market Traction (1-5)'],y:+r['Product Differentiation (1-5)'],label:r['Company Name']}); });
-  charts.cScatter = new Chart(document.getElementById('cScatter'), {
-    type:'scatter',
-    data:{ datasets: Object.entries(grp).map(([a,p]) => ({ label:a, data:p, backgroundColor:colorMap[a]||'#888', pointRadius:7, pointHoverRadius:9 })) },
-    options:{ responsive:true, maintainAspectRatio:false, plugins:{ legend:{position:'bottom',labels:{font:{size:11},boxWidth:10}}, tooltip:{callbacks:{label:c=>`${c.raw.label} (${c.raw.x}, ${c.raw.y})`}} }, scales:{ x:{min:0,max:6,title:{display:true,text:'Market Traction',font:{size:11}},grid:{color:'#eef2f6'}}, y:{min:0,max:6,title:{display:true,text:'Product Diff.',font:{size:11}},grid:{color:'#eef2f6'}} } }
-  });
-}
-
-function dlChart(id) {
-  const c = charts[id]; if (!c) return;
-  const a = document.createElement('a');
-  a.download = id + '_TMG.png';
-  a.href = c.toBase64Image('image/png', 1);
-  a.click();
+function cnt(data,key){return data.reduce((a,r)=>{const v=r[key]||'Unknown';a[v]=(a[v]||0)+1;return a;},{});}
+function renderCharts(data){
+  Object.values(charts).forEach(c=>c.destroy());charts={};
+  const ORG='#e07535',NAV='#162535',GRN='#2a7f5f',RSE='#b85050';
+  const fc=cnt(data,'TMG Focus Area');
+  charts.cFocus=new Chart(document.getElementById('cFocus'),{type:'bar',data:{labels:Object.keys(fc),datasets:[{data:Object.values(fc),backgroundColor:[ORG,NAV,GRN],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#eef2f6'},ticks:{stepSize:1}}}}});
+  const stgOrder=['Pre-seed','Seed','Series A','Series B','Series D','Public'];
+  const sc=cnt(data,'Stage');const sl=stgOrder.filter(s=>sc[s]);
+  charts.cStage=new Chart(document.getElementById('cStage'),{type:'bar',data:{labels:sl,datasets:[{data:sl.map(s=>sc[s]||0),backgroundColor:NAV,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#eef2f6'},ticks:{stepSize:1}}}}});
+  const hc=cnt(data,'Healthspan Target');
+  charts.cHealth=new Chart(document.getElementById('cHealth'),{type:'bar',data:{labels:Object.keys(hc),datasets:[{data:Object.values(hc),backgroundColor:GRN,borderRadius:6,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#eef2f6'},ticks:{stepSize:1}},y:{grid:{display:false},ticks:{font:{size:11}}}}}});
+  const cmap={'Precision Nutrition':ORG+'cc','Intelligent Health':NAV+'cc','Food & Medicine':GRN+'cc'};
+  const pts=data.filter(r=>r['Market Traction (1-5)']&&r['Product Differentiation (1-5)']);
+  const grp={};
+  pts.forEach(r=>{const a=r['TMG Focus Area']||'Other';if(!grp[a])grp[a]=[];grp[a].push({x:+r['Market Traction (1-5)'],y:+r['Product Differentiation (1-5)'],label:r['Company Name']});});
+  charts.cScatter=new Chart(document.getElementById('cScatter'),{type:'scatter',data:{datasets:Object.entries(grp).map(([a,p])=>({label:a,data:p,backgroundColor:cmap[a]||'#888',pointRadius:7,pointHoverRadius:9}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:10}},tooltip:{callbacks:{label:c=>`${c.raw.label} (${c.raw.x}, ${c.raw.y})`}}},scales:{x:{min:0,max:6,title:{display:true,text:'Market Traction',font:{size:11}},grid:{color:'#eef2f6'}},y:{min:0,max:6,title:{display:true,text:'Product Diff.',font:{size:11}},grid:{color:'#eef2f6'}}}}});
 }
 
 // --- FILTERS & TABLE ---
-function applyFilters() {
-  const q = (document.getElementById('srch')||{value:''}).value.toLowerCase();
-  const ff = (document.getElementById('fFocus')||{value:''}).value;
-  const fs = (document.getElementById('fStage')||{value:''}).value;
-  const fi = (document.getElementById('fInterest')||{value:''}).value;
-  const ft = (document.getElementById('fType')||{value:''}).value;
-  const fh = (document.getElementById('fHealth')||{value:''}).value;
-  const base = curView === 'targets' ? allData.filter(r => r['Company Type'] === 'Startup') : allData;
-  filteredData = base.filter(r => {
-    if (q && !Object.values(r).join(' ').toLowerCase().includes(q)) return false;
-    if (ff && r['TMG Focus Area'] !== ff) return false;
-    if (fs && r['Stage'] !== fs) return false;
-    if (fi && r['TMG Interest Level'] !== fi) return false;
-    if (ft && r['Company Type'] !== ft) return false;
-    if (fh && r['Healthspan Target'] !== fh) return false;
+function applyFilters(){
+  const q=(document.getElementById('srch')||{value:''}).value.toLowerCase();
+  const ff=(document.getElementById('fFocus')||{value:''}).value;
+  const fs=(document.getElementById('fStage')||{value:''}).value;
+  const fi=(document.getElementById('fInterest')||{value:''}).value;
+  const ft=(document.getElementById('fType')||{value:''}).value;
+  const fh=(document.getElementById('fHealth')||{value:''}).value;
+  const base=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
+  filteredData=base.filter(r=>{
+    if(q&&!Object.values(r).join(' ').toLowerCase().includes(q))return false;
+    if(ff&&r['TMG Focus Area']!==ff)return false;
+    if(fs&&r['Stage']!==fs)return false;
+    if(fi&&r['TMG Interest Level']!==fi)return false;
+    if(ft&&r['Company Type']!==ft)return false;
+    if(fh&&r['Healthspan Target']!==fh)return false;
     return true;
   });
-  const fc = document.getElementById('fCount');
-  if (fc) fc.textContent = filteredData.length + ' companies';
+  const fc=document.getElementById('fCount');
+  if(fc)fc.textContent=filteredData.length+' companies';
   renderTable();
 }
+function srt(col){if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}filteredData.sort((a,b)=>(a[col]||'').localeCompare(b[col]||'',undefined,{numeric:true})*sortDir);renderTable();}
+function fBadge(a){return a==='Precision Nutrition'?'b-pn':a==='Intelligent Health'?'b-ih':'b-fm';}
+function tBadge(t){return t==='Startup'?'b-startup':t==='Incumbent'?'b-incumbent':'b-acquirer';}
+function iBadge(l){return l==='Priority'?'b-priority':l==='Interested'?'b-interested':'b-watch';}
+function sbar(v){const n=parseFloat(v)||0,p=(n/5)*100;return `<div class="sbar"><div class="strack"><div class="sfill" style="width:${p}%"></div></div><span class="snum">${v||'—'}</span></div>`;}
+function isLocal(r){return localData.some(l=>l['Company Name']===r['Company Name']);}
+function isOverride(r){return !!overrides[r['Company Name']];}
 
-function srt(col) {
-  if (sortCol === col) sortDir *= -1; else { sortCol = col; sortDir = 1; }
-  filteredData.sort((a,b) => (a[col]||'').localeCompare(b[col]||'', undefined, {numeric:true}) * sortDir);
-  renderTable();
-}
-
-function focusBadge(a) { return a==='Precision Nutrition'?'b-pn':a==='Intelligent Health'?'b-ih':'b-fm'; }
-function typeBadge(t) { return t==='Startup'?'b-startup':t==='Incumbent'?'b-incumbent':'b-acquirer'; }
-function interestBadge(l) { return l==='Priority'?'b-priority':l==='Interested'?'b-interested':'b-watch'; }
-function sbar(v) { const n=parseFloat(v)||0,p=(n/5)*100; return `<div class="sbar"><div class="strack"><div class="sfill" style="width:${p}%"></div></div><span class="snum">${v||'—'}</span></div>`; }
-function isLocal(r) { return localData.some(l => l['Company Name']===r['Company Name']); }
-
-function renderTable() {
-  const tb = document.getElementById('tBody'); if (!tb) return;
-  if (!filteredData.length) { tb.innerHTML = '<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--ink-muted)">No companies match your filters</td></tr>'; return; }
-  tb.innerHTML = filteredData.map((r,i) => `
-    <tr onclick="openPanel(${allData.indexOf(r)})">
+function renderTable(){
+  const tb=document.getElementById('tBody');if(!tb)return;
+  if(!filteredData.length){tb.innerHTML='<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--ink-muted)">No companies match filters</td></tr>';return;}
+  tb.innerHTML=filteredData.map(r=>`
+    <tr onclick="openPanel('${r['Company Name'].replace(/'/g,"\\'")}')">
       <td><div class="co-name">${r['Company Name']}${isLocal(r)?'<span class="local-tag">NEW</span>':''}</div><div class="co-sub">${r['One-liner']||''}</div></td>
-      <td><span class="badge ${focusBadge(r['TMG Focus Area'])}">${r['TMG Focus Area']||'—'}</span></td>
+      <td><span class="badge ${fBadge(r['TMG Focus Area'])}">${r['TMG Focus Area']||'—'}</span></td>
       <td style="font-size:12px;color:var(--ink-soft)">${r['Sub-category']||'—'}</td>
       <td style="font-size:12px">${r['Ecosystem Position']||'—'}</td>
       <td style="font-size:12px">${r['Business Model']||'—'}</td>
       <td style="font-size:12px">${r['Stage']||'—'}</td>
       <td style="font-size:12px">${r['Funding Raised (USD)']||'—'}</td>
       <td style="font-size:12px">${r['Geography']||'—'}</td>
-      <td><span class="badge ${typeBadge(r['Company Type'])}">${r['Company Type']||'—'}</span></td>
+      <td><span class="badge ${tBadge(r['Company Type'])}">${r['Company Type']||'—'}</span></td>
       <td>${sbar(r['Market Traction (1-5)'])}</td>
       <td>${sbar(r['Product Differentiation (1-5)'])}</td>
-      <td><span class="badge ${interestBadge(r['TMG Interest Level'])}">${r['TMG Interest Level']||'—'}</span></td>
+      <td><span class="badge ${iBadge(r['TMG Interest Level'])}">${r['TMG Interest Level']||'—'}</span></td>
     </tr>`).join('');
 }
 
 // --- DETAIL PANEL ---
-function openPanel(idx) {
-  const r = allData[idx]; if (!r) return;
-  const fBadge = `<span class="badge ${focusBadge(r['TMG Focus Area'])}">${r['TMG Focus Area']||''}</span>`;
-  const tBadge = `<span class="badge ${typeBadge(r['Company Type'])}">${r['Company Type']||''}</span>`;
-  const iBadge = `<span class="badge ${interestBadge(r['TMG Interest Level'])}">${r['TMG Interest Level']||''}</span>`;
-  const field = (label,val,full) => val ? `<div class="dp-field${full?' full':''}"><label>${label}</label><span>${val}</span></div>` : '';
-  const scoreItem = (label,val) => `<div class="dp-score-item"><div class="dp-score-val">${val||'—'}</div><div class="dp-score-lbl">${label}</div></div>`;
+let curPanelName='';
+function openPanel(name){
+  const r=allData.find(c=>c['Company Name']===name);if(!r)return;
+  curPanelName=name;
+  const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');
+  const compNotes=notes[name]||{text:'',links:[]};
+  const linksHtml=compNotes.links.length?`<ul class="links-list">${compNotes.links.map((l,i)=>`<li><a href="${l.url}" target="_blank">${l.label||l.url}</a><button class="link-del" onclick="delLink('${name}',${i})">✕</button></li>`).join('')}</ul>`:'<p style="font-size:12px;color:var(--ink-muted);margin-bottom:8px">No links added yet.</p>';
+  const field=(label,val,full)=>val?`<div class="dp-field${full?' full':''}"><label>${label}</label><span>${val}</span></div>`:'';
+  const score=(label,val)=>`<div class="dp-score-item"><div class="dp-score-val">${val||'—'}</div><div class="dp-score-lbl">${label}</div></div>`;
 
-  document.getElementById('dpContent').innerHTML = `
+  document.getElementById('dpContent').innerHTML=`
     <div class="dp-header">
+      <button class="dp-close" onclick="closePanel()">✕</button>
       <div class="dp-co-name">${r['Company Name']}</div>
-      <div class="dp-badges">${fBadge}${tBadge}${iBadge}</div>
+      <div class="dp-badges">
+        <span class="badge ${fBadge(r['TMG Focus Area'])}">${r['TMG Focus Area']||''}</span>
+        <span class="badge ${tBadge(r['Company Type'])}">${r['Company Type']||''}</span>
+        <span class="badge ${iBadge(r['TMG Interest Level'])}">${r['TMG Interest Level']||''}</span>
+      </div>
       ${r['Website']?`<a class="dp-website" href="${r['Website']}" target="_blank">🔗 ${r['Website']}</a>`:''}
+      <div class="dp-actions">
+        <button class="dp-btn edit" onclick="editCompany('${name}')">✏ Edit</button>
+        <button class="dp-btn del" onclick="deleteCompany('${name}')">🗑 Delete</button>
+      </div>
     </div>
     <div class="dp-body">
       <div class="dp-section">
@@ -735,39 +708,170 @@ function openPanel(idx) {
       <div class="dp-section">
         <div class="dp-section-title">TMG Scores</div>
         <div class="dp-scores">
-          ${scoreItem('Market Traction',r['Market Traction (1-5)'])}
-          ${scoreItem('Product Diff.',r['Product Differentiation (1-5)'])}
-          ${scoreItem('Capital Efficiency',r['Capital Efficiency (1-5)'])}
+          ${score('Market Traction',r['Market Traction (1-5)'])}
+          ${score('Product Diff.',r['Product Differentiation (1-5)'])}
+          ${score('Capital Efficiency',r['Capital Efficiency (1-5)'])}
         </div>
+      </div>
+      <div class="dp-section">
+        <div class="dp-section-title">Notes & Reference Links</div>
+        ${linksHtml}
+        <div class="link-add-row">
+          <input id="newLinkLabel" type="text" placeholder="Label (e.g. Pitch Deck)">
+          <input id="newLinkUrl" type="text" placeholder="https://…">
+          <button class="btn-add-link" onclick="addLink('${name}')">+ Add Link</button>
+        </div>
+        <textarea class="notes-area" id="notesArea" placeholder="Add notes, observations, meeting notes…">${compNotes.text}</textarea>
+        <button class="save-notes-btn" onclick="saveNotes('${name}')">Save Notes</button>
       </div>
     </div>`;
   document.getElementById('overlay').classList.add('open');
   document.getElementById('detailPanel').classList.add('open');
 }
+function closePanel(){document.getElementById('overlay').classList.remove('open');document.getElementById('detailPanel').classList.remove('open');}
 
-function closePanel() {
-  document.getElementById('overlay').classList.remove('open');
-  document.getElementById('detailPanel').classList.remove('open');
+function addLink(name){
+  const label=document.getElementById('newLinkLabel').value.trim();
+  const url=document.getElementById('newLinkUrl').value.trim();
+  if(!url)return;
+  const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');
+  if(!notes[name])notes[name]={text:'',links:[]};
+  notes[name].links.push({label:label||url,url});
+  localStorage.setItem('tmg_notes',JSON.stringify(notes));
+  openPanel(name);
+}
+function delLink(name,idx){
+  const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');
+  if(notes[name])notes[name].links.splice(idx,1);
+  localStorage.setItem('tmg_notes',JSON.stringify(notes));
+  openPanel(name);
+}
+function saveNotes(name){
+  const text=document.getElementById('notesArea').value;
+  const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');
+  if(!notes[name])notes[name]={text:'',links:[]};
+  notes[name].text=text;
+  localStorage.setItem('tmg_notes',JSON.stringify(notes));
+  const btn=event.target;btn.textContent='Saved ✓';setTimeout(()=>btn.textContent='Save Notes',1500);
+}
+
+// --- EDIT / DELETE ---
+function editCompany(name){
+  const r=allData.find(c=>c['Company Name']===name);if(!r)return;
+  document.getElementById('modalTitle').textContent='Edit Company';
+  document.getElementById('f_editName').value=name;
+  document.getElementById('f_name').value=r['Company Name']||'';
+  document.getElementById('f_oneliner').value=r['One-liner']||'';
+  document.getElementById('f_focus').value=r['TMG Focus Area']||'';
+  document.getElementById('f_sub').value=r['Sub-category']||'';
+  document.getElementById('f_health').value=r['Healthspan Target']||'';
+  document.getElementById('f_eco').value=r['Ecosystem Position']||'';
+  document.getElementById('f_biz').value=r['Business Model']||'';
+  document.getElementById('f_type').value=r['Company Type']||'';
+  document.getElementById('f_geo').value=r['Geography']||'';
+  document.getElementById('f_stage').value=r['Stage']||'';
+  document.getElementById('f_funding').value=r['Funding Raised (USD)']||'';
+  document.getElementById('f_investors').value=r['Key Investors']||'';
+  document.getElementById('f_tech').value=r['Key Technology']||'';
+  document.getElementById('f_pricing').value=r['Pricing Model']||'';
+  document.getElementById('f_customer').value=r['Target Customer']||'';
+  document.getElementById('f_moat').value=r['Core Moat']||'';
+  document.getElementById('f_competitors').value=r['Key Competitors']||'';
+  document.getElementById('f_risk').value=r['Execution Risk']||'';
+  document.getElementById('f_website').value=r['Website']||'';
+  document.getElementById('f_traction').value=r['Market Traction (1-5)']||'';
+  document.getElementById('f_diff').value=r['Product Differentiation (1-5)']||'';
+  document.getElementById('f_capeff').value=r['Capital Efficiency (1-5)']||'';
+  document.getElementById('f_interest').value=r['TMG Interest Level']||'';
+  closePanel();
+  document.getElementById('addModal').classList.add('open');
+}
+
+function deleteCompany(name){
+  if(!confirm(`Delete "${name}" from the platform?\n\nNote: This only removes it from the local view. To permanently remove, also delete from your Google Sheet.`))return;
+  if(isLocal({['Company Name']:name})){
+    localData=localData.filter(r=>r['Company Name']!==name);
+    localStorage.setItem('tmg_local',JSON.stringify(localData));
+  } else {
+    hidden.push(name);
+    localStorage.setItem('tmg_hidden',JSON.stringify(hidden));
+  }
+  allData=mergeData();populateCmpSelects();applyView();closePanel();
+}
+
+// --- ADD/SAVE COMPANY ---
+function openAddModal(){
+  document.getElementById('modalTitle').textContent='Add New Company';
+  document.getElementById('f_editName').value='';
+  ['f_name','f_oneliner','f_sub','f_geo','f_funding','f_investors','f_tech','f_pricing','f_customer','f_moat','f_competitors','f_risk','f_website'].forEach(id=>document.getElementById(id).value='');
+  ['f_focus','f_health','f_eco','f_biz','f_type','f_stage','f_traction','f_diff','f_capeff','f_interest'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('addModal').classList.add('open');
+}
+function closeAddModal(){document.getElementById('addModal').classList.remove('open');}
+
+function saveCompany(){
+  const name=document.getElementById('f_name').value.trim();
+  if(!name){alert('Company name is required');return;}
+  const editName=document.getElementById('f_editName').value;
+  const today=new Date().toLocaleDateString('en-GB').replace(/\//g,'.');
+  const row={
+    'Company Name':name,'One-liner':document.getElementById('f_oneliner').value.trim(),
+    'TMG Focus Area':document.getElementById('f_focus').value,'Sub-category':document.getElementById('f_sub').value.trim(),
+    'Healthspan Target':document.getElementById('f_health').value,'Ecosystem Position':document.getElementById('f_eco').value,
+    'Business Model':document.getElementById('f_biz').value,'Company Type':document.getElementById('f_type').value,
+    'Geography':document.getElementById('f_geo').value.trim(),'Stage':document.getElementById('f_stage').value,
+    'Funding Raised (USD)':document.getElementById('f_funding').value.trim(),'Key Investors':document.getElementById('f_investors').value.trim(),
+    'Key Technology':document.getElementById('f_tech').value.trim(),'Pricing Model':document.getElementById('f_pricing').value.trim(),
+    'Target Customer':document.getElementById('f_customer').value.trim(),'Core Moat':document.getElementById('f_moat').value.trim(),
+    'Key Competitors':document.getElementById('f_competitors').value.trim(),'Execution Risk':document.getElementById('f_risk').value.trim(),
+    'Website':document.getElementById('f_website').value.trim(),'Market Traction (1-5)':document.getElementById('f_traction').value,
+    'Product Differentiation (1-5)':document.getElementById('f_diff').value,'Capital Efficiency (1-5)':document.getElementById('f_capeff').value,
+    'TMG Interest Level':document.getElementById('f_interest').value,'Last Updated':today
+  };
+  if(editName){
+    // editing existing
+    if(isLocal({['Company Name']:editName})){
+      const idx=localData.findIndex(r=>r['Company Name']===editName);
+      if(idx>-1)localData[idx]=row;
+      localStorage.setItem('tmg_local',JSON.stringify(localData));
+    } else {
+      overrides[editName]=row;
+      localStorage.setItem('tmg_overrides',JSON.stringify(overrides));
+    }
+  } else {
+    localData.push(row);
+    localStorage.setItem('tmg_local',JSON.stringify(localData));
+  }
+  allData=mergeData();populateCmpSelects();applyView();closeAddModal();
+}
+
+// --- EXPORT CSV ---
+function exportCSV(){
+  const hdr=COLS.join(',');
+  const rows=allData.map(r=>COLS.map(c=>{const v=r[c]||'';return(v.includes(',')||v.includes('"')||v.includes('\n'))?`"${v.replace(/"/g,'""')}"`':v;}).join(','));
+  const csv=[hdr,...rows].join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='TMG_Landscape_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
 }
 
 // --- COMPARE ---
-function populateCompareSelects() {
-  const opts = allData.map(r => `<option value="${r['Company Name']}">${r['Company Name']}</option>`).join('');
-  ['cmp1','cmp2','cmp3'].forEach(id => {
-    const el = document.getElementById(id); if (!el) return;
-    const cur = el.value;
-    el.innerHTML = `<option value="">Select Company…</option>${opts}`;
-    if (cur) el.value = cur;
+function populateCmpSelects(){
+  const opts=allData.map(r=>`<option value="${r['Company Name']}">${r['Company Name']}</option>`).join('');
+  ['cmp1','cmp2','cmp3'].forEach(id=>{
+    const el=document.getElementById(id);if(!el)return;
+    const cur=el.value;
+    el.innerHTML=`<option value="">Select Company…</option>${opts}`;
+    if(cur)el.value=cur;
   });
 }
-
-function renderCompare() {
-  const ids = ['cmp1','cmp2','cmp3'].map(id => document.getElementById(id)?.value).filter(Boolean);
-  const companies = ids.map(name => allData.find(r => r['Company Name'] === name)).filter(Boolean);
-  const out = document.getElementById('cmpOutput'); if (!out) return;
-  if (!companies.length) { out.innerHTML = '<div class="cmp-empty">Select companies above to compare them</div>'; return; }
-
-  const rows = [
+function renderCompare(){
+  const ids=['cmp1','cmp2','cmp3'].map(id=>document.getElementById(id)?.value).filter(Boolean);
+  const companies=ids.map(n=>allData.find(r=>r['Company Name']===n)).filter(Boolean);
+  const out=document.getElementById('cmpOutput');if(!out)return;
+  if(!companies.length){out.innerHTML='<div class="cmp-empty">Select companies above to compare them</div>';return;}
+  const rows=[
     ['Focus Area','TMG Focus Area'],['Sub-category','Sub-category'],['Healthspan Target','Healthspan Target'],
     ['Ecosystem Position','Ecosystem Position'],['Business Model','Business Model'],['Company Type','Company Type'],
     ['Geography','Geography'],['Stage','Stage'],['Funding Raised','Funding Raised (USD)'],
@@ -777,168 +881,289 @@ function renderCompare() {
     ['Product Differentiation','Product Differentiation (1-5)'],['Capital Efficiency','Capital Efficiency (1-5)'],
     ['TMG Interest','TMG Interest Level']
   ];
-
-  const scoreFields = ['Market Traction (1-5)','Product Differentiation (1-5)','Capital Efficiency (1-5)'];
-
-  out.innerHTML = `<div class="cmp-table-wrap"><table class="cmp-table">
-    <thead><tr>
-      <th style="width:180px">Attribute</th>
-      ${companies.map(c=>`<th class="co-th">${c['Company Name']}</th>`).join('')}
-    </tr></thead>
-    <tbody>
-    ${rows.map(([label, key]) => {
-      const vals = companies.map(c => c[key]||'—');
-      const isScore = scoreFields.includes(key);
-      const nums = vals.map(v => parseFloat(v)||0);
-      const max = isScore ? Math.max(...nums) : null;
-      const min = isScore ? Math.min(...nums) : null;
-      return `<tr>
-        <td class="attr">${label}</td>
-        ${vals.map((v,i) => {
-          let cls = '';
-          if (isScore && nums[i] === max && max > 0 && companies.length > 1) cls = 'cmp-best';
-          if (isScore && nums[i] === min && min > 0 && max !== min) cls = 'cmp-worst';
-          return `<td class="val ${cls}">${v}</td>`;
-        }).join('')}
-      </tr>`;
-    }).join('')}
-    </tbody>
-  </table></div>`;
+  const scoreFields=['Market Traction (1-5)','Product Differentiation (1-5)','Capital Efficiency (1-5)'];
+  out.innerHTML=`<div class="cmp-table-wrap"><table class="cmp-table">
+    <thead><tr><th style="width:180px">Attribute</th>${companies.map(c=>`<th class="co-th">${c['Company Name']}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(([label,key])=>{
+      const vals=companies.map(c=>c[key]||'—');
+      const isScore=scoreFields.includes(key);
+      const nums=vals.map(v=>parseFloat(v)||0);
+      const max=isScore?Math.max(...nums):null;const min=isScore?Math.min(...nums):null;
+      return`<tr><td class="attr">${label}</td>${vals.map((v,i)=>{
+        let cls='';
+        if(isScore&&nums[i]===max&&max>0&&companies.length>1)cls='cmp-best';
+        if(isScore&&nums[i]===min&&min>0&&max!==min)cls='cmp-worst';
+        return`<td class="val ${cls}">${v}</td>`;
+      }).join('')}</tr>`;
+    }).join('')}</tbody></table></div>`;
 }
 
-// --- ADD COMPANY ---
-function openAddModal() { document.getElementById('addModal').classList.add('open'); }
-function closeAddModal() { document.getElementById('addModal').classList.remove('open'); }
-
-function saveCompany() {
-  const name = document.getElementById('f_name').value.trim();
-  if (!name) { alert('Company name is required'); return; }
-  const today = new Date().toLocaleDateString('en-GB').replace(/\//g,'.');
-  const row = {
-    'Company Name': name,
-    'One-liner': document.getElementById('f_oneliner').value.trim(),
-    'TMG Focus Area': document.getElementById('f_focus').value,
-    'Sub-category': document.getElementById('f_sub').value.trim(),
-    'Healthspan Target': document.getElementById('f_health').value,
-    'Ecosystem Position': document.getElementById('f_eco').value,
-    'Business Model': document.getElementById('f_biz').value,
-    'Company Type': document.getElementById('f_type').value,
-    'Geography': document.getElementById('f_geo').value.trim(),
-    'Stage': document.getElementById('f_stage').value,
-    'Funding Raised (USD)': document.getElementById('f_funding').value.trim(),
-    'Key Investors': document.getElementById('f_investors').value.trim(),
-    'Key Technology': document.getElementById('f_tech').value.trim(),
-    'Pricing Model': document.getElementById('f_pricing').value.trim(),
-    'Target Customer': document.getElementById('f_customer').value.trim(),
-    'Core Moat': document.getElementById('f_moat').value.trim(),
-    'Key Competitors': document.getElementById('f_competitors').value.trim(),
-    'Execution Risk': document.getElementById('f_risk').value.trim(),
-    'Website': document.getElementById('f_website').value.trim(),
-    'Market Traction (1-5)': document.getElementById('f_traction').value,
-    'Product Differentiation (1-5)': document.getElementById('f_diff').value,
-    'Capital Efficiency (1-5)': document.getElementById('f_capeff').value,
-    'TMG Interest Level': document.getElementById('f_interest').value,
-    'Last Updated': today
-  };
-  localData.push(row);
-  localStorage.setItem('tmg_local', JSON.stringify(localData));
-  allData = mergeData();
-  populateCompareSelects();
-  applyView();
-  closeAddModal();
-  // clear form
-  ['f_name','f_oneliner','f_sub','f_geo','f_funding','f_investors','f_tech','f_pricing','f_customer','f_moat','f_competitors','f_risk','f_website'].forEach(id => document.getElementById(id).value='');
-  ['f_focus','f_health','f_eco','f_biz','f_type','f_stage','f_traction','f_diff','f_capeff','f_interest'].forEach(id => document.getElementById(id).value='');
-  alert(`✓ "${name}" added successfully!`);
+// --- VISUALS ---
+function setVis(type,btn){
+  curVis=type;
+  document.querySelectorAll('.vis-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderVis();
+}
+function renderVis(){
+  const data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
+  const vc=document.getElementById('visContent');if(!vc)return;
+  if(curVis==='valuechain')renderValueChain(data,vc);
+  else if(curVis==='tile')renderTile(data,vc);
+  else if(curVis==='matrix2x2')renderMatrix(data,vc);
+  else if(curVis==='heatmap')renderHeatmap(data,vc);
+  else if(curVis==='bubble')renderBubble(data,vc);
 }
 
-// --- EXPORT CSV ---
-function exportCSV() {
-  const header = COLS.join(',');
-  const rows = allData.map(r => COLS.map(c => {
-    const v = r[c] || '';
-    return v.includes(',') || v.includes('"') || v.includes('\n') ? `"${v.replace(/"/g,'""')}"` : v;
-  }).join(','));
-  const csv = [header, ...rows].join('\n');
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
-  a.download = 'TMG_Landscape_' + new Date().toISOString().slice(0,10) + '.csv';
-  a.click();
+// VALUE CHAIN
+function renderValueChain(data,vc){
+  const cols=['Ingredient / Science','Platform','Brand','Distribution / Channel'];
+  const colClass=['vc-orange','vc-navy','vc-green','vc-rose'];
+  const colData={};
+  cols.forEach(c=>colData[c]=[]);
+  data.forEach(r=>{const pos=r['Ecosystem Position'];if(colData[pos])colData[pos].push(r);});
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">Value Chain Map</span><button class="btn-dl-vis" onclick="dlVis('vc-inner')">↓ Download PNG</button></div>
+    <div class="vis-card-desc">Companies positioned by their role in the healthspan value chain — from upstream science to end consumer distribution.</div>
+    <div id="vc-inner" style="background:var(--white);padding:20px;border-radius:8px">
+      <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:16px">
+        ${cols.map((c,i)=>`<div style="flex:1;text-align:center;position:relative">
+          <div style="background:var(--navy);color:var(--white);padding:10px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase">${c}</div>
+          ${i<cols.length-1?'<div style="position:absolute;right:-12px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--ink-muted);z-index:1">→</div>':''}
+        </div>`).join('')}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;min-height:200px">
+        ${cols.map((c,i)=>`<div style="display:flex;flex-direction:column;gap:7px">
+          ${(colData[c]||[]).map(r=>`<div class="vc-chip ${colClass[i]}" title="${r['One-liner']||''}">${r['Company Name']}<div style="font-size:10px;opacity:.8;font-weight:400">${r['TMG Focus Area']||''}</div></div>`).join('')}
+          ${!colData[c]?.length?'<div style="font-size:12px;color:var(--ink-muted);padding:10px;text-align:center">No companies</div>':''}
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
 }
 
-// --- AI ---
-function selPrompt(btn, type) {
-  document.querySelectorAll('.ai-opt').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  curPrompt = type;
+// TILE LANDSCAPE
+function renderTile(data,vc){
+  const areas=['Precision Nutrition','Intelligent Health','Food & Medicine'];
+  const aClass=['pn','ih','fm'];
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">Tile Landscape</span><button class="btn-dl-vis" onclick="dlVis('tile-inner')">↓ Download PNG</button></div>
+    <div class="vis-card-desc">All companies mapped as tiles across TMG's three focus areas. Click any tile to view company details.</div>
+    <div id="tile-inner" style="background:var(--white);padding:20px;border-radius:8px">
+      ${areas.map((area,i)=>{
+        const companies=data.filter(r=>r['TMG Focus Area']===area);
+        return`<div class="tile-section">
+          <div class="tile-section-title ${aClass[i]}">${area} — ${companies.length} companies</div>
+          <div class="tiles-grid">${companies.map(r=>`<div class="tile ${aClass[i]}" onclick="openPanel('${r['Company Name'].replace(/'/g,"\\'")}');showSection('companies')">
+            <div>${r['Company Name']}</div>
+            <div class="tile-stage">${r['Stage']||''} · ${r['Sub-category']||''}</div>
+          </div>`).join('')}
+          ${!companies.length?'<span style="font-size:12px;color:var(--ink-muted)">No companies in this area</span>':''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
 }
 
-function saveKey() {
-  const k = document.getElementById('apiKeyInput').value.trim();
-  if (k) { localStorage.setItem('tmg_apiKey', k); document.getElementById('s_apiKey').value = k; alert('API key saved!'); }
+// 2x2 MATRIX
+let matChart=null;
+function renderMatrix(data,vc){
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">2×2 Matrix</span><button class="btn-dl-vis" onclick="dlMatrixChart()">↓ Download PNG</button></div>
+    <div class="vis-card-desc">Plot companies on configurable axes to identify leaders, challengers, and emerging players. Best scores are top-right.</div>
+    <div class="vis-controls">
+      <label>X Axis:</label>
+      <select id="mx_x" onchange="updateMatrix()">
+        <option value="Market Traction (1-5)">Market Traction</option>
+        <option value="Product Differentiation (1-5)">Product Differentiation</option>
+        <option value="Capital Efficiency (1-5)">Capital Efficiency</option>
+      </select>
+      <label>Y Axis:</label>
+      <select id="mx_y" onchange="updateMatrix()">
+        <option value="Product Differentiation (1-5)">Product Differentiation</option>
+        <option value="Market Traction (1-5)">Market Traction</option>
+        <option value="Capital Efficiency (1-5)">Capital Efficiency</option>
+      </select>
+    </div>
+    <div class="vis-render" style="padding:0;background:var(--white)">
+      <div style="position:relative;height:380px;padding:20px"><canvas id="matrixChart"></canvas></div>
+    </div>
+  </div>`;
+  updateMatrix(data);
+}
+function updateMatrix(data){
+  if(!data)data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
+  const xKey=document.getElementById('mx_x')?.value||'Market Traction (1-5)';
+  const yKey=document.getElementById('mx_y')?.value||'Product Differentiation (1-5)';
+  const cmap={'Precision Nutrition':'#e07535cc','Intelligent Health':'#162535cc','Food & Medicine':'#2a7f5fcc'};
+  const grp={};
+  data.filter(r=>r[xKey]&&r[yKey]).forEach(r=>{
+    const a=r['TMG Focus Area']||'Other';
+    if(!grp[a])grp[a]=[];
+    grp[a].push({x:+r[xKey],y:+r[yKey],label:r['Company Name']});
+  });
+  if(matChart){matChart.destroy();matChart=null;}
+  const ctx=document.getElementById('matrixChart');if(!ctx)return;
+  matChart=new Chart(ctx,{
+    type:'scatter',
+    data:{datasets:Object.entries(grp).map(([a,pts])=>({label:a,data:pts,backgroundColor:cmap[a]||'#888cc',pointRadius:9,pointHoverRadius:11}))},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{position:'bottom',labels:{font:{size:11},boxWidth:10}},
+        tooltip:{callbacks:{label:c=>`${c.raw.label} (${c.raw.x}, ${c.raw.y})`}},
+        annotation:{annotations:{
+          vLine:{type:'line',xMin:2.5,xMax:2.5,borderColor:'#dde4ec',borderWidth:1,borderDash:[4,4]},
+          hLine:{type:'line',yMin:2.5,yMax:2.5,borderColor:'#dde4ec',borderWidth:1,borderDash:[4,4]}
+        }}
+      },
+      scales:{
+        x:{min:0,max:6,title:{display:true,text:xKey.replace(' (1-5)',''),font:{size:11}},grid:{color:'#eef2f6'}},
+        y:{min:0,max:6,title:{display:true,text:yKey.replace(' (1-5)',''),font:{size:11}},grid:{color:'#eef2f6'}}
+      }
+    }
+  });
+}
+function dlMatrixChart(){if(matChart){const a=document.createElement('a');a.download='TMG_Matrix.png';a.href=matChart.toBase64Image('image/png',1);a.click();}}
+
+// HEATMAP
+function renderHeatmap(data,vc){
+  const areas=['Precision Nutrition','Intelligent Health','Food & Medicine'];
+  const targets=['Metabolic Control','Gut Health','Cardiovascular Health','Neurological Health','Inflammation','Musculoskeletal'];
+  const matrix={};
+  areas.forEach(a=>{matrix[a]={};targets.forEach(t=>matrix[a][t]=0);});
+  data.forEach(r=>{if(matrix[r['TMG Focus Area']]&&r['Healthspan Target'])matrix[r['TMG Focus Area']][r['Healthspan Target']]=(matrix[r['TMG Focus Area']][r['Healthspan Target']]||0)+1;});
+  const max=Math.max(...areas.flatMap(a=>targets.map(t=>matrix[a][t]||0)));
+  function hmClass(n){if(n===0)return 'hm-0';if(n===1)return 'hm-1';if(n===2)return 'hm-2';if(n===3)return 'hm-3';return 'hm-4';}
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">Heatmap</span><button class="btn-dl-vis" onclick="dlVis('hm-inner')">↓ Download PNG</button></div>
+    <div class="vis-card-desc">Company density across Focus Areas × Healthspan Targets. Darker = more companies. White = potential white space.</div>
+    <div id="hm-inner" style="background:var(--white);padding:20px;border-radius:8px;overflow-x:auto">
+      <table class="heatmap-table">
+        <thead><tr>
+          <th class="row-hdr">Focus Area</th>
+          ${targets.map(t=>`<th>${t}</th>`).join('')}
+        </tr></thead>
+        <tbody>${areas.map(a=>`<tr>
+          <td style="font-weight:600;font-size:12px;background:var(--slate);white-space:nowrap;padding:10px 14px">${a}</td>
+          ${targets.map(t=>`<td class="${hmClass(matrix[a][t]||0)}">${matrix[a][t]||0}</td>`).join('')}
+        </tr>`).join('')}</tbody>
+      </table>
+      <div style="display:flex;align-items:center;gap:10px;margin-top:14px;font-size:11px;color:var(--ink-muted)">
+        <span>Density:</span>
+        <span class="hm-0" style="padding:3px 8px;border-radius:4px">0</span>
+        <span class="hm-1" style="padding:3px 8px;border-radius:4px">1</span>
+        <span class="hm-2" style="padding:3px 8px;border-radius:4px">2</span>
+        <span class="hm-3" style="padding:3px 8px;border-radius:4px;color:var(--white)">3</span>
+        <span class="hm-4" style="padding:3px 8px;border-radius:4px;color:var(--white)">4+</span>
+      </div>
+    </div>
+  </div>`;
 }
 
-function buildPrompt(type) {
-  const data = curView === 'targets' ? allData.filter(r => r['Company Type']==='Startup') : allData;
-  const summary = data.map(r => `${r['Company Name']} (${r['TMG Focus Area']}, ${r['Stage']}, ${r['Healthspan Target']}, Score: Traction ${r['Market Traction (1-5)']}/5 Diff ${r['Product Differentiation (1-5)']}/5): ${r['One-liner']}`).join('\n');
-  const prompts = {
-    newsletter: `You are a senior analyst at The March Group (TMG), a VC fund focused on the Consumer Healthspan Economy (Precision Nutrition, Intelligent Health, Food & Medicine). Write a 180-word newsletter paragraph for TMG's investor newsletter covering key trends and notable companies in this landscape. Reference specific companies. Professional but engaging tone.\n\nData:\n${summary}`,
-    whitespace: `You are a senior analyst at The March Group. Based on this landscape, identify 3 specific white spaces — underserved areas where few companies operate — that represent compelling investment opportunities aligned with TMG's thesis. For each: name the gap, explain why it exists, and suggest what a winning company would look like.\n\nData:\n${summary}`,
-    priority: `You are a senior analyst at The March Group. Write a 200-word investment memo identifying the top 3 priority targets from this landscape for TMG to engage. For each: explain strategic fit with TMG's thesis, note their key differentiator, and flag one risk. Base your picks on their scores and stage.\n\nData:\n${summary}`,
-    thesis: `You are a senior analyst at The March Group. Assess how well this landscape validates TMG's three structural shifts: (1) Calories → Health Outcomes, (2) Brands → Platforms, (3) Reactive Care → Preventative Health. Which shift has most activity? Which is underserved? Keep to 180 words.\n\nData:\n${summary}`,
-    diligence: `You are a senior analyst at The March Group conducting due diligence. From this landscape, identify the top competitive dynamics: which companies are most likely to compete directly, where is there platform risk, and what is the biggest execution risk for early-stage startups in this space? Keep to 200 words.\n\nData:\n${summary}`
-  };
-  return prompts[type];
+// BUBBLE CHART
+let bubbleChart=null;
+function renderBubble(data,vc){
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">Bubble Chart</span><button class="btn-dl-vis" onclick="dlBubbleChart()">↓ Download PNG</button></div>
+    <div class="vis-card-desc">Bubble size = Capital Efficiency score. X = Market Traction, Y = Product Differentiation. Larger bubbles are more capital efficient.</div>
+    <div class="vis-render" style="padding:0;background:var(--white)">
+      <div style="position:relative;height:380px;padding:20px"><canvas id="bubbleChartVis"></canvas></div>
+    </div>
+  </div>`;
+  const cmap={'Precision Nutrition':'#e07535bb','Intelligent Health':'#162535bb','Food & Medicine':'#2a7f5fbb'};
+  const grp={};
+  data.filter(r=>r['Market Traction (1-5)']&&r['Product Differentiation (1-5)']).forEach(r=>{
+    const a=r['TMG Focus Area']||'Other';
+    if(!grp[a])grp[a]=[];
+    grp[a].push({x:+r['Market Traction (1-5)'],y:+r['Product Differentiation (1-5)'],r:Math.max(6,(+r['Capital Efficiency (1-5)']||3)*5),label:r['Company Name']});
+  });
+  if(bubbleChart){bubbleChart.destroy();bubbleChart=null;}
+  const ctx=document.getElementById('bubbleChartVis');if(!ctx)return;
+  bubbleChart=new Chart(ctx,{
+    type:'bubble',
+    data:{datasets:Object.entries(grp).map(([a,pts])=>({label:a,data:pts,backgroundColor:cmap[a]||'#888bb',borderColor:'transparent'}))},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:10}},tooltip:{callbacks:{label:c=>`${c.raw.label}`}}},
+      scales:{
+        x:{min:0,max:6,title:{display:true,text:'Market Traction',font:{size:11}},grid:{color:'#eef2f6'}},
+        y:{min:0,max:6,title:{display:true,text:'Product Differentiation',font:{size:11}},grid:{color:'#eef2f6'}}
+      }
+    }
+  });
 }
+function dlBubbleChart(){if(bubbleChart){const a=document.createElement('a');a.download='TMG_Bubble.png';a.href=bubbleChart.toBase64Image('image/png',1);a.click();}}
 
-async function generateAI() {
-  const key = localStorage.getItem('tmg_apiKey') || document.getElementById('apiKeyInput').value.trim();
-  if (!key) { alert('Please enter your Anthropic API key first'); return; }
-  const btn = document.getElementById('btnGen');
-  const out = document.getElementById('aiOutput');
-  btn.disabled = true; btn.textContent = 'Generating…';
-  out.textContent = 'Analysing landscape data…'; out.className = 'ai-output idle';
-  try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json', 'x-api-key': key, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
-      body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1000, messages:[{role:'user',content:buildPrompt(curPrompt)}] })
+// DOWNLOAD SVG-BASED VISUALS AS PNG
+function dlVis(innerId){
+  const el=document.getElementById(innerId);if(!el)return;
+  import('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js').then(()=>{
+    html2canvas(el,{scale:2,backgroundColor:'#ffffff'}).then(canvas=>{
+      const a=document.createElement('a');a.download='TMG_Visual.png';a.href=canvas.toDataURL('image/png');a.click();
     });
-    const data = await res.json();
-    if (data.error) throw new Error(data.error.message);
-    out.textContent = data.content?.[0]?.text || 'No response.';
-    out.className = 'ai-output';
-  } catch(e) {
-    out.textContent = 'Error: ' + e.message + '\n\nMake sure your API key is correct and has credits.';
-    out.className = 'ai-output';
-  }
-  btn.disabled = false; btn.textContent = 'Generate';
-}
-
-function copyAI() {
-  navigator.clipboard.writeText(document.getElementById('aiOutput').textContent).then(() => {
-    const b = event.target; b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy text',1500);
+  }).catch(()=>{
+    // fallback: load html2canvas dynamically
+    const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.onload=()=>{html2canvas(el,{scale:2,backgroundColor:'#ffffff'}).then(canvas=>{const a=document.createElement('a');a.download='TMG_Visual.png';a.href=canvas.toDataURL('image/png');a.click();});};
+    document.head.appendChild(s);
   });
 }
 
+// --- AI ---
+function selPrompt(btn,type){document.querySelectorAll('.ai-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');curPrompt=type;}
+function saveKey(){const k=document.getElementById('apiKeyInput').value.trim();if(k){localStorage.setItem('tmg_apiKey',k);alert('API key saved!');}}
+function buildPrompt(type){
+  const data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
+  const summary=data.map(r=>`${r['Company Name']} (${r['TMG Focus Area']}, ${r['Stage']}, ${r['Healthspan Target']}, Traction:${r['Market Traction (1-5)']}/5 Diff:${r['Product Differentiation (1-5)']}/5): ${r['One-liner']}`).join('\n');
+  const prompts={
+    newsletter:`You are a senior analyst at The March Group (TMG), a VC fund focused on the Consumer Healthspan Economy. Write a 180-word newsletter paragraph covering key trends across Precision Nutrition, Intelligent Health, and Food & Medicine. Reference specific companies. Professional but engaging tone.\n\nLandscape data:\n${summary}`,
+    whitespace:`You are a senior analyst at The March Group. Identify 3 specific white spaces — underserved segments where few companies operate — that represent compelling investment opportunities for TMG. For each: name the gap, explain why it exists, suggest what a winning company looks like.\n\nData:\n${summary}`,
+    priority:`You are a senior analyst at The March Group. Write a 200-word investment memo identifying the top 3 priority targets for TMG to engage. For each: explain strategic fit, note key differentiator, flag one risk.\n\nData:\n${summary}`,
+    thesis:`Assess how this landscape validates TMG's three structural shifts: (1) Calories → Health Outcomes, (2) Brands → Platforms, (3) Reactive Care → Preventative Health. Which shift has most activity? Which is underserved? 180 words.\n\nData:\n${summary}`,
+    diligence:`As a TMG analyst, identify top competitive dynamics: which companies compete directly, where is platform risk highest, what is the biggest execution risk for early-stage startups here? 200 words.\n\nData:\n${summary}`
+  };
+  return prompts[type];
+}
+async function generateAI(){
+  const key=localStorage.getItem('tmg_apiKey')||document.getElementById('apiKeyInput').value.trim();
+  if(!key){alert('Please enter your Anthropic API key first');return;}
+  const btn=document.getElementById('btnGen');const out=document.getElementById('aiOutput');
+  btn.disabled=true;btn.textContent='Generating…';out.textContent='Analysing landscape data…';out.className='ai-output idle';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:Object.assign({'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+        (()=>{const w=localStorage.getItem('tmg_workspaceId');return w?{'anthropic-workspace-id':w}:{};})()),
+      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:buildPrompt(curPrompt)}]})
+    });
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    out.textContent=data.content?.[0]?.text||'No response.';out.className='ai-output';
+  }catch(e){out.textContent='Error: '+e.message;out.className='ai-output';}
+  btn.disabled=false;btn.textContent='Generate';
+}
+function copyAI(){navigator.clipboard.writeText(document.getElementById('aiOutput').textContent).then(()=>{const b=event.target;b.textContent='Copied!';setTimeout(()=>b.textContent='Copy text',1500);});}
+
 // --- SETTINGS ---
-function openSettings() {
-  const k = localStorage.getItem('tmg_apiKey');
-  const u = localStorage.getItem('tmg_csvUrl');
-  if (k) document.getElementById('s_apiKey').value = k;
-  if (u) document.getElementById('s_csvUrl').value = u;
-  else document.getElementById('s_csvUrl').value = DEFAULT_CSV;
+function openSettings(){
+  const k=localStorage.getItem('tmg_apiKey');const u=localStorage.getItem('tmg_csvUrl');const w=localStorage.getItem('tmg_workspaceId');
+  if(k)document.getElementById('s_apiKey').value=k;
+  if(w)document.getElementById('s_workspaceId').value=w;
+  document.getElementById('s_csvUrl').value=u||DEFAULT_CSV;
   document.getElementById('settingsModal').classList.add('open');
 }
-function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
-function saveSettings() {
-  const k = document.getElementById('s_apiKey').value.trim();
-  const u = document.getElementById('s_csvUrl').value.trim();
-  if (k) { localStorage.setItem('tmg_apiKey', k); document.getElementById('apiKeyInput').value = k; }
-  if (u) localStorage.setItem('tmg_csvUrl', u);
-  closeSettings();
-  loadData();
-  alert('Settings saved!');
+function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
+function saveSettings(){
+  const k=document.getElementById('s_apiKey').value.trim();
+  const u=document.getElementById('s_csvUrl').value.trim();
+  const w=document.getElementById('s_workspaceId').value.trim();
+  if(k){localStorage.setItem('tmg_apiKey',k);document.getElementById('apiKeyInput').value=k;}
+  if(w)localStorage.setItem('tmg_workspaceId',w);
+  if(u)localStorage.setItem('tmg_csvUrl',u);
+  closeSettings();loadData();alert('Settings saved!');
 }
 
 init();
