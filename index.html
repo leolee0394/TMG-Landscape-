@@ -889,8 +889,16 @@ function saveCompany(){
 // --- EXPORT CSV ---
 function exportCSV(){
   const hdr=COLS.join(',');
-  const rows=allData.map(r=>COLS.map(c=>{const v=r[c]||'';return(v.includes(',')||v.includes('"')||v.includes('\n'))?`"${v.replace(/"/g,'""')}"`':v;}).join(','));
-  const csv=[hdr,...rows].join('\n');
+  const rows=allData.map(r=>COLS.map(c=>{
+    const v=r[c]||'';
+    if(v.includes(',') || v.includes('"') || v.includes('
+')){
+      return '"' + v.replace(/"/g, '""') + '"';
+    }
+    return v;
+  }).join(','));
+  const csv=[hdr,...rows].join('
+');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
   a.download='TMG_Landscape_'+new Date().toISOString().slice(0,10)+'.csv';
