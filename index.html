@@ -481,13 +481,25 @@ function init(){
 function csvUrl(){return localStorage.getItem('tmg_csvUrl')||DEFAULT_CSV;}
 
 async function loadData(){
-  document.getElementById('loadingMsg').style.display='block';
+  const msg=document.getElementById('loadingMsg');
+  msg.style.display='block';
+  msg.textContent='Loading landscape data…';
   document.querySelectorAll('.section-wrap').forEach(s=>s.classList.remove('active'));
-  const proxies=[u=>u,u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`];
+  const url=csvUrl();
+  const proxies=[
+    {name:'direct',fn:u=>u},
+    {name:'corsproxy.io',fn:u=>`https://corsproxy.io/?${encodeURIComponent(u)}`},
+    {name:'allorigins',fn:u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`},
+    {name:'thingproxy',fn:u=>`https://thingproxy.freeboard.io/fetch/${u}`},
+  ];
   let ok=false;
   for(const px of proxies){
     try{
-      const r=await fetch(px(csvUrl()+'&t='+Date.now()));
+      msg.textContent=`Loading via ${px.name}…`;
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),8000);
+      const r=await fetch(px.fn(url+'&t='+Date.now()),{signal:controller.signal});
+      clearTimeout(timer);
       if(!r.ok)continue;
       const t=await r.text();
       if(!t.includes('Company Name'))continue;
@@ -496,13 +508,35 @@ async function loadData(){
       sheetData=p;ok=true;break;
     }catch(e){continue;}
   }
-  if(!ok){document.getElementById('loadingMsg').textContent='Could not load sheet data. Check Settings → CSV URL.';return;}
-  document.getElementById('loadingMsg').style.display='none';
+  if(!ok){
+    msg.innerHTML=`
+      <div style="max-width:480px;margin:0 auto;text-align:left">
+        <div style="font-size:16px;font-weight:600;margin-bottom:8px">⚠️ Could not load sheet data</div>
+        <div style="font-size:13px;color:#4a6070;margin-bottom:16px">All proxies failed. Try these fixes:</div>
+        <ol style="font-size:13px;color:#4a6070;padding-left:20px;line-height:2">
+          <li>Make sure your Google Sheet is <strong>published</strong>: File → Share → Publish to web → CSV</li>
+          <li>Click <strong>⚙ Settings</strong> above and verify the CSV URL is correct</li>
+          <li>Try opening in a different browser (Chrome recommended)</li>
+        </ol>
+        <button onclick="loadData()" style="margin-top:16px;padding:9px 20px;background:#e07535;color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit">↻ Try Again</button>
+        <button onclick="loadOffline()" style="margin-top:16px;margin-left:8px;padding:9px 20px;background:#162535;color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit">Continue Without Sheet Data</button>
+      </div>`;
+    return;
+  }
+  msg.style.display='none';
   allData=mergeData();
   populateCmpSelects();
   applyView();
   showSection(curSection,true);
   document.getElementById('lastUpd').textContent='Updated '+new Date().toLocaleTimeString();
+}
+function loadOffline(){
+  // load with just local data
+  sheetData=[];
+  allData=mergeData();
+  document.getElementById('loadingMsg').style.display='none';
+  populateCmpSelects();applyView();showSection(curSection,true);
+  document.getElementById('lastUpd').textContent='Offline mode — local data only';
 }
 
 function mergeData(){
