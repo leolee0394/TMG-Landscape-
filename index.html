@@ -18,245 +18,223 @@
   --purple:#6a3fa0;--purple-light:#f0e8fe;
 }
 body{font-family:'DM Sans',sans-serif;background:var(--slate);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden}
-
-/* HEADER */
-header{background:var(--navy);height:60px;display:flex;align-items:center;padding:0 32px;gap:20px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.3)}
-.logo{display:flex;align-items:center;gap:10px;margin-right:12px;text-decoration:none}
-.logo-box{width:34px;height:34px;border:2px solid var(--orange);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;color:var(--orange);font-size:15px;flex-shrink:0}
-.logo-text{color:var(--white);font-size:14px;font-weight:500;line-height:1.2}
+header{background:var(--navy);height:60px;display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.logo{display:flex;align-items:center;gap:10px;margin-right:8px;text-decoration:none;flex-shrink:0}
+.logo-box{width:32px;height:32px;border:2px solid var(--orange);border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;color:var(--orange);font-size:14px}
+.logo-text{color:var(--white);font-size:13px;font-weight:500;line-height:1.2}
 .logo-sub{color:var(--ink-muted);font-size:10px;font-weight:300}
-nav{display:flex;gap:3px}
-.nav-btn{background:none;border:none;color:#7a9ab0;font-size:13px;font-family:inherit;padding:7px 13px;border-radius:6px;cursor:pointer;font-weight:500;transition:.15s;white-space:nowrap}
+nav{display:flex;gap:2px}
+.nav-btn{background:none;border:none;color:#7a9ab0;font-size:12px;font-family:inherit;padding:6px 11px;border-radius:6px;cursor:pointer;font-weight:500;transition:.15s;white-space:nowrap}
 .nav-btn:hover{color:var(--white);background:rgba(255,255,255,.08)}
 .nav-btn.active{color:var(--white);background:var(--orange)}
-.header-right{margin-left:auto;display:flex;align-items:center;gap:7px}
-.h-btn{background:none;border:1px solid #2a4560;color:#7a9ab0;padding:6px 11px;border-radius:6px;font-size:12px;font-family:inherit;cursor:pointer;transition:.15s;white-space:nowrap}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.h-btn{background:none;border:1px solid #2a4560;color:#7a9ab0;padding:5px 10px;border-radius:6px;font-size:11px;font-family:inherit;cursor:pointer;transition:.15s;white-space:nowrap}
 .h-btn:hover{border-color:var(--orange);color:var(--orange)}
 .h-btn.primary{background:var(--orange);border-color:var(--orange);color:var(--white)}
 .h-btn.primary:hover{background:var(--orange2)}
-.last-upd{font-size:11px;color:#4a6070;white-space:nowrap}
-
-/* MAIN */
-main{max-width:1320px;margin:0 auto;padding:28px 32px 60px}
-.page-hdr{margin-bottom:22px}
-.page-hdr h1{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--ink)}
-.page-hdr p{font-size:13px;color:var(--ink-soft);margin-top:3px;font-weight:300}
-
-/* VIEW TOGGLE */
-.view-toggle{display:inline-flex;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px;margin-bottom:20px}
-.vt-btn{padding:6px 16px;border-radius:6px;border:none;background:none;font-size:13px;font-weight:500;color:var(--ink-muted);cursor:pointer;font-family:inherit;transition:.15s}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#4a6070;flex-shrink:0}
+.sync-dot.live{background:#2a7f5f;animation:pulse 2s infinite}
+.last-upd{font-size:10px;color:#4a6070}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+main{max-width:1320px;margin:0 auto;padding:24px 28px 60px}
+.page-hdr{margin-bottom:20px}
+.page-hdr h1{font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:var(--ink)}
+.page-hdr p{font-size:12px;color:var(--ink-soft);margin-top:3px;font-weight:300}
+.view-toggle{display:inline-flex;background:var(--white);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px;margin-bottom:18px}
+.vt-btn{padding:5px 14px;border-radius:6px;border:none;background:none;font-size:12px;font-weight:500;color:var(--ink-muted);cursor:pointer;font-family:inherit;transition:.15s}
 .vt-btn.active{background:var(--navy);color:var(--white)}
-
-/* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
-.stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:18px 22px;border-top:3px solid var(--orange)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:16px 20px;border-top:3px solid var(--orange)}
 .stat-card.s2{border-top-color:var(--navy)}.stat-card.s3{border-top-color:var(--green)}.stat-card.s4{border-top-color:var(--rose)}
-.stat-val{font-family:'DM Serif Display',serif;font-size:34px;color:var(--ink);line-height:1}
-.stat-lbl{font-size:12px;color:var(--ink-muted);margin-top:4px}
-
-/* CHARTS */
-.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:22px}
-.chart-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:22px}
-.chart-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:14px}
-.chart-wrap{position:relative;height:210px}
-
-/* AI PANEL */
-.ai-panel{background:var(--navy);border-radius:10px;padding:24px 28px;margin-bottom:22px;color:var(--white)}
-.ai-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.ai-title{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400}
+.stat-val{font-family:'DM Serif Display',serif;font-size:32px;color:var(--ink);line-height:1}
+.stat-lbl{font-size:11px;color:var(--ink-muted);margin-top:3px}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.chart-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px}
+.chart-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:12px}
+.chart-wrap{position:relative;height:200px}
+.ai-panel{background:var(--navy);border-radius:10px;padding:22px 26px;margin-bottom:20px;color:var(--white)}
+.ai-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.ai-title{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400}
 .ai-badge{font-size:11px;color:var(--orange);font-weight:500;display:flex;align-items:center;gap:5px}
 .ai-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--orange);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.ai-options{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:11px}
-.ai-opt{padding:6px 13px;border:1px solid #2a4560;background:none;color:#7a9ab0;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;transition:.15s}
+.ai-options{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ai-opt{padding:5px 12px;border:1px solid #2a4560;background:none;color:#7a9ab0;border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;transition:.15s}
 .ai-opt:hover,.ai-opt.active{border-color:var(--orange);color:var(--orange);background:rgba(224,117,53,.08)}
-.ai-key-row{display:flex;gap:8px;margin-bottom:11px;align-items:center}
+.ai-provider-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;flex-wrap:wrap}
+.ai-prov-lbl{font-size:11px;color:#4a6070;white-space:nowrap}
+.ai-prov-sel{background:rgba(255,255,255,.05);border:1px solid #2a4560;color:var(--white);padding:5px 10px;border-radius:6px;font-size:11px;font-family:inherit;outline:none;cursor:pointer}
+.ai-key-row{display:flex;gap:6px;margin-bottom:10px;align-items:center}
 .ai-key-lbl{font-size:11px;color:#4a6070;white-space:nowrap}
-.ai-key-input{flex:1;background:rgba(255,255,255,.05);border:1px solid #2a4560;color:var(--white);padding:7px 12px;border-radius:6px;font-size:12px;font-family:inherit;outline:none}
+.ai-key-input{flex:1;background:rgba(255,255,255,.05);border:1px solid #2a4560;color:var(--white);padding:6px 10px;border-radius:6px;font-size:11px;font-family:inherit;outline:none}
 .ai-key-input:focus{border-color:var(--orange)}
-.ai-key-save{padding:7px 13px;background:var(--orange);border:none;color:var(--white);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit}
-.ai-output{background:rgba(255,255,255,.04);border:1px solid #2a4560;border-radius:8px;padding:16px;min-height:70px;font-size:13px;line-height:1.7;color:#cce0ee;font-weight:300;white-space:pre-wrap}
+.ai-key-save{padding:6px 12px;background:var(--orange);border:none;color:var(--white);border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit}
+.ai-output{background:rgba(255,255,255,.04);border:1px solid #2a4560;border-radius:8px;padding:14px;min-height:60px;font-size:12px;line-height:1.7;color:#cce0ee;font-weight:300;white-space:pre-wrap}
 .ai-output.idle{color:#4a6070;font-style:italic}
-.ai-actions{display:flex;gap:8px;margin-top:11px}
-.btn-gen{padding:8px 20px;background:var(--orange);color:var(--white);border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.ai-actions{display:flex;gap:7px;margin-top:10px}
+.btn-gen{padding:7px 18px;background:var(--orange);color:var(--white);border:none;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 .btn-gen:hover{background:var(--orange2)}.btn-gen:disabled{opacity:.5;cursor:not-allowed}
-.btn-copy-ai{padding:8px 13px;background:none;border:1px solid #2a4560;color:#7a9ab0;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit;transition:.15s}
+.btn-copy-ai{padding:7px 12px;background:none;border:1px solid #2a4560;color:#7a9ab0;border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;transition:.15s}
 .btn-copy-ai:hover{border-color:var(--orange);color:var(--orange)}
-
-/* FILTERS / TABLE */
-.filters-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
-.f-input,.f-select{padding:8px 11px;border:1px solid var(--border);border-radius:7px;background:var(--white);font-size:13px;color:var(--ink);font-family:inherit;outline:none}
-.f-input:focus,.f-select:focus{border-color:var(--orange)}.f-input{width:190px}
-.f-count{font-size:12px;color:var(--ink-muted);margin-left:auto}
-.bar-actions{display:flex;gap:8px;margin-bottom:12px}
-.btn-sm{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid var(--border);background:var(--white);color:var(--ink);transition:.15s}
+.filters-bar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.f-input,.f-select{padding:7px 10px;border:1px solid var(--border);border-radius:7px;background:var(--white);font-size:12px;color:var(--ink);font-family:inherit;outline:none}
+.f-input:focus,.f-select:focus{border-color:var(--orange)}.f-input{width:180px}
+.f-count{font-size:11px;color:var(--ink-muted);margin-left:auto}
+.bar-actions{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.btn-sm{padding:6px 13px;border-radius:7px;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;border:1px solid var(--border);background:var(--white);color:var(--ink);transition:.15s}
 .btn-sm:hover{border-color:var(--orange);color:var(--orange)}
 .btn-sm.primary{background:var(--orange);border-color:var(--orange);color:var(--white)}
 .btn-sm.primary:hover{background:var(--orange2)}
-.tbl-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:22px}
+.tbl-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px}
 table{width:100%;border-collapse:collapse}
-thead th{background:var(--navy);color:var(--white);padding:11px 14px;text-align:left;font-size:11px;font-weight:500;letter-spacing:.03em;white-space:nowrap;cursor:pointer;user-select:none}
+thead th{background:var(--navy);color:var(--white);padding:10px 12px;text-align:left;font-size:10px;font-weight:500;letter-spacing:.03em;white-space:nowrap;cursor:pointer;user-select:none}
 thead th:hover{background:var(--navy2)}
 tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:.1s}
 tbody tr:last-child{border-bottom:none}
 tbody tr:hover{background:var(--orange-pale)}
-td{padding:10px 14px;font-size:13px;vertical-align:middle}
-.co-name{font-weight:600;color:var(--ink)}
-.co-sub{font-size:11px;color:var(--ink-muted);font-weight:300;margin-top:1px}
-
-/* BADGES */
-.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap}
+td{padding:9px 12px;font-size:12px;vertical-align:middle}
+.co-name{font-weight:600;color:var(--ink);font-size:13px}
+.co-sub{font-size:10px;color:var(--ink-muted);font-weight:300;margin-top:1px}
+.badge{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap}
 .b-pn{background:#fce0cc;color:#a04000}.b-ih{background:#ddeaf4;color:#1d4d6e}.b-fm{background:var(--rose-light);color:var(--rose)}
 .b-startup{background:#e8f0fe;color:#1a56a0}.b-incumbent{background:var(--purple-light);color:var(--purple)}.b-acquirer{background:#fee8e8;color:#9a1a1a}
 .b-priority{background:var(--green-light);color:var(--green)}.b-interested{background:#fce0cc;color:#a04000}.b-watch{background:#f0f4f8;color:#7a9ab0}
-.local-tag{display:inline-block;padding:1px 5px;background:#e8f0fe;color:#1a56a0;border-radius:4px;font-size:10px;font-weight:600;margin-left:4px;vertical-align:middle}
-
-/* SCORE BAR */
-.sbar{display:flex;align-items:center;gap:6px}
-.strack{width:44px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+.firebase-tag{display:inline-block;padding:1px 5px;background:#fff3e0;color:#e65100;border-radius:4px;font-size:9px;font-weight:600;margin-left:4px;vertical-align:middle}
+.sbar{display:flex;align-items:center;gap:5px}
+.strack{width:40px;height:3px;background:var(--border);border-radius:2px;overflow:hidden}
 .sfill{height:100%;border-radius:2px;background:var(--orange)}
-.snum{font-size:11px;color:var(--ink-muted)}
-
-/* DETAIL PANEL */
+.snum{font-size:10px;color:var(--ink-muted)}
 .panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;opacity:0;pointer-events:none;transition:.2s}
 .panel-overlay.open{opacity:1;pointer-events:all}
-.detail-panel{position:fixed;right:0;top:0;bottom:0;width:540px;background:var(--white);z-index:301;transform:translateX(100%);transition:.25s ease;overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.15)}
+.detail-panel{position:fixed;right:0;top:0;bottom:0;width:520px;background:var(--white);z-index:301;transform:translateX(100%);transition:.25s ease;overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.15)}
 .detail-panel.open{transform:translateX(0)}
-.dp-header{background:var(--navy);padding:22px 26px;color:var(--white);position:relative}
-.dp-close{position:absolute;top:18px;right:22px;background:none;border:none;color:#7a9ab0;font-size:20px;cursor:pointer;line-height:1}
+.dp-header{background:var(--navy);padding:20px 24px;color:var(--white);position:relative}
+.dp-close{position:absolute;top:16px;right:20px;background:none;border:none;color:#7a9ab0;font-size:18px;cursor:pointer;line-height:1}
 .dp-close:hover{color:var(--white)}
-.dp-actions{display:flex;gap:8px;margin-top:14px}
-.dp-btn{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;border:none;transition:.15s}
+.dp-actions{display:flex;gap:7px;margin-top:12px}
+.dp-btn{padding:5px 12px;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;font-family:inherit;border:none;transition:.15s}
 .dp-btn.edit{background:rgba(255,255,255,.15);color:var(--white)}.dp-btn.edit:hover{background:var(--orange)}
 .dp-btn.del{background:rgba(184,80,80,.3);color:#ffaaaa}.dp-btn.del:hover{background:var(--rose);color:var(--white)}
-.dp-co-name{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;margin-bottom:6px}
-.dp-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-.dp-website{font-size:12px;color:var(--orange);text-decoration:none}
+.dp-co-name{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400;margin-bottom:5px}
+.dp-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px}
+.dp-website{font-size:11px;color:var(--orange);text-decoration:none}
 .dp-website:hover{text-decoration:underline}
-.dp-body{padding:22px 26px}
-.dp-section{margin-bottom:20px}
-.dp-section-title{font-size:11px;font-weight:600;color:var(--ink-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
-.dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.dp-field label{font-size:11px;color:var(--ink-muted);font-weight:500;display:block;margin-bottom:2px}
-.dp-field span{font-size:13px;color:var(--ink)}
+.dp-body{padding:20px 24px}
+.dp-section{margin-bottom:18px}
+.dp-section-title{font-size:10px;font-weight:600;color:var(--ink-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.dp-field label{font-size:10px;color:var(--ink-muted);font-weight:500;display:block;margin-bottom:1px}
+.dp-field span{font-size:12px;color:var(--ink)}
 .dp-field.full{grid-column:1/-1}
-.dp-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.dp-score-item{text-align:center;padding:13px;background:var(--slate);border-radius:8px}
-.dp-score-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--orange)}
-.dp-score-lbl{font-size:11px;color:var(--ink-muted);margin-top:2px}
-
-/* NOTES SECTION */
-.notes-area{width:100%;padding:10px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;resize:vertical;min-height:80px;outline:none;color:var(--ink)}
+.dp-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.dp-score-item{text-align:center;padding:11px;background:var(--slate);border-radius:8px}
+.dp-score-val{font-family:'DM Serif Display',serif;font-size:26px;color:var(--orange)}
+.dp-score-lbl{font-size:10px;color:var(--ink-muted);margin-top:1px}
+.notes-area{width:100%;padding:9px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;resize:vertical;min-height:70px;outline:none;color:var(--ink)}
 .notes-area:focus{border-color:var(--orange)}
-.links-list{list-style:none;margin-bottom:10px}
-.links-list li{display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--slate);border-radius:6px;margin-bottom:6px;font-size:13px}
+.links-list{list-style:none;margin-bottom:8px}
+.links-list li{display:flex;align-items:center;gap:7px;padding:6px 9px;background:var(--slate);border-radius:6px;margin-bottom:5px;font-size:12px}
 .links-list a{color:var(--orange);text-decoration:none;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .links-list a:hover{text-decoration:underline}
-.link-del{background:none;border:none;color:var(--ink-muted);cursor:pointer;font-size:14px;padding:0 4px}
+.link-del{background:none;border:none;color:var(--ink-muted);cursor:pointer;font-size:13px;padding:0 3px}
 .link-del:hover{color:var(--rose)}
-.link-add-row{display:flex;gap:6px;margin-top:8px}
-.link-add-row input{flex:1;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--ink)}
+.link-add-row{display:flex;gap:5px;margin-top:7px}
+.link-add-row input{flex:1;padding:6px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;outline:none;color:var(--ink)}
 .link-add-row input:focus{border-color:var(--orange)}
-.btn-add-link{padding:7px 12px;background:var(--orange);border:none;color:var(--white);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
-.save-notes-btn{padding:7px 16px;background:var(--navy);border:none;color:var(--white);border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit;margin-top:10px}
-.save-notes-btn:hover{background:var(--navy2)}
-
-/* COMPARE */
-.compare-selectors{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap}
-.cmp-select{flex:1;min-width:180px;padding:10px 13px;border:1px solid var(--border);border-radius:8px;background:var(--white);font-size:13px;color:var(--ink);font-family:inherit;outline:none}
+.btn-add-link{padding:6px 11px;background:var(--orange);border:none;color:var(--white);border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.save-notes-btn{padding:6px 14px;background:var(--navy);border:none;color:var(--white);border-radius:6px;font-size:11px;cursor:pointer;font-family:inherit;margin-top:8px}
+.compare-selectors{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.cmp-select{flex:1;min-width:160px;padding:8px 11px;border:1px solid var(--border);border-radius:7px;background:var(--white);font-size:12px;color:var(--ink);font-family:inherit;outline:none}
 .cmp-select:focus{border-color:var(--orange)}
-.cmp-table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden}
-.cmp-table{width:100%;border-collapse:collapse}
-.cmp-table th{background:var(--navy);color:var(--white);padding:12px 16px;text-align:left;font-size:12px;font-weight:500}
+.cmp-add-btn{padding:8px 14px;background:var(--orange);border:none;color:var(--white);border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.cmp-remove-btn{padding:3px 8px;background:none;border:1px solid var(--border);color:var(--ink-muted);border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit}
+.cmp-remove-btn:hover{border-color:var(--rose);color:var(--rose)}
+.cmp-table-wrap{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow-x:auto}
+.cmp-table{width:100%;border-collapse:collapse;min-width:500px}
+.cmp-table th{background:var(--navy);color:var(--white);padding:10px 14px;text-align:left;font-size:11px;font-weight:500}
 .cmp-table th.co-th{text-align:center}
-.cmp-table td{padding:10px 16px;border-bottom:1px solid var(--border);font-size:13px;vertical-align:middle}
-.cmp-table td.attr{font-weight:500;color:var(--ink-soft);background:var(--slate);font-size:12px}
+.cmp-table td{padding:9px 14px;border-bottom:1px solid var(--border);font-size:12px;vertical-align:middle}
+.cmp-table td.attr{font-weight:500;color:var(--ink-soft);background:var(--slate);font-size:11px;white-space:nowrap}
 .cmp-table td.val{text-align:center}
 .cmp-table tr:last-child td{border-bottom:none}
 .cmp-best{color:var(--green);font-weight:700}.cmp-worst{color:var(--rose)}
-.cmp-empty{text-align:center;padding:60px;color:var(--ink-muted);font-size:13px}
-
-/* VISUALS TAB */
-.vis-selector{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
-.vis-btn{padding:9px 18px;border:2px solid var(--border);background:var(--white);color:var(--ink-soft);border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:.15s}
+.cmp-empty{text-align:center;padding:50px;color:var(--ink-muted);font-size:13px}
+.cmp-ai-section{background:var(--navy);border-radius:10px;padding:20px 24px;margin-top:20px;color:var(--white)}
+.vis-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.vis-btn{padding:8px 16px;border:2px solid var(--border);background:var(--white);color:var(--ink-soft);border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit;transition:.15s}
 .vis-btn:hover{border-color:var(--orange);color:var(--orange)}
 .vis-btn.active{border-color:var(--orange);background:var(--orange-pale);color:var(--orange)}
-.vis-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:20px}
-.vis-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
-.vis-card-title{font-size:15px;font-weight:600;color:var(--ink)}
-.vis-card-desc{font-size:12px;color:var(--ink-muted);margin-bottom:20px}
-.vis-controls{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
-.vis-controls label{font-size:12px;color:var(--ink-soft);font-weight:500}
-.vis-controls select{padding:7px 11px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;outline:none;color:var(--ink)}
+.vis-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:22px;margin-bottom:18px}
+.vis-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+.vis-card-title{font-size:14px;font-weight:600;color:var(--ink)}
+.vis-card-desc{font-size:11px;color:var(--ink-muted);margin-bottom:16px}
+.vis-controls{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.vis-controls label{font-size:11px;color:var(--ink-soft);font-weight:500}
+.vis-controls select,.vis-controls input[type=range]{padding:6px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;outline:none;color:var(--ink)}
 .vis-controls select:focus{border-color:var(--orange)}
-.vis-render{overflow-x:auto;border:1px solid var(--border);border-radius:8px;background:var(--slate);padding:20px;min-height:320px}
-.btn-dl-vis{padding:8px 16px;background:var(--navy);border:none;color:var(--white);border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit;transition:.15s}
+.vis-render{overflow-x:auto;border:1px solid var(--border);border-radius:8px;background:var(--white);padding:16px;min-height:280px}
+.btn-dl-vis{padding:7px 14px;background:var(--navy);border:none;color:var(--white);border-radius:7px;font-size:11px;cursor:pointer;font-family:inherit;transition:.15s}
 .btn-dl-vis:hover{background:var(--navy2)}
-
-/* VALUE CHAIN */
-.vc-wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:0;min-height:280px}
-.vc-col{display:flex;flex-direction:column}
-.vc-col-hdr{background:var(--navy);color:var(--white);padding:10px 12px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;text-align:center;border-right:1px solid var(--border)}
-.vc-col-hdr:last-child{border-right:none}
-.vc-col-body{flex:1;padding:12px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:7px;background:var(--white)}
-.vc-col-body:last-child{border-right:none}
-.vc-chip{padding:6px 10px;border-radius:6px;font-size:12px;font-weight:500;text-align:center;color:var(--white)}
+.vc-grid{display:grid;gap:0}
+.vc-col-hdr{background:var(--navy);color:var(--white);padding:9px 10px;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;text-align:center;border-right:1px solid #2a4560}
+.vc-col-body{padding:10px;border-right:1px solid var(--border);display:flex;flex-direction:column;gap:6px;background:var(--white);min-height:160px}
+.vc-chip{padding:5px 9px;border-radius:6px;font-size:11px;font-weight:500;text-align:center;color:var(--white);cursor:pointer;transition:.15s}
+.vc-chip:hover{opacity:.85;transform:translateY(-1px)}
 .vc-orange{background:var(--orange)}.vc-navy{background:var(--navy2)}.vc-green{background:var(--green)}.vc-rose{background:var(--rose)}
-
-/* TILE LANDSCAPE */
-.tile-section{margin-bottom:20px}
-.tile-section-title{font-size:12px;font-weight:600;color:var(--ink-soft);letter-spacing:.04em;text-transform:uppercase;margin-bottom:10px;padding:6px 10px;border-radius:6px}
-.tile-section-title.pn{background:#fce0cc;color:#a04000}
-.tile-section-title.ih{background:#ddeaf4;color:#1d4d6e}
-.tile-section-title.fm{background:var(--rose-light);color:var(--rose)}
-.tiles-grid{display:flex;flex-wrap:wrap;gap:8px}
-.tile{padding:8px 12px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;transition:.15s;border:1px solid transparent}
-.tile:hover{transform:translateY(-1px);box-shadow:0 3px 10px rgba(0,0,0,.1)}
+.vc-flow{display:flex;align-items:stretch;gap:0;overflow-x:auto}
+.vc-flow-col{flex:1;min-width:140px;display:flex;flex-direction:column}
+.vc-flow-arrow{display:flex;align-items:center;justify-content:center;padding:0 4px;color:var(--ink-muted);font-size:20px;flex-shrink:0}
+.vc-flow-hdr{background:var(--navy);color:var(--white);padding:8px 12px;font-size:10px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;text-align:center}
+.vc-flow-body{flex:1;padding:10px;background:var(--orange-pale);border:2px solid var(--orange);border-top:none;display:flex;flex-direction:column;gap:5px}
+.tile-section{margin-bottom:18px}
+.tile-section-hdr{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px;padding:5px 10px;border-radius:6px;display:flex;align-items:center;gap:8px}
+.tile-section-hdr.pn{background:#fce0cc;color:#a04000}
+.tile-section-hdr.ih{background:#ddeaf4;color:#1d4d6e}
+.tile-section-hdr.fm{background:var(--rose-light);color:var(--rose)}
+.tiles-grid{display:flex;flex-wrap:wrap;gap:7px}
+.tile{border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;transition:.15s;border:1px solid transparent;overflow:hidden;width:120px;text-align:center}
+.tile:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.tile-logo{width:100%;height:56px;object-fit:contain;padding:8px;background:var(--white)}
+.tile-logo-fallback{width:100%;height:56px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--white)}
+.tile-name{padding:5px 6px;font-size:10px}
 .tile.pn{background:#fce0cc;color:#a04000;border-color:#f0c09a}
 .tile.ih{background:#ddeaf4;color:#1d4d6e;border-color:#b0d0e8}
 .tile.fm{background:var(--rose-light);color:var(--rose);border-color:#e8b0b0}
-.tile-stage{font-size:10px;font-weight:400;opacity:.7;margin-top:1px}
-
-/* 2x2 */
-.matrix-wrap{position:relative;width:100%;height:360px}
-
-/* HEATMAP */
 .heatmap-table{width:100%;border-collapse:collapse}
-.heatmap-table th{background:var(--navy);color:var(--white);padding:9px 12px;font-size:11px;font-weight:500;text-align:center}
+.heatmap-table th{background:var(--navy);color:var(--white);padding:8px 10px;font-size:10px;font-weight:500;text-align:center}
 .heatmap-table th.row-hdr{text-align:left;background:var(--navy2)}
-.heatmap-table td{padding:12px;text-align:center;font-size:13px;font-weight:600;border:1px solid var(--white)}
-.hm-0{background:#f0f4f8;color:var(--ink-muted)}
-.hm-1{background:#fce8d0;color:#a04000}
-.hm-2{background:#f5c090;color:#804000}
-.hm-3{background:#e07535;color:var(--white)}
-.hm-4{background:#b05020;color:var(--white)}
-
-/* MODAL */
+.heatmap-table td{padding:11px;text-align:center;font-size:13px;font-weight:600;border:1px solid var(--white)}
+.hm-0{background:#f0f4f8;color:var(--ink-muted)}.hm-1{background:#fce8d0;color:#a04000}
+.hm-2{background:#f5c090;color:#804000}.hm-3{background:#e07535;color:var(--white)}.hm-4{background:#b05020;color:var(--white)}
+.eco-map{width:100%;min-height:400px}
+.radar-wrap{position:relative;height:340px}
+.wspace-table{width:100%;border-collapse:collapse}
+.wspace-table th{background:var(--navy);color:var(--white);padding:8px 10px;font-size:10px;font-weight:500;text-align:center}
+.wspace-table th.row-hdr{text-align:left}
+.wspace-table td{padding:10px;text-align:center;font-size:11px;border:1px solid var(--border);vertical-align:top}
+.wspace-cell-filled{background:var(--orange-pale);border-color:#f0c09a}
+.wspace-cell-empty{background:#f8f9fb;color:var(--ink-muted);font-style:italic}
+.funding-timeline{overflow-x:auto;padding:10px 0}
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.open{display:flex}
-.modal{background:var(--white);border-radius:12px;width:700px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)}
-.modal-hdr{padding:22px 26px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:1}
-.modal-title{font-family:'DM Serif Display',serif;font-size:20px;font-weight:400}
-.modal-close{background:none;border:none;font-size:20px;color:var(--ink-muted);cursor:pointer;line-height:1}
-.modal-body{padding:22px 26px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.form-field{display:flex;flex-direction:column;gap:4px}
+.modal{background:var(--white);border-radius:12px;width:680px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.modal-hdr{padding:20px 24px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--white);z-index:1}
+.modal-title{font-family:'DM Serif Display',serif;font-size:18px;font-weight:400}
+.modal-close{background:none;border:none;font-size:18px;color:var(--ink-muted);cursor:pointer;line-height:1}
+.modal-body{padding:20px 24px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-field{display:flex;flex-direction:column;gap:3px}
 .form-field.full{grid-column:1/-1}
-.form-field label{font-size:12px;font-weight:500;color:var(--ink-soft)}
-.form-field input,.form-field select,.form-field textarea{padding:8px 11px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;color:var(--ink);outline:none;transition:.15s}
+.form-field label{font-size:11px;font-weight:500;color:var(--ink-soft)}
+.form-field input,.form-field select,.form-field textarea{padding:7px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;color:var(--ink);outline:none;transition:.15s}
 .form-field input:focus,.form-field select:focus,.form-field textarea:focus{border-color:var(--orange)}
-.form-field textarea{resize:vertical;min-height:56px}
-.modal-footer{padding:14px 26px 22px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid var(--border);margin-top:6px}
-.btn-cancel{padding:8px 18px;background:none;border:1px solid var(--border);color:var(--ink-soft);border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit}
-.btn-save{padding:8px 20px;background:var(--orange);border:none;color:var(--white);border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.form-field textarea{resize:vertical;min-height:52px}
+.modal-footer{padding:12px 24px 20px;display:flex;gap:9px;justify-content:flex-end;border-top:1px solid var(--border);margin-top:6px}
+.btn-cancel{padding:7px 16px;background:none;border:1px solid var(--border);color:var(--ink-soft);border-radius:7px;font-size:12px;cursor:pointer;font-family:inherit}
+.btn-save{padding:7px 18px;background:var(--orange);border:none;color:var(--white);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit}
 .btn-save:hover{background:var(--orange2)}
-
-/* SETTINGS */
-.settings-inner{background:var(--white);border-radius:12px;width:460px;max-width:100%;box-shadow:0 8px 40px rgba(0,0,0,.2)}
-
-/* MISC */
+.settings-inner{background:var(--white);border-radius:12px;width:480px;max-width:100%;box-shadow:0 8px 40px rgba(0,0,0,.2)}
 .section-wrap{display:none}.section-wrap.active{display:block}
-.center-msg{text-align:center;padding:60px;color:var(--ink-muted);font-size:14px}
+.center-msg{text-align:center;padding:50px;color:var(--ink-muted);font-size:14px}
 </style>
 </head>
 <body>
@@ -272,19 +250,18 @@ td{padding:10px 14px;font-size:13px;vertical-align:middle}
     <button class="nav-btn" onclick="showSection('visuals')">Visuals</button>
   </nav>
   <div class="header-right">
-    <span class="last-upd" id="lastUpd">—</span>
-    <button class="h-btn" onclick="loadData()">↻ Refresh</button>
+    <div class="sync-dot" id="syncDot"></div>
+    <span class="last-upd" id="lastUpd">Connecting…</span>
     <button class="h-btn" onclick="openSettings()">⚙ Settings</button>
     <button class="h-btn primary" onclick="openAddModal()">+ Add Company</button>
   </div>
 </header>
 
 <main>
-  <div id="loadingMsg" class="center-msg">Loading landscape data…</div>
+  <div id="loadingMsg" class="center-msg">Connecting to database…</div>
 
-  <!-- DASHBOARD -->
   <div class="section-wrap" id="sec-dashboard">
-    <div class="page-hdr"><h1>Consumer Healthspan Landscape</h1><p>Precision Nutrition · Intelligent Health · Food & Medicine</p></div>
+    <div class="page-hdr"><h1>Consumer Healthspan Landscape</h1><p>Precision Nutrition · Intelligent Health · Food & Medicine — Live data from Firebase</p></div>
     <div class="view-toggle">
       <button class="vt-btn active" onclick="setView('targets',this)">Investment Targets</button>
       <button class="vt-btn" onclick="setView('landscape',this)">Full Landscape</button>
@@ -297,30 +274,36 @@ td{padding:10px 14px;font-size:13px;vertical-align:middle}
       <div class="chart-card"><div class="chart-title">Traction vs Differentiation</div><div class="chart-wrap"><canvas id="cScatter"></canvas></div></div>
     </div>
     <div class="ai-panel">
-      <div class="ai-hdr"><span class="ai-title">AI Analysis</span><span class="ai-badge">Powered by Claude</span></div>
+      <div class="ai-hdr"><span class="ai-title">AI Analysis</span><span class="ai-badge">Powered by Claude / Gemini</span></div>
       <div class="ai-options">
-        <button class="ai-opt active" onclick="selPrompt(this,'newsletter')">Newsletter Summary</button>
-        <button class="ai-opt" onclick="selPrompt(this,'whitespace')">White Space Analysis</button>
-        <button class="ai-opt" onclick="selPrompt(this,'priority')">Priority Targets Memo</button>
+        <button class="ai-opt active" onclick="selPrompt(this,'newsletter')">Newsletter</button>
+        <button class="ai-opt" onclick="selPrompt(this,'whitespace')">White Space</button>
+        <button class="ai-opt" onclick="selPrompt(this,'priority')">Priority Memo</button>
         <button class="ai-opt" onclick="selPrompt(this,'thesis')">Thesis Validation</button>
-        <button class="ai-opt" onclick="selPrompt(this,'diligence')">Due Diligence Brief</button>
+        <button class="ai-opt" onclick="selPrompt(this,'diligence')">Due Diligence</button>
+      </div>
+      <div class="ai-provider-row">
+        <span class="ai-prov-lbl">Provider:</span>
+        <select class="ai-prov-sel" id="aiProvider" onchange="updateKeyLabel()">
+          <option value="claude">Claude (Anthropic)</option>
+          <option value="gemini">Gemini Flash (Google — Free)</option>
+        </select>
       </div>
       <div class="ai-key-row">
-        <span class="ai-key-lbl">Anthropic API Key:</span>
+        <span class="ai-key-lbl" id="aiKeyLbl">Anthropic API Key:</span>
         <input class="ai-key-input" type="password" id="apiKeyInput" placeholder="sk-ant-…">
         <button class="ai-key-save" onclick="saveKey()">Save</button>
       </div>
       <div class="ai-output idle" id="aiOutput">Select an analysis type above and click Generate.</div>
       <div class="ai-actions">
         <button class="btn-gen" id="btnGen" onclick="generateAI()">Generate</button>
-        <button class="btn-copy-ai" onclick="copyAI()">Copy text</button>
+        <button class="btn-copy-ai" onclick="copyAI()">Copy</button>
       </div>
     </div>
   </div>
 
-  <!-- COMPANIES -->
   <div class="section-wrap" id="sec-companies">
-    <div class="page-hdr"><h1>Company Database</h1><p>Click any row to view full profile · Edit or delete from the detail panel</p></div>
+    <div class="page-hdr"><h1>Company Database</h1><p>Live · shared across all team members · Click any row to view full profile</p></div>
     <div class="view-toggle">
       <button class="vt-btn active" onclick="setView('targets',this)">Investment Targets</button>
       <button class="vt-btn" onclick="setView('landscape',this)">Full Landscape</button>
@@ -328,14 +311,15 @@ td{padding:10px 14px;font-size:13px;vertical-align:middle}
     <div class="bar-actions">
       <button class="btn-sm primary" onclick="openAddModal()">+ Add Company</button>
       <button class="btn-sm" onclick="exportCSV()">↓ Export CSV</button>
+      <button class="btn-sm" onclick="importFromSheet()">↑ Sync from Sheet</button>
     </div>
     <div class="filters-bar">
       <input class="f-input" type="text" placeholder="Search…" id="srch" oninput="applyFilters()">
       <select class="f-select" id="fFocus" onchange="applyFilters()"><option value="">All Focus Areas</option><option>Precision Nutrition</option><option>Intelligent Health</option><option>Food & Medicine</option></select>
       <select class="f-select" id="fStage" onchange="applyFilters()"><option value="">All Stages</option><option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Public</option></select>
-      <select class="f-select" id="fInterest" onchange="applyFilters()"><option value="">All Interest Levels</option><option>Priority</option><option>Interested</option><option>Watch</option></select>
+      <select class="f-select" id="fInterest" onchange="applyFilters()"><option value="">All Interest</option><option>Priority</option><option>Interested</option><option>Watch</option></select>
       <select class="f-select" id="fType" onchange="applyFilters()"><option value="">All Types</option><option>Startup</option><option>Incumbent</option><option>Acquirer</option></select>
-      <select class="f-select" id="fHealth" onchange="applyFilters()"><option value="">All Healthspan Targets</option><option>Metabolic Control</option><option>Gut Health</option><option>Cardiovascular Health</option><option>Neurological Health</option><option>Inflammation</option><option>Musculoskeletal</option></select>
+      <select class="f-select" id="fHealth" onchange="applyFilters()"><option value="">All Healthspan</option><option>Metabolic Control</option><option>Gut Health</option><option>Cardiovascular Health</option><option>Neurological Health</option><option>Inflammation</option><option>Musculoskeletal</option></select>
       <span class="f-count" id="fCount"></span>
     </div>
     <div class="tbl-wrap">
@@ -347,11 +331,12 @@ td{padding:10px 14px;font-size:13px;vertical-align:middle}
           <th onclick="srt('Ecosystem Position')">Ecosystem</th>
           <th onclick="srt('Business Model')">Model</th>
           <th onclick="srt('Stage')">Stage</th>
-          <th onclick="srt('Funding Raised (USD)')">Funding</th>
+          <th onclick="srt('Funding Raised')">Funding</th>
           <th onclick="srt('Geography')">Geo</th>
           <th onclick="srt('Company Type')">Type</th>
-          <th onclick="srt('Market Traction (1-5)')">Traction</th>
-          <th onclick="srt('Product Differentiation (1-5)')">Diff.</th>
+          <th onclick="srt('Market Traction')">Traction</th>
+          <th onclick="srt('Product Differentiation')">Diff.</th>
+          <th onclick="srt('Data Moat')">Data Moat</th>
           <th onclick="srt('TMG Interest Level')">Interest</th>
         </tr></thead>
         <tbody id="tBody"></tbody>
@@ -359,62 +344,71 @@ td{padding:10px 14px;font-size:13px;vertical-align:middle}
     </div>
   </div>
 
-  <!-- COMPARE -->
   <div class="section-wrap" id="sec-compare">
-    <div class="page-hdr"><h1>Competitive Comparison</h1><p>Select up to 3 companies to compare side-by-side</p></div>
-    <div class="compare-selectors">
-      <select class="cmp-select" id="cmp1" onchange="renderCompare()"><option value="">Select Company 1…</option></select>
-      <select class="cmp-select" id="cmp2" onchange="renderCompare()"><option value="">Select Company 2…</option></select>
-      <select class="cmp-select" id="cmp3" onchange="renderCompare()"><option value="">Select Company 3…</option></select>
+    <div class="page-hdr"><h1>Competitive Comparison</h1><p>Select up to 10 companies to compare side-by-side · Generate AI insights from selected companies</p></div>
+    <div class="compare-selectors" id="cmpSelectors">
+      <select class="cmp-select" id="cmp_0" onchange="renderCompare()"><option value="">Select Company…</option></select>
+      <select class="cmp-select" id="cmp_1" onchange="renderCompare()"><option value="">Select Company…</option></select>
+      <select class="cmp-select" id="cmp_2" onchange="renderCompare()"><option value="">Select Company…</option></select>
+      <button class="cmp-add-btn" onclick="addCmpSlot()">+ Add</button>
     </div>
-    <div id="cmpOutput"><div class="cmp-empty">Select companies above to compare them</div></div>
+    <div id="cmpOutput"><div class="cmp-empty">Select companies above to compare</div></div>
+    <div class="cmp-ai-section" id="cmpAiSection" style="display:none">
+      <div class="ai-hdr"><span class="ai-title" style="font-size:15px">AI Insights — Selected Companies</span><span class="ai-badge">Claude / Gemini</span></div>
+      <div class="ai-options">
+        <button class="ai-opt active" onclick="selCmpPrompt(this,'compare')">Compare Analysis</button>
+        <button class="ai-opt" onclick="selCmpPrompt(this,'winner')">Pick the Winner</button>
+        <button class="ai-opt" onclick="selCmpPrompt(this,'gaps')">Find Gaps</button>
+        <button class="ai-opt" onclick="selCmpPrompt(this,'invest')">Investment Case</button>
+      </div>
+      <div class="ai-output idle" id="cmpAiOutput" style="margin-top:10px">Click Generate to analyse selected companies.</div>
+      <div class="ai-actions" style="margin-top:10px">
+        <button class="btn-gen" onclick="generateCmpAI()">Generate</button>
+        <button class="btn-copy-ai" onclick="copyCmpAI()">Copy</button>
+      </div>
+    </div>
   </div>
 
-  <!-- VISUALS -->
   <div class="section-wrap" id="sec-visuals">
     <div class="page-hdr"><h1>Market Visuals</h1><p>Strategic views of the landscape — download any visual for newsletters and reports</p></div>
     <div class="vis-selector">
-      <button class="vis-btn active" onclick="setVis('valuechain',this)">Value Chain Map</button>
+      <button class="vis-btn active" onclick="setVis('valuechain',this)">Value Chain</button>
       <button class="vis-btn" onclick="setVis('tile',this)">Tile Landscape</button>
       <button class="vis-btn" onclick="setVis('matrix2x2',this)">2×2 Matrix</button>
       <button class="vis-btn" onclick="setVis('heatmap',this)">Heatmap</button>
       <button class="vis-btn" onclick="setVis('bubble',this)">Bubble Chart</button>
+      <button class="vis-btn" onclick="setVis('ecosystem',this)">Ecosystem Map</button>
+      <button class="vis-btn" onclick="setVis('radar',this)">Radar Chart</button>
+      <button class="vis-btn" onclick="setVis('whitespace',this)">White Space</button>
+      <button class="vis-btn" onclick="setVis('funding',this)">Funding Timeline</button>
     </div>
     <div id="visContent"></div>
   </div>
 </main>
 
-<!-- DETAIL PANEL -->
 <div class="panel-overlay" id="overlay" onclick="closePanel()"></div>
-<div class="detail-panel" id="detailPanel">
-  <button class="dp-close" onclick="closePanel()">✕</button>
-  <div id="dpContent"></div>
-</div>
+<div class="detail-panel" id="detailPanel"><div id="dpContent"></div></div>
 
-<!-- ADD/EDIT MODAL -->
 <div class="modal-overlay" id="addModal">
   <div class="modal">
-    <div class="modal-hdr">
-      <span class="modal-title" id="modalTitle">Add New Company</span>
-      <button class="modal-close" onclick="closeAddModal()">✕</button>
-    </div>
+    <div class="modal-hdr"><span class="modal-title" id="modalTitle">Add Company</span><button class="modal-close" onclick="closeAddModal()">✕</button></div>
     <div class="modal-body">
-      <input type="hidden" id="f_editName">
+      <input type="hidden" id="f_docId">
       <div class="form-grid">
-        <div class="form-field full"><label>Company Name *</label><input id="f_name" type="text" placeholder="e.g. ZOE"></div>
-        <div class="form-field full"><label>One-liner *</label><textarea id="f_oneliner" placeholder="What they do in one sentence"></textarea></div>
-        <div class="form-field"><label>TMG Focus Area</label><select id="f_focus"><option value="">Select…</option><option>Precision Nutrition</option><option>Intelligent Health</option><option>Food & Medicine</option></select></div>
+        <div class="form-field full"><label>Company Name *</label><input id="f_name" type="text"></div>
+        <div class="form-field full"><label>One-liner *</label><textarea id="f_oneliner"></textarea></div>
+        <div class="form-field"><label>TMG Focus Area</label><select id="f_focus"><option value="">—</option><option>Precision Nutrition</option><option>Intelligent Health</option><option>Food & Medicine</option></select></div>
         <div class="form-field"><label>Sub-category</label><input id="f_sub" type="text"></div>
-        <div class="form-field"><label>Healthspan Target</label><select id="f_health"><option value="">Select…</option><option>Metabolic Control</option><option>Gut Health</option><option>Cardiovascular Health</option><option>Neurological Health</option><option>Inflammation</option><option>Musculoskeletal</option></select></div>
-        <div class="form-field"><label>Ecosystem Position</label><select id="f_eco"><option value="">Select…</option><option>Ingredient / Science</option><option>Platform</option><option>Brand</option><option>Distribution / Channel</option></select></div>
-        <div class="form-field"><label>Business Model</label><select id="f_biz"><option value="">Select…</option><option>B2C</option><option>B2B</option><option>B2B2C</option><option>Marketplace</option><option>SaaS</option></select></div>
-        <div class="form-field"><label>Company Type</label><select id="f_type"><option value="">Select…</option><option>Startup</option><option>Incumbent</option><option>Acquirer</option></select></div>
-        <div class="form-field"><label>Geography</label><input id="f_geo" type="text" placeholder="e.g. US, UK"></div>
-        <div class="form-field"><label>Stage</label><select id="f_stage"><option value="">Select…</option><option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Public</option></select></div>
-        <div class="form-field"><label>Funding Raised (USD)</label><input id="f_funding" type="text" placeholder="e.g. $10M"></div>
+        <div class="form-field"><label>Healthspan Target</label><select id="f_health"><option value="">—</option><option>Metabolic Control</option><option>Gut Health</option><option>Cardiovascular Health</option><option>Neurological Health</option><option>Inflammation</option><option>Musculoskeletal</option></select></div>
+        <div class="form-field"><label>Ecosystem Position</label><select id="f_eco"><option value="">—</option><option>Ingredient / Science</option><option>Platform</option><option>Brand</option><option>Distribution / Channel</option></select></div>
+        <div class="form-field"><label>Business Model</label><select id="f_biz"><option value="">—</option><option>B2C</option><option>B2B</option><option>B2B2C</option><option>Marketplace</option><option>SaaS</option></select></div>
+        <div class="form-field"><label>Company Type</label><select id="f_type"><option value="">—</option><option>Startup</option><option>Incumbent</option><option>Acquirer</option></select></div>
+        <div class="form-field"><label>Geography</label><input id="f_geo" type="text"></div>
+        <div class="form-field"><label>Stage</label><select id="f_stage"><option value="">—</option><option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Public</option></select></div>
+        <div class="form-field"><label>Funding Raised</label><input id="f_funding" type="text" placeholder="e.g. $10M"></div>
         <div class="form-field"><label>Key Investors</label><input id="f_investors" type="text"></div>
         <div class="form-field full"><label>Key Technology</label><input id="f_tech" type="text"></div>
-        <div class="form-field"><label>Pricing Model</label><input id="f_pricing" type="text" placeholder="e.g. Subscription"></div>
+        <div class="form-field"><label>Pricing Model</label><input id="f_pricing" type="text"></div>
         <div class="form-field"><label>Target Customer</label><input id="f_customer" type="text"></div>
         <div class="form-field full"><label>Core Moat</label><textarea id="f_moat"></textarea></div>
         <div class="form-field full"><label>Key Competitors</label><input id="f_competitors" type="text"></div>
@@ -423,187 +417,138 @@ td{padding:10px 14px;font-size:13px;vertical-align:middle}
         <div class="form-field"><label>Market Traction (1–5)</label><select id="f_traction"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
         <div class="form-field"><label>Product Differentiation (1–5)</label><select id="f_diff"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
         <div class="form-field"><label>Capital Efficiency (1–5)</label><select id="f_capeff"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
-        <div class="form-field"><label>TMG Interest Level</label><select id="f_interest"><option value="">Select…</option><option>Priority</option><option>Interested</option><option>Watch</option></select></div>
+        <div class="form-field"><label>Clinical Validation (1–5)</label><select id="f_cv"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-field"><label>AI Actionability (1–5)</label><select id="f_ai"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-field"><label>Regulatory Complexity (1–5)</label><select id="f_reg"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-field"><label>Personalization Depth (1–5)</label><select id="f_pers"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-field"><label>Data Moat (1–5)</label><select id="f_dm"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-field"><label>Scalability (1–5)</label><select id="f_sc"><option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></div>
+        <div class="form-field"><label>TMG Interest Level</label><select id="f_interest"><option value="">—</option><option>Priority</option><option>Interested</option><option>Watch</option></select></div>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeAddModal()">Cancel</button>
-      <button class="btn-save" onclick="saveCompany()">Save Company</button>
-    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeAddModal()">Cancel</button><button class="btn-save" onclick="saveCompany()">Save to Database</button></div>
   </div>
 </div>
 
-<!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settingsModal">
   <div class="settings-inner modal">
     <div class="modal-hdr"><span class="modal-title">Settings</span><button class="modal-close" onclick="closeSettings()">✕</button></div>
     <div class="modal-body">
       <div class="form-field" style="margin-bottom:14px">
-        <label>Anthropic API Key</label>
-        <input id="s_apiKey" type="password" placeholder="sk-ant-…" style="margin-top:5px;padding:9px 11px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;width:100%;outline:none">
-        <span style="font-size:11px;color:var(--ink-muted);display:block;margin-top:4px">Stored locally in your browser. Get yours at console.anthropic.com</span>
+        <label>AI Provider</label>
+        <select id="s_provider" style="margin-top:4px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;width:100%;outline:none">
+          <option value="claude">Claude (Anthropic)</option>
+          <option value="gemini">Gemini Flash (Google — Free)</option>
+        </select>
       </div>
       <div class="form-field" style="margin-bottom:14px">
-        <label>Anthropic Workspace ID <span style="font-weight:400;color:var(--ink-muted)">(required for identity-linked API keys)</span></label>
-        <input id="s_workspaceId" type="text" placeholder="wrkspc-…" style="margin-top:5px;padding:9px 11px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;width:100%;outline:none">
-        <span style="font-size:11px;color:var(--ink-muted);display:block;margin-top:4px">Find this in console.anthropic.com → Settings → Workspaces → copy the Workspace ID</span>
+        <label>Claude API Key</label>
+        <input id="s_claudeKey" type="password" placeholder="sk-ant-…" style="margin-top:4px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;width:100%;outline:none">
+        <span style="font-size:10px;color:var(--ink-muted);display:block;margin-top:3px">console.anthropic.com → API Keys</span>
+      </div>
+      <div class="form-field" style="margin-bottom:14px">
+        <label>Claude Workspace ID <span style="font-weight:400;color:var(--ink-muted)">(if identity-linked key)</span></label>
+        <input id="s_workspaceId" type="text" placeholder="wrkspc-…" style="margin-top:4px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;width:100%;outline:none">
+      </div>
+      <div class="form-field" style="margin-bottom:14px">
+        <label>Gemini API Key <span style="font-weight:400;color:var(--ink-muted)">(free at aistudio.google.com)</span></label>
+        <input id="s_geminiKey" type="password" placeholder="AIza…" style="margin-top:4px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;width:100%;outline:none">
       </div>
       <div class="form-field">
-        <label>Google Sheet CSV URL</label>
-        <input id="s_csvUrl" type="text" placeholder="https://docs.google.com/…" style="margin-top:5px;padding:9px 11px;border:1px solid var(--border);border-radius:7px;font-size:13px;font-family:inherit;width:100%;outline:none">
+        <label>Google Sheet CSV URL <span style="font-weight:400;color:var(--ink-muted)">(for Sync from Sheet)</span></label>
+        <input id="s_csvUrl" type="text" style="margin-top:4px;padding:8px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;width:100%;outline:none" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vR8LViFyryNqnjbQxgOO3SKHjHWAzY-2-S5mERrp7xABQc8_y2iw4mK2DV6PX5HsCN6Yj1wL6HtMOiY/pub?output=csv">
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
-      <button class="btn-save" onclick="saveSettings()">Save Settings</button>
-    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeSettings()">Cancel</button><button class="btn-save" onclick="saveSettings()">Save</button></div>
   </div>
 </div>
 
-<script>
-const DEFAULT_CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vR8LViFyryNqnjbQxgOO3SKHjHWAzY-2-S5mERrp7xABQc8_y2iw4mK2DV6PX5HsCN6Yj1wL6HtMOiY/pub?output=csv';
-const COLS=['Company Name','One-liner','TMG Focus Area','Sub-category','Healthspan Target','Ecosystem Position','Business Model','Company Type','Geography','Stage','Funding Raised (USD)','Key Investors','Key Technology','Pricing Model','Target Customer','Core Moat','Key Competitors','Execution Risk','Website','Market Traction (1-5)','Product Differentiation (1-5)','Capital Efficiency (1-5)','TMG Interest Level','Last Updated'];
-let sheetData=[],localData=[],overrides={},hidden=[],allData=[],filteredData=[];
-let curView='targets',curSection='dashboard',sortCol='',sortDir=1,curPrompt='newsletter',curVis='valuechain';
-let charts={};
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-function init(){
-  const k=localStorage.getItem('tmg_apiKey');
-  if(k){document.getElementById('apiKeyInput').value=k;document.getElementById('s_apiKey').value=k;}
-  const u=localStorage.getItem('tmg_csvUrl');
-  if(u)document.getElementById('s_csvUrl').value=u;
-  localData=JSON.parse(localStorage.getItem('tmg_local')||'[]');
-  overrides=JSON.parse(localStorage.getItem('tmg_overrides')||'{}');
-  hidden=JSON.parse(localStorage.getItem('tmg_hidden')||'[]');
-  loadData();
-}
+const firebaseConfig = {
+  apiKey: "AIzaSyBM6Ohu0xd39ihz0--nhekwuKSoUvcMWGs",
+  authDomain: "tmg-landscape.firebaseapp.com",
+  projectId: "tmg-landscape",
+  storageBucket: "tmg-landscape.firebasestorage.app",
+  messagingSenderId: "51507827374",
+  appId: "1:51507827374:web:31bdb51948527b7535d33f"
+};
 
-function csvUrl(){return localStorage.getItem('tmg_csvUrl')||DEFAULT_CSV;}
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const COL = 'companies';
 
-async function loadData(){
-  const msg=document.getElementById('loadingMsg');
-  msg.style.display='block';
-  document.querySelectorAll('.section-wrap').forEach(s=>s.classList.remove('active'));
-  const url=csvUrl();
-  const proxies=[
-    {name:'Direct',fn:u=>u},
-    {name:'corsproxy.io',fn:u=>`https://corsproxy.io/?${encodeURIComponent(u)}`},
-    {name:'allorigins',fn:u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`},
-    {name:'thingproxy',fn:u=>`https://thingproxy.freeboard.io/fetch/${u}`},
-  ];
-  let ok=false;
-  for(const px of proxies){
-    try{
-      msg.innerHTML=`<div style="font-size:14px">Trying ${px.name}…</div>`;
-      await new Promise(r=>setTimeout(r,80));// allow repaint
-      const controller=new AbortController();
-      const timer=setTimeout(()=>controller.abort(),8000);
-      const r=await fetch(px.fn(url+'&t='+Date.now()),{signal:controller.signal});
-      clearTimeout(timer);
-      if(!r.ok){console.log(px.name,'bad status',r.status);continue;}
-      const t=await r.text();
-      console.log(px.name,'response length',t.length,'preview',t.slice(0,80));
-      if(!t.includes('Company Name')){console.log(px.name,'no Company Name header');continue;}
-      const p=parseCSV(t);
-      if(!p.length){console.log(px.name,'parsed 0 rows');continue;}
-      sheetData=p;ok=true;
-      console.log('Loaded',p.length,'rows via',px.name);
-      break;
-    }catch(e){console.log(px.name,'error:',e.message);continue;}
-  }
-  if(!ok){
-    msg.innerHTML=`
-      <div style="max-width:500px;margin:0 auto;text-align:left;background:var(--white);padding:28px;border-radius:12px;border:1px solid var(--border)">
-        <div style="font-size:16px;font-weight:600;color:var(--ink);margin-bottom:6px">⚠️ Could not connect to Google Sheet</div>
-        <div style="font-size:13px;color:var(--ink-soft);margin-bottom:16px">All proxies failed. You can paste your CSV data directly as a workaround:</div>
-        <textarea id="csvPaste" placeholder="Open your Google Sheet → File → Download → CSV → open in Notepad → paste everything here" style="width:100%;height:140px;padding:10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:monospace;resize:vertical;outline:none;margin-bottom:10px"></textarea>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button onclick="loadFromPaste()" style="padding:9px 18px;background:var(--orange);color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit;font-weight:600">Load Pasted Data</button>
-          <button onclick="loadData()" style="padding:9px 18px;background:var(--navy);color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit">↻ Retry</button>
-          <button onclick="loadOffline()" style="padding:9px 18px;background:none;border:1px solid var(--border);color:var(--ink-soft);border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit">Continue Offline</button>
-        </div>
-        <div style="margin-top:14px;font-size:11px;color:var(--ink-muted)">Tip: Open browser console (F12) to see which proxy failed and why.</div>
-      </div>`;
-    return;
-  }
-  finishLoad();
-}
-function loadFromPaste(){
-  const text=document.getElementById('csvPaste')?.value?.trim();
-  if(!text){alert('Please paste CSV data first');return;}
-  if(!text.includes('Company Name')){alert('This doesn\'t look like the right CSV — make sure you copied from the Landscape tab');return;}
-  const p=parseCSV(text);
-  if(!p.length){alert('Could not parse any companies from the pasted data');return;}
-  sheetData=p;
-  finishLoad();
-}
-function loadOffline(){sheetData=[];finishLoad();}
-function finishLoad(){
-  const msg=document.getElementById('loadingMsg');
-  msg.style.display='none';
-  allData=mergeData();
-  populateCmpSelects();applyView();showSection(curSection,true);
-  document.getElementById('lastUpd').textContent=sheetData.length?'Updated '+new Date().toLocaleTimeString():'Offline mode';
-}
+// --- STATE ---
+const SCORE_COLS = ['Market Traction','Product Differentiation','Capital Efficiency','Clinical Validation','AI Actionability','Regulatory Complexity','Personalization Depth','Data Moat','Scalability'];
+let allData=[], filteredData=[], curView='targets', curSection='dashboard', sortCol='', sortDir=1, curPrompt='newsletter', curVis='valuechain', cmpPrompt='compare', numCmpSlots=3;
+let charts={}, visCharts={};
 
-function mergeData(){
-  const processed=sheetData
-    .filter(r=>!hidden.includes(r['Company Name']))
-    .map(r=>overrides[r['Company Name']]?{...r,...overrides[r['Company Name']]}:r);
-  const names=processed.map(r=>r['Company Name'].toLowerCase());
-  const locals=localData.filter(r=>!names.includes(r['Company Name'].toLowerCase()));
-  return[...processed,...locals];
-}
+// Expose globals needed by inline onclick handlers
+window.setView = setView; window.showSection = showSection; window.openAddModal = openAddModal;
+window.closeAddModal = closeAddModal; window.saveCompany = saveCompany; window.openSettings = openSettings;
+window.closeSettings = closeSettings; window.saveSettings = saveSettings; window.applyFilters = applyFilters;
+window.srt = srt; window.openPanel = openPanel; window.closePanel = closePanel;
+window.editCompany = editCompany; window.deleteCompany = deleteCompany;
+window.addLink = addLink; window.delLink = delLink; window.saveNotes = saveNotes;
+window.renderCompare = renderCompare; window.addCmpSlot = addCmpSlot;
+window.selPrompt = selPrompt; window.selCmpPrompt = selCmpPrompt;
+window.generateAI = generateAI; window.generateCmpAI = generateCmpAI;
+window.copyAI = copyAI; window.copyCmpAI = copyCmpAI;
+window.saveKey = saveKey; window.updateKeyLabel = updateKeyLabel;
+window.setVis = setVis; window.exportCSV = exportCSV; window.importFromSheet = importFromSheet;
+window.dlVis = dlVis; window.dlChart = dlChart; window.updateMatrix = updateMatrix;
 
-function parseCSV(txt){
-  const lines=txt.trim().split('\n');
-  const hdrs=splitLine(lines[0]);
-  return lines.slice(1).map(l=>{
-    const v=splitLine(l),obj={};
-    hdrs.forEach((h,i)=>obj[h.trim()]=(v[i]||'').trim());
-    return obj;
-  }).filter(r=>r['Company Name']);
+// --- FIREBASE LISTENER ---
+onSnapshot(collection(db, COL), (snap) => {
+  allData = snap.docs.map(d => ({...d.data(), _id: d.id}));
+  document.getElementById('loadingMsg').style.display = 'none';
+  document.getElementById('syncDot').className = 'sync-dot live';
+  document.getElementById('lastUpd').textContent = 'Live · ' + new Date().toLocaleTimeString();
+  applyView();
+  if(curSection) showSection(curSection, true);
+  populateCmpSelects();
+}, (err) => {
+  document.getElementById('loadingMsg').textContent = '⚠️ Firebase connection failed. Check Firestore rules — set to test mode.';
+  console.error(err);
+});
+
+// --- INIT ---
+function init() {
+  const k = localStorage.getItem('tmg_claudeKey'); if(k) { document.getElementById('apiKeyInput').value=k; document.getElementById('s_claudeKey').value=k; }
+  const w = localStorage.getItem('tmg_workspaceId'); if(w) document.getElementById('s_workspaceId').value=w;
+  const g = localStorage.getItem('tmg_geminiKey'); if(g) document.getElementById('s_geminiKey').value=g;
+  const p = localStorage.getItem('tmg_provider')||'claude'; document.getElementById('aiProvider').value=p; document.getElementById('s_provider').value=p;
+  updateKeyLabel();
 }
-function splitLine(line){
-  const v=[];let cur='',inQ=false;
-  for(let i=0;i<line.length;i++){
-    if(line[i]==='"')inQ=!inQ;
-    else if(line[i]===','&&!inQ){v.push(cur);cur='';}
-    else cur+=line[i];
-  }
-  v.push(cur);return v;
-}
+init();
 
 // --- VIEW ---
-function setView(v,btn){
+function setView(v, btn) {
   curView=v;
-  // toggle all vt-btns in same parent
-  if(btn){
-    const siblings=btn.closest('.view-toggle').querySelectorAll('.vt-btn');
-    siblings.forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  }
+  if(btn) { btn.closest('.view-toggle').querySelectorAll('.vt-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
   applyView();
 }
-function applyView(){
-  const base=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
-  filteredData=base;
-  renderStats(base);renderCharts(base);applyFilters();
+function applyView() {
+  const base = curView==='targets' ? allData.filter(r=>r['Company Type']==='Startup') : allData;
+  filteredData = base;
+  renderStats(base); renderCharts(base); applyFilters();
+  if(curSection==='visuals') renderVis();
 }
-function showSection(id,skipNav){
+function showSection(id, skipNav) {
   curSection=id;
   document.querySelectorAll('.section-wrap').forEach(s=>s.classList.remove('active'));
-  const sec=document.getElementById('sec-'+id);
-  if(sec)sec.classList.add('active');
+  document.getElementById('sec-'+id)?.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
   const map={dashboard:0,companies:1,compare:2,visuals:3};
   document.querySelectorAll('.nav-btn')[map[id]]?.classList.add('active');
-  if(id==='compare')renderCompare();
-  if(id==='visuals')renderVis();
+  if(id==='visuals') renderVis();
+  if(id==='compare') renderCompare();
 }
 
 // --- STATS ---
-function renderStats(data){
+function renderStats(data) {
   const s=data.filter(r=>r['Company Type']==='Startup').length;
   const p=data.filter(r=>r['TMG Interest Level']==='Priority').length;
   const areas=[...new Set(data.map(r=>r['TMG Focus Area']).filter(Boolean))].length;
@@ -616,34 +561,36 @@ function renderStats(data){
 }
 
 // --- CHARTS ---
-function cnt(data,key){return data.reduce((a,r)=>{const v=r[key]||'Unknown';a[v]=(a[v]||0)+1;return a;},{});}
-function renderCharts(data){
-  Object.values(charts).forEach(c=>c.destroy());charts={};
-  const ORG='#e07535',NAV='#162535',GRN='#2a7f5f',RSE='#b85050';
+function cnt(data,key){ return data.reduce((a,r)=>{const v=r[key]||'Unknown';a[v]=(a[v]||0)+1;return a;},{}); }
+function renderCharts(data) {
+  Object.values(charts).forEach(c=>c.destroy()); charts={};
+  const ORG='#e07535',NAV='#162535',GRN='#2a7f5f';
   const fc=cnt(data,'TMG Focus Area');
-  charts.cFocus=new Chart(document.getElementById('cFocus'),{type:'bar',data:{labels:Object.keys(fc),datasets:[{data:Object.values(fc),backgroundColor:[ORG,NAV,GRN],borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#eef2f6'},ticks:{stepSize:1}}}}});
-  const stgOrder=['Pre-seed','Seed','Series A','Series B','Series D','Public'];
+  charts.cFocus=new Chart(document.getElementById('cFocus'),{type:'bar',data:{labels:Object.keys(fc),datasets:[{data:Object.values(fc),backgroundColor:[ORG,NAV,GRN],borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#eef2f6'},ticks:{stepSize:1}}}}});
+  const stgOrder=['Pre-seed','Seed','Series A','Series B','Public'];
   const sc=cnt(data,'Stage');const sl=stgOrder.filter(s=>sc[s]);
-  charts.cStage=new Chart(document.getElementById('cStage'),{type:'bar',data:{labels:sl,datasets:[{data:sl.map(s=>sc[s]||0),backgroundColor:NAV,borderRadius:6,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#eef2f6'},ticks:{stepSize:1}}}}});
+  charts.cStage=new Chart(document.getElementById('cStage'),{type:'bar',data:{labels:sl,datasets:[{data:sl.map(s=>sc[s]||0),backgroundColor:NAV,borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#eef2f6'},ticks:{stepSize:1}}}}});
   const hc=cnt(data,'Healthspan Target');
-  charts.cHealth=new Chart(document.getElementById('cHealth'),{type:'bar',data:{labels:Object.keys(hc),datasets:[{data:Object.values(hc),backgroundColor:GRN,borderRadius:6,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#eef2f6'},ticks:{stepSize:1}},y:{grid:{display:false},ticks:{font:{size:11}}}}}});
-  const cmap={'Precision Nutrition':ORG+'cc','Intelligent Health':NAV+'cc','Food & Medicine':GRN+'cc'};
-  const pts=data.filter(r=>r['Market Traction (1-5)']&&r['Product Differentiation (1-5)']);
+  charts.cHealth=new Chart(document.getElementById('cHealth'),{type:'bar',data:{labels:Object.keys(hc),datasets:[{data:Object.values(hc),backgroundColor:GRN,borderRadius:5,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#eef2f6'},ticks:{stepSize:1}},y:{grid:{display:false},ticks:{font:{size:10}}}}}});
+  const cmap={'Precision Nutrition':ORG+'bb','Intelligent Health':NAV+'bb','Food & Medicine':GRN+'bb'};
   const grp={};
-  pts.forEach(r=>{const a=r['TMG Focus Area']||'Other';if(!grp[a])grp[a]=[];grp[a].push({x:+r['Market Traction (1-5)'],y:+r['Product Differentiation (1-5)'],label:r['Company Name']});});
-  charts.cScatter=new Chart(document.getElementById('cScatter'),{type:'scatter',data:{datasets:Object.entries(grp).map(([a,p])=>({label:a,data:p,backgroundColor:cmap[a]||'#888',pointRadius:7,pointHoverRadius:9}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:10}},tooltip:{callbacks:{label:c=>`${c.raw.label} (${c.raw.x}, ${c.raw.y})`}}},scales:{x:{min:0,max:6,title:{display:true,text:'Market Traction',font:{size:11}},grid:{color:'#eef2f6'}},y:{min:0,max:6,title:{display:true,text:'Product Diff.',font:{size:11}},grid:{color:'#eef2f6'}}}}});
+  data.filter(r=>r['Market Traction']&&r['Product Differentiation']).forEach(r=>{
+    const a=r['TMG Focus Area']||'Other'; if(!grp[a])grp[a]=[]; grp[a].push({x:+r['Market Traction'],y:+r['Product Differentiation'],label:r['Company Name']});
+  });
+  charts.cScatter=new Chart(document.getElementById('cScatter'),{type:'scatter',data:{datasets:Object.entries(grp).map(([a,p])=>({label:a,data:p,backgroundColor:cmap[a]||'#888bb',pointRadius:7,pointHoverRadius:9}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:8}},tooltip:{callbacks:{label:c=>`${c.raw.label} (${c.raw.x},${c.raw.y})`}}},scales:{x:{min:0,max:6,title:{display:true,text:'Market Traction',font:{size:10}},grid:{color:'#eef2f6'}},y:{min:0,max:6,title:{display:true,text:'Product Diff.',font:{size:10}},grid:{color:'#eef2f6'}}}}});
 }
+function dlChart(id) { const c=charts[id];if(!c)return;const a=document.createElement('a');a.download=id+'_TMG.png';a.href=c.toBase64Image('image/png',1);a.click(); }
 
 // --- FILTERS & TABLE ---
-function applyFilters(){
+function applyFilters() {
   const q=(document.getElementById('srch')||{value:''}).value.toLowerCase();
   const ff=(document.getElementById('fFocus')||{value:''}).value;
   const fs=(document.getElementById('fStage')||{value:''}).value;
   const fi=(document.getElementById('fInterest')||{value:''}).value;
   const ft=(document.getElementById('fType')||{value:''}).value;
   const fh=(document.getElementById('fHealth')||{value:''}).value;
-  const base=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
-  filteredData=base.filter(r=>{
+  const base = curView==='targets' ? allData.filter(r=>r['Company Type']==='Startup') : allData;
+  filteredData = base.filter(r=>{
     if(q&&!Object.values(r).join(' ').toLowerCase().includes(q))return false;
     if(ff&&r['TMG Focus Area']!==ff)return false;
     if(fs&&r['Stage']!==fs)return false;
@@ -652,49 +599,43 @@ function applyFilters(){
     if(fh&&r['Healthspan Target']!==fh)return false;
     return true;
   });
-  const fc=document.getElementById('fCount');
-  if(fc)fc.textContent=filteredData.length+' companies';
+  const fc=document.getElementById('fCount'); if(fc)fc.textContent=filteredData.length+' companies';
   renderTable();
 }
-function srt(col){if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}filteredData.sort((a,b)=>(a[col]||'').localeCompare(b[col]||'',undefined,{numeric:true})*sortDir);renderTable();}
+function srt(col) { if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;} filteredData.sort((a,b)=>(a[col]||'').toString().localeCompare((b[col]||'').toString(),undefined,{numeric:true})*sortDir); renderTable(); }
 function fBadge(a){return a==='Precision Nutrition'?'b-pn':a==='Intelligent Health'?'b-ih':'b-fm';}
 function tBadge(t){return t==='Startup'?'b-startup':t==='Incumbent'?'b-incumbent':'b-acquirer';}
 function iBadge(l){return l==='Priority'?'b-priority':l==='Interested'?'b-interested':'b-watch';}
 function sbar(v){const n=parseFloat(v)||0,p=(n/5)*100;return `<div class="sbar"><div class="strack"><div class="sfill" style="width:${p}%"></div></div><span class="snum">${v||'—'}</span></div>`;}
-function isLocal(r){return localData.some(l=>l['Company Name']===r['Company Name']);}
-function isOverride(r){return !!overrides[r['Company Name']];}
-
-function renderTable(){
-  const tb=document.getElementById('tBody');if(!tb)return;
-  if(!filteredData.length){tb.innerHTML='<tr><td colspan="12" style="text-align:center;padding:40px;color:var(--ink-muted)">No companies match filters</td></tr>';return;}
+function renderTable() {
+  const tb=document.getElementById('tBody'); if(!tb)return;
+  if(!filteredData.length){tb.innerHTML='<tr><td colspan="13" style="text-align:center;padding:30px;color:var(--ink-muted)">No companies match filters</td></tr>';return;}
   tb.innerHTML=filteredData.map(r=>`
-    <tr onclick="openPanel('${r['Company Name'].replace(/'/g,"\\'")}')">
-      <td><div class="co-name">${r['Company Name']}${isLocal(r)?'<span class="local-tag">NEW</span>':''}</div><div class="co-sub">${r['One-liner']||''}</div></td>
+    <tr onclick="openPanel('${(r['Company Name']||'').replace(/'/g,"\\'")}')">
+      <td><div class="co-name">${r['Company Name']||''}${r._id&&r._source==='firebase'?'<span class="firebase-tag">FB</span>':''}</div><div class="co-sub">${r['One-liner']||''}</div></td>
       <td><span class="badge ${fBadge(r['TMG Focus Area'])}">${r['TMG Focus Area']||'—'}</span></td>
-      <td style="font-size:12px;color:var(--ink-soft)">${r['Sub-category']||'—'}</td>
-      <td style="font-size:12px">${r['Ecosystem Position']||'—'}</td>
-      <td style="font-size:12px">${r['Business Model']||'—'}</td>
-      <td style="font-size:12px">${r['Stage']||'—'}</td>
-      <td style="font-size:12px">${r['Funding Raised (USD)']||'—'}</td>
-      <td style="font-size:12px">${r['Geography']||'—'}</td>
+      <td style="font-size:11px;color:var(--ink-soft)">${r['Sub-category']||'—'}</td>
+      <td style="font-size:11px">${r['Ecosystem Position']||'—'}</td>
+      <td style="font-size:11px">${r['Business Model']||'—'}</td>
+      <td style="font-size:11px">${r['Stage']||'—'}</td>
+      <td style="font-size:11px">${r['Funding Raised']||'—'}</td>
+      <td style="font-size:11px">${r['Geography']||'—'}</td>
       <td><span class="badge ${tBadge(r['Company Type'])}">${r['Company Type']||'—'}</span></td>
-      <td>${sbar(r['Market Traction (1-5)'])}</td>
-      <td>${sbar(r['Product Differentiation (1-5)'])}</td>
+      <td>${sbar(r['Market Traction'])}</td>
+      <td>${sbar(r['Product Differentiation'])}</td>
+      <td>${sbar(r['Data Moat'])}</td>
       <td><span class="badge ${iBadge(r['TMG Interest Level'])}">${r['TMG Interest Level']||'—'}</span></td>
     </tr>`).join('');
 }
 
 // --- DETAIL PANEL ---
-let curPanelName='';
-function openPanel(name){
-  const r=allData.find(c=>c['Company Name']===name);if(!r)return;
-  curPanelName=name;
+function openPanel(name) {
+  const r=allData.find(c=>c['Company Name']===name); if(!r)return;
   const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');
-  const compNotes=notes[name]||{text:'',links:[]};
-  const linksHtml=compNotes.links.length?`<ul class="links-list">${compNotes.links.map((l,i)=>`<li><a href="${l.url}" target="_blank">${l.label||l.url}</a><button class="link-del" onclick="delLink('${name}',${i})">✕</button></li>`).join('')}</ul>`:'<p style="font-size:12px;color:var(--ink-muted);margin-bottom:8px">No links added yet.</p>';
-  const field=(label,val,full)=>val?`<div class="dp-field${full?' full':''}"><label>${label}</label><span>${val}</span></div>`:'';
-  const score=(label,val)=>`<div class="dp-score-item"><div class="dp-score-val">${val||'—'}</div><div class="dp-score-lbl">${label}</div></div>`;
-
+  const cn=notes[name]||{text:'',links:[]};
+  const linksHtml=cn.links.length?`<ul class="links-list">${cn.links.map((l,i)=>`<li><a href="${l.url}" target="_blank">${l.label||l.url}</a><button class="link-del" onclick="delLink('${name}',${i})">✕</button></li>`).join('')}</ul>`:'<p style="font-size:11px;color:var(--ink-muted);margin-bottom:7px">No links yet.</p>';
+  const fld=(label,val,full)=>val?`<div class="dp-field${full?' full':''}"><label>${label}</label><span>${val}</span></div>`:'';
+  const sc=(label,val)=>`<div class="dp-score-item"><div class="dp-score-val">${val||'—'}</div><div class="dp-score-lbl">${label}</div></div>`;
   document.getElementById('dpContent').innerHTML=`
     <div class="dp-header">
       <button class="dp-close" onclick="closePanel()">✕</button>
@@ -713,45 +654,47 @@ function openPanel(name){
     <div class="dp-body">
       <div class="dp-section">
         <div class="dp-section-title">Overview</div>
-        ${field('One-liner',r['One-liner'],true)}
+        ${fld('One-liner',r['One-liner'],true)}
         <div class="dp-grid">
-          ${field('Sub-category',r['Sub-category'])}
-          ${field('Healthspan Target',r['Healthspan Target'])}
-          ${field('Geography',r['Geography'])}
-          ${field('Stage',r['Stage'])}
+          ${fld('Sub-category',r['Sub-category'])}${fld('Healthspan Target',r['Healthspan Target'])}
+          ${fld('Geography',r['Geography'])}${fld('Stage',r['Stage'])}
         </div>
       </div>
       <div class="dp-section">
         <div class="dp-section-title">Financials & Business</div>
         <div class="dp-grid">
-          ${field('Funding Raised',r['Funding Raised (USD)'])}
-          ${field('Business Model',r['Business Model'])}
-          ${field('Pricing Model',r['Pricing Model']||'Not specified')}
-          ${field('Key Investors',r['Key Investors'])}
+          ${fld('Funding Raised',r['Funding Raised'])}${fld('Business Model',r['Business Model'])}
+          ${fld('Pricing Model',r['Pricing Model']||'Not specified')}${fld('Key Investors',r['Key Investors'])}
         </div>
       </div>
       <div class="dp-section">
         <div class="dp-section-title">Technology & Moat</div>
         <div class="dp-grid">
-          ${field('Ecosystem Position',r['Ecosystem Position'])}
-          ${field('Key Technology',r['Key Technology'],true)}
-          ${field('Core Moat',r['Core Moat']||'Not yet assessed',true)}
+          ${fld('Ecosystem Position',r['Ecosystem Position'])}${fld('Key Technology',r['Key Technology'],true)}
+          ${fld('Core Moat',r['Core Moat']||'Not assessed',true)}
         </div>
       </div>
       <div class="dp-section">
         <div class="dp-section-title">Market & Competition</div>
         <div class="dp-grid">
-          ${field('Target Customer',r['Target Customer']||'Not yet assessed',true)}
-          ${field('Key Competitors',r['Key Competitors']||'Not yet assessed',true)}
-          ${field('Execution Risk',r['Execution Risk']||'Not yet assessed',true)}
+          ${fld('Target Customer',r['Target Customer']||'Not assessed',true)}
+          ${fld('Key Competitors',r['Key Competitors']||'Not assessed',true)}
+          ${fld('Execution Risk',r['Execution Risk']||'Not assessed',true)}
         </div>
       </div>
       <div class="dp-section">
-        <div class="dp-section-title">TMG Scores</div>
+        <div class="dp-section-title">Original Scores</div>
         <div class="dp-scores">
-          ${score('Market Traction',r['Market Traction (1-5)'])}
-          ${score('Product Diff.',r['Product Differentiation (1-5)'])}
-          ${score('Capital Efficiency',r['Capital Efficiency (1-5)'])}
+          ${sc('Market Traction',r['Market Traction'])}${sc('Product Diff.',r['Product Differentiation'])}${sc('Capital Efficiency',r['Capital Efficiency'])}
+        </div>
+      </div>
+      <div class="dp-section">
+        <div class="dp-section-title">Extended Scores</div>
+        <div class="dp-scores">
+          ${sc('Clinical Valid.',r['Clinical Validation'])}${sc('AI Actionability',r['AI Actionability'])}${sc('Regulatory Cplx.',r['Regulatory Complexity'])}
+        </div>
+        <div class="dp-scores" style="margin-top:8px">
+          ${sc('Personalization',r['Personalization Depth'])}${sc('Data Moat',r['Data Moat'])}${sc('Scalability',r['Scalability'])}
         </div>
       </div>
       <div class="dp-section">
@@ -760,9 +703,9 @@ function openPanel(name){
         <div class="link-add-row">
           <input id="newLinkLabel" type="text" placeholder="Label (e.g. Pitch Deck)">
           <input id="newLinkUrl" type="text" placeholder="https://…">
-          <button class="btn-add-link" onclick="addLink('${name}')">+ Add Link</button>
+          <button class="btn-add-link" onclick="addLink('${name}')">+ Add</button>
         </div>
-        <textarea class="notes-area" id="notesArea" placeholder="Add notes, observations, meeting notes…">${compNotes.text}</textarea>
+        <textarea class="notes-area" id="notesArea" placeholder="Meeting notes, observations…" style="margin-top:9px">${cn.text}</textarea>
         <button class="save-notes-btn" onclick="saveNotes('${name}')">Save Notes</button>
       </div>
     </div>`;
@@ -770,90 +713,15 @@ function openPanel(name){
   document.getElementById('detailPanel').classList.add('open');
 }
 function closePanel(){document.getElementById('overlay').classList.remove('open');document.getElementById('detailPanel').classList.remove('open');}
+function addLink(name){const label=document.getElementById('newLinkLabel').value.trim();const url=document.getElementById('newLinkUrl').value.trim();if(!url)return;const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');if(!notes[name])notes[name]={text:'',links:[]};notes[name].links.push({label:label||url,url});localStorage.setItem('tmg_notes',JSON.stringify(notes));openPanel(name);}
+function delLink(name,idx){const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');if(notes[name])notes[name].links.splice(idx,1);localStorage.setItem('tmg_notes',JSON.stringify(notes));openPanel(name);}
+function saveNotes(name){const text=document.getElementById('notesArea').value;const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');if(!notes[name])notes[name]={text:'',links:[]};notes[name].text=text;localStorage.setItem('tmg_notes',JSON.stringify(notes));const btn=event.target;btn.textContent='Saved ✓';setTimeout(()=>btn.textContent='Save Notes',1500);}
 
-function addLink(name){
-  const label=document.getElementById('newLinkLabel').value.trim();
-  const url=document.getElementById('newLinkUrl').value.trim();
-  if(!url)return;
-  const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');
-  if(!notes[name])notes[name]={text:'',links:[]};
-  notes[name].links.push({label:label||url,url});
-  localStorage.setItem('tmg_notes',JSON.stringify(notes));
-  openPanel(name);
-}
-function delLink(name,idx){
-  const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');
-  if(notes[name])notes[name].links.splice(idx,1);
-  localStorage.setItem('tmg_notes',JSON.stringify(notes));
-  openPanel(name);
-}
-function saveNotes(name){
-  const text=document.getElementById('notesArea').value;
-  const notes=JSON.parse(localStorage.getItem('tmg_notes')||'{}');
-  if(!notes[name])notes[name]={text:'',links:[]};
-  notes[name].text=text;
-  localStorage.setItem('tmg_notes',JSON.stringify(notes));
-  const btn=event.target;btn.textContent='Saved ✓';setTimeout(()=>btn.textContent='Save Notes',1500);
-}
-
-// --- EDIT / DELETE ---
-function editCompany(name){
-  const r=allData.find(c=>c['Company Name']===name);if(!r)return;
-  document.getElementById('modalTitle').textContent='Edit Company';
-  document.getElementById('f_editName').value=name;
-  document.getElementById('f_name').value=r['Company Name']||'';
-  document.getElementById('f_oneliner').value=r['One-liner']||'';
-  document.getElementById('f_focus').value=r['TMG Focus Area']||'';
-  document.getElementById('f_sub').value=r['Sub-category']||'';
-  document.getElementById('f_health').value=r['Healthspan Target']||'';
-  document.getElementById('f_eco').value=r['Ecosystem Position']||'';
-  document.getElementById('f_biz').value=r['Business Model']||'';
-  document.getElementById('f_type').value=r['Company Type']||'';
-  document.getElementById('f_geo').value=r['Geography']||'';
-  document.getElementById('f_stage').value=r['Stage']||'';
-  document.getElementById('f_funding').value=r['Funding Raised (USD)']||'';
-  document.getElementById('f_investors').value=r['Key Investors']||'';
-  document.getElementById('f_tech').value=r['Key Technology']||'';
-  document.getElementById('f_pricing').value=r['Pricing Model']||'';
-  document.getElementById('f_customer').value=r['Target Customer']||'';
-  document.getElementById('f_moat').value=r['Core Moat']||'';
-  document.getElementById('f_competitors').value=r['Key Competitors']||'';
-  document.getElementById('f_risk').value=r['Execution Risk']||'';
-  document.getElementById('f_website').value=r['Website']||'';
-  document.getElementById('f_traction').value=r['Market Traction (1-5)']||'';
-  document.getElementById('f_diff').value=r['Product Differentiation (1-5)']||'';
-  document.getElementById('f_capeff').value=r['Capital Efficiency (1-5)']||'';
-  document.getElementById('f_interest').value=r['TMG Interest Level']||'';
-  closePanel();
-  document.getElementById('addModal').classList.add('open');
-}
-
-function deleteCompany(name){
-  if(!confirm(`Delete "${name}" from the platform?\n\nNote: This only removes it from the local view. To permanently remove, also delete from your Google Sheet.`))return;
-  if(isLocal({['Company Name']:name})){
-    localData=localData.filter(r=>r['Company Name']!==name);
-    localStorage.setItem('tmg_local',JSON.stringify(localData));
-  } else {
-    hidden.push(name);
-    localStorage.setItem('tmg_hidden',JSON.stringify(hidden));
-  }
-  allData=mergeData();populateCmpSelects();applyView();closePanel();
-}
-
-// --- ADD/SAVE COMPANY ---
-function openAddModal(){
-  document.getElementById('modalTitle').textContent='Add New Company';
-  document.getElementById('f_editName').value='';
-  ['f_name','f_oneliner','f_sub','f_geo','f_funding','f_investors','f_tech','f_pricing','f_customer','f_moat','f_competitors','f_risk','f_website'].forEach(id=>document.getElementById(id).value='');
-  ['f_focus','f_health','f_eco','f_biz','f_type','f_stage','f_traction','f_diff','f_capeff','f_interest'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('addModal').classList.add('open');
-}
-function closeAddModal(){document.getElementById('addModal').classList.remove('open');}
-
-function saveCompany(){
+// --- FIREBASE CRUD ---
+async function saveCompany() {
   const name=document.getElementById('f_name').value.trim();
   if(!name){alert('Company name is required');return;}
-  const editName=document.getElementById('f_editName').value;
+  const docId=document.getElementById('f_docId').value;
   const today=new Date().toLocaleDateString('en-GB').replace(/\//g,'.');
   const row={
     'Company Name':name,'One-liner':document.getElementById('f_oneliner').value.trim(),
@@ -861,138 +729,254 @@ function saveCompany(){
     'Healthspan Target':document.getElementById('f_health').value,'Ecosystem Position':document.getElementById('f_eco').value,
     'Business Model':document.getElementById('f_biz').value,'Company Type':document.getElementById('f_type').value,
     'Geography':document.getElementById('f_geo').value.trim(),'Stage':document.getElementById('f_stage').value,
-    'Funding Raised (USD)':document.getElementById('f_funding').value.trim(),'Key Investors':document.getElementById('f_investors').value.trim(),
+    'Funding Raised':document.getElementById('f_funding').value.trim(),'Key Investors':document.getElementById('f_investors').value.trim(),
     'Key Technology':document.getElementById('f_tech').value.trim(),'Pricing Model':document.getElementById('f_pricing').value.trim(),
     'Target Customer':document.getElementById('f_customer').value.trim(),'Core Moat':document.getElementById('f_moat').value.trim(),
     'Key Competitors':document.getElementById('f_competitors').value.trim(),'Execution Risk':document.getElementById('f_risk').value.trim(),
-    'Website':document.getElementById('f_website').value.trim(),'Market Traction (1-5)':document.getElementById('f_traction').value,
-    'Product Differentiation (1-5)':document.getElementById('f_diff').value,'Capital Efficiency (1-5)':document.getElementById('f_capeff').value,
-    'TMG Interest Level':document.getElementById('f_interest').value,'Last Updated':today
+    'Website':document.getElementById('f_website').value.trim(),
+    'Market Traction':document.getElementById('f_traction').value,'Product Differentiation':document.getElementById('f_diff').value,
+    'Capital Efficiency':document.getElementById('f_capeff').value,'Clinical Validation':document.getElementById('f_cv').value,
+    'AI Actionability':document.getElementById('f_ai').value,'Regulatory Complexity':document.getElementById('f_reg').value,
+    'Personalization Depth':document.getElementById('f_pers').value,'Data Moat':document.getElementById('f_dm').value,
+    'Scalability':document.getElementById('f_sc').value,'TMG Interest Level':document.getElementById('f_interest').value,
+    'Last Updated':today,'_source':'firebase'
   };
-  if(editName){
-    // editing existing
-    if(isLocal({['Company Name']:editName})){
-      const idx=localData.findIndex(r=>r['Company Name']===editName);
-      if(idx>-1)localData[idx]=row;
-      localStorage.setItem('tmg_local',JSON.stringify(localData));
-    } else {
-      overrides[editName]=row;
-      localStorage.setItem('tmg_overrides',JSON.stringify(overrides));
-    }
-  } else {
-    localData.push(row);
-    localStorage.setItem('tmg_local',JSON.stringify(localData));
-  }
-  allData=mergeData();populateCmpSelects();applyView();closeAddModal();
+  try {
+    if(docId) { await updateDoc(doc(db,COL,docId),row); }
+    else { await addDoc(collection(db,COL),row); }
+    closeAddModal();
+  } catch(e) { alert('Save failed: '+e.message); }
 }
+
+async function deleteCompany(name) {
+  const r=allData.find(c=>c['Company Name']===name); if(!r)return;
+  if(!confirm(`Delete "${name}" from the database? This cannot be undone.`))return;
+  try {
+    if(r._id) await deleteDoc(doc(db,COL,r._id));
+    closePanel();
+  } catch(e) { alert('Delete failed: '+e.message); }
+}
+
+function editCompany(name) {
+  const r=allData.find(c=>c['Company Name']===name); if(!r)return;
+  document.getElementById('modalTitle').textContent='Edit Company';
+  document.getElementById('f_docId').value=r._id||'';
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||''};
+  set('f_name',r['Company Name']);set('f_oneliner',r['One-liner']);set('f_focus',r['TMG Focus Area']);
+  set('f_sub',r['Sub-category']);set('f_health',r['Healthspan Target']);set('f_eco',r['Ecosystem Position']);
+  set('f_biz',r['Business Model']);set('f_type',r['Company Type']);set('f_geo',r['Geography']);
+  set('f_stage',r['Stage']);set('f_funding',r['Funding Raised']);set('f_investors',r['Key Investors']);
+  set('f_tech',r['Key Technology']);set('f_pricing',r['Pricing Model']);set('f_customer',r['Target Customer']);
+  set('f_moat',r['Core Moat']);set('f_competitors',r['Key Competitors']);set('f_risk',r['Execution Risk']);
+  set('f_website',r['Website']);set('f_traction',r['Market Traction']);set('f_diff',r['Product Differentiation']);
+  set('f_capeff',r['Capital Efficiency']);set('f_cv',r['Clinical Validation']);set('f_ai',r['AI Actionability']);
+  set('f_reg',r['Regulatory Complexity']);set('f_pers',r['Personalization Depth']);set('f_dm',r['Data Moat']);
+  set('f_sc',r['Scalability']);set('f_interest',r['TMG Interest Level']);
+  closePanel();
+  document.getElementById('addModal').classList.add('open');
+}
+
+function openAddModal() {
+  document.getElementById('modalTitle').textContent='Add Company';
+  document.getElementById('f_docId').value='';
+  ['f_name','f_oneliner','f_sub','f_geo','f_funding','f_investors','f_tech','f_pricing','f_customer','f_moat','f_competitors','f_risk','f_website'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['f_focus','f_health','f_eco','f_biz','f_type','f_stage','f_traction','f_diff','f_capeff','f_cv','f_ai','f_reg','f_pers','f_dm','f_sc','f_interest'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('addModal').classList.add('open');
+}
+function closeAddModal(){document.getElementById('addModal').classList.remove('open');}
+
+// --- SYNC FROM SHEET ---
+async function importFromSheet() {
+  const csvUrl=document.getElementById('s_csvUrl').value||localStorage.getItem('tmg_csvUrl')||'';
+  if(!csvUrl){alert('Set CSV URL in Settings first');return;}
+  const btn=event.target;btn.textContent='Syncing…';btn.disabled=true;
+  const proxies=[u=>u,u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`];
+  let rows=null;
+  for(const px of proxies){
+    try{
+      const r=await fetch(px(csvUrl+'&t='+Date.now()));if(!r.ok)continue;
+      const t=await r.text();if(!t.includes('Company Name'))continue;
+      rows=parseCSV(t);if(rows.length)break;
+    }catch(e){continue;}
+  }
+  if(!rows||!rows.length){btn.textContent='↑ Sync from Sheet';btn.disabled=false;alert('Could not fetch sheet data. Check CSV URL in Settings.');return;}
+  let count=0;
+  for(const row of rows){
+    const name=row['Company Name'];if(!name)continue;
+    const existing=allData.find(c=>c['Company Name']===name);
+    row['_source']='sheet';row['Last Updated']=row['Last Updated']||new Date().toLocaleDateString('en-GB').replace(/\//g,'.');
+    try{
+      if(existing&&existing._id){await updateDoc(doc(db,COL,existing._id),row);}
+      else{await addDoc(collection(db,COL),row);}
+      count++;
+    }catch(e){console.error('Error syncing',name,e);}
+  }
+  btn.textContent='↑ Sync from Sheet';btn.disabled=false;
+  alert(`Synced ${count} companies from sheet to Firebase. All teammates will see updates immediately.`);
+}
+
+function parseCSV(txt){
+  const lines=txt.trim().split('\n');
+  const hdrs=splitLine(lines[0]);
+  return lines.slice(1).map(l=>{const v=splitLine(l),obj={};hdrs.forEach((h,i)=>obj[h.trim()]=(v[i]||'').trim());return obj;}).filter(r=>r['Company Name']);
+}
+function splitLine(line){const v=[];let cur='',inQ=false;for(let i=0;i<line.length;i++){if(line[i]==='"')inQ=!inQ;else if(line[i]===','&&!inQ){v.push(cur);cur='';}else cur+=line[i];}v.push(cur);return v;}
 
 // --- EXPORT CSV ---
-function exportCSV(){var NL=String.fromCharCode(10);var hdr=COLS.join(',');var rows=allData.map(function(r){return COLS.map(function(c){var v=r[c]||'';return(v.indexOf(',')>-1||v.indexOf('"')>-1)?'"'+v.replace(/"/g,'""')+'"':v;}).join(',');});var csv=[hdr].concat(rows).join(NL);var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='TMG_Landscape_'+new Date().toISOString().slice(0,10)+'.csv';a.click();}
+function exportCSV(){
+  const cols=Object.keys(allData[0]||{}).filter(k=>!k.startsWith('_'));
+  const hdr=cols.join(',');
+  const rows=allData.map(r=>cols.map(c=>{const v=r[c]||'';const q='"';return(v.toString().indexOf(',')>-1||v.toString().indexOf(q)>-1)?(q+v.toString().replace(/"/g,q+q)+q):v;}).join(','));
+  const NL=String.fromCharCode(10);const csv=[hdr].concat(rows).join(NL);
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='TMG_Landscape_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
 
 // --- COMPARE ---
-function populateCmpSelects(){
+function populateCmpSelects() {
   const opts=allData.map(r=>`<option value="${r['Company Name']}">${r['Company Name']}</option>`).join('');
-  ['cmp1','cmp2','cmp3'].forEach(id=>{
-    const el=document.getElementById(id);if(!el)return;
-    const cur=el.value;
-    el.innerHTML=`<option value="">Select Company…</option>${opts}`;
-    if(cur)el.value=cur;
-  });
+  for(let i=0;i<numCmpSlots;i++){const el=document.getElementById('cmp_'+i);if(!el)continue;const cur=el.value;el.innerHTML=`<option value="">Select…</option>${opts}`;if(cur)el.value=cur;}
+  renderCompare();
+}
+function addCmpSlot(){
+  if(numCmpSlots>=10){alert('Maximum 10 companies');return;}
+  const cont=document.getElementById('cmpSelectors');
+  const sel=document.createElement('select');sel.className='cmp-select';sel.id='cmp_'+numCmpSlots;sel.onchange=renderCompare;
+  sel.innerHTML=`<option value="">Select…</option>`+allData.map(r=>`<option value="${r['Company Name']}">${r['Company Name']}</option>`).join('');
+  const rmBtn=document.createElement('button');rmBtn.className='cmp-remove-btn';rmBtn.textContent='✕';
+  const slot=numCmpSlots;rmBtn.onclick=()=>{sel.remove();rmBtn.remove();renderCompare();};
+  cont.insertBefore(sel,cont.lastElementChild);cont.insertBefore(rmBtn,cont.lastElementChild);
+  numCmpSlots++;
 }
 function renderCompare(){
-  const ids=['cmp1','cmp2','cmp3'].map(id=>document.getElementById(id)?.value).filter(Boolean);
-  const companies=ids.map(n=>allData.find(r=>r['Company Name']===n)).filter(Boolean);
+  const ids=[];for(let i=0;i<numCmpSlots;i++){const el=document.getElementById('cmp_'+i);if(el&&el.value)ids.push(el.value);}
+  // also check dynamic selects
+  document.querySelectorAll('#cmpSelectors .cmp-select').forEach(el=>{if(el.value&&!ids.includes(el.value))ids.push(el.value);});
+  const companies=[...new Set(ids)].map(n=>allData.find(r=>r['Company Name']===n)).filter(Boolean);
   const out=document.getElementById('cmpOutput');if(!out)return;
-  if(!companies.length){out.innerHTML='<div class="cmp-empty">Select companies above to compare them</div>';return;}
+  if(!companies.length){out.innerHTML='<div class="cmp-empty">Select companies above to compare</div>';document.getElementById('cmpAiSection').style.display='none';return;}
   const rows=[
     ['Focus Area','TMG Focus Area'],['Sub-category','Sub-category'],['Healthspan Target','Healthspan Target'],
     ['Ecosystem Position','Ecosystem Position'],['Business Model','Business Model'],['Company Type','Company Type'],
-    ['Geography','Geography'],['Stage','Stage'],['Funding Raised','Funding Raised (USD)'],
-    ['Key Investors','Key Investors'],['Key Technology','Key Technology'],['Pricing Model','Pricing Model'],
-    ['Target Customer','Target Customer'],['Core Moat','Core Moat'],['Key Competitors','Key Competitors'],
-    ['Execution Risk','Execution Risk'],['Market Traction','Market Traction (1-5)'],
-    ['Product Differentiation','Product Differentiation (1-5)'],['Capital Efficiency','Capital Efficiency (1-5)'],
+    ['Geography','Geography'],['Stage','Stage'],['Funding Raised','Funding Raised'],
+    ['Key Investors','Key Investors'],['Pricing Model','Pricing Model'],['Target Customer','Target Customer'],
+    ['Key Technology','Key Technology'],['Core Moat','Core Moat'],['Key Competitors','Key Competitors'],['Execution Risk','Execution Risk'],
+    ['Market Traction','Market Traction'],['Product Diff.','Product Differentiation'],['Capital Efficiency','Capital Efficiency'],
+    ['Clinical Validation','Clinical Validation'],['AI Actionability','AI Actionability'],['Regulatory Complexity','Regulatory Complexity'],
+    ['Personalization Depth','Personalization Depth'],['Data Moat','Data Moat'],['Scalability','Scalability'],
     ['TMG Interest','TMG Interest Level']
   ];
-  const scoreFields=['Market Traction (1-5)','Product Differentiation (1-5)','Capital Efficiency (1-5)'];
+  const scoreKeys=['Market Traction','Product Differentiation','Capital Efficiency','Clinical Validation','AI Actionability','Regulatory Complexity','Personalization Depth','Data Moat','Scalability'];
   out.innerHTML=`<div class="cmp-table-wrap"><table class="cmp-table">
-    <thead><tr><th style="width:180px">Attribute</th>${companies.map(c=>`<th class="co-th">${c['Company Name']}</th>`).join('')}</tr></thead>
+    <thead><tr><th style="width:160px">Attribute</th>${companies.map(c=>`<th class="co-th">${c['Company Name']}</th>`).join('')}</tr></thead>
     <tbody>${rows.map(([label,key])=>{
       const vals=companies.map(c=>c[key]||'—');
-      const isScore=scoreFields.includes(key);
+      const isScore=scoreKeys.includes(key);
       const nums=vals.map(v=>parseFloat(v)||0);
       const max=isScore?Math.max(...nums):null;const min=isScore?Math.min(...nums):null;
       return`<tr><td class="attr">${label}</td>${vals.map((v,i)=>{
-        let cls='';
-        if(isScore&&nums[i]===max&&max>0&&companies.length>1)cls='cmp-best';
-        if(isScore&&nums[i]===min&&min>0&&max!==min)cls='cmp-worst';
+        let cls='';if(isScore&&companies.length>1){if(nums[i]===max&&max>0)cls='cmp-best';else if(nums[i]===min&&min>0&&max!==min)cls='cmp-worst';}
         return`<td class="val ${cls}">${v}</td>`;
       }).join('')}</tr>`;
     }).join('')}</tbody></table></div>`;
+  document.getElementById('cmpAiSection').style.display='block';
+  window._cmpCompanies=companies;
 }
+function selCmpPrompt(btn,type){document.querySelectorAll('#cmpAiSection .ai-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');cmpPrompt=type;}
+async function generateCmpAI(){
+  const companies=window._cmpCompanies||[];if(!companies.length){alert('Select companies first');return;}
+  const summary=companies.map(r=>`${r['Company Name']} (${r['TMG Focus Area']}, ${r['Stage']}, Traction:${r['Market Traction']}/5, DataMoat:${r['Data Moat']}/5, Diff:${r['Product Differentiation']}/5): ${r['One-liner']}`).join('\n');
+  const prompts={
+    compare:`Compare these companies across their core dimensions — technology approach, market positioning, moat strength, and execution risk. Be specific and direct.\n\nCompanies:\n${summary}`,
+    winner:`If TMG could only back one of these companies, which would it be and why? Consider TMG's thesis around healthspan outcomes, platform businesses, and preventative health. Be decisive.\n\nCompanies:\n${summary}`,
+    gaps:`What market gaps or opportunities do these companies collectively leave uncovered? Where is there white space that a new entrant could exploit?\n\nCompanies:\n${summary}`,
+    invest:`Write a brief investment memo covering all of these companies — which to prioritise for outreach, which to monitor, and which to pass on for now.\n\nCompanies:\n${summary}`
+  };
+  const out=document.getElementById('cmpAiOutput');out.textContent='Analysing…';out.className='ai-output idle';
+  const result=await callAI(prompts[cmpPrompt]);
+  out.textContent=result;out.className='ai-output';
+}
+function copyCmpAI(){navigator.clipboard.writeText(document.getElementById('cmpAiOutput').textContent).then(()=>{const b=event.target;b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1500);});}
 
 // --- VISUALS ---
-function setVis(type,btn){
-  curVis=type;
-  document.querySelectorAll('.vis-btn').forEach(b=>b.classList.remove('active'));
-  if(btn)btn.classList.add('active');
-  renderVis();
-}
+function setVis(type,btn){curVis=type;document.querySelectorAll('.vis-btn').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');renderVis();}
 function renderVis(){
   const data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
   const vc=document.getElementById('visContent');if(!vc)return;
+  Object.values(visCharts).forEach(c=>{try{c.destroy();}catch(e){}});visCharts={};
   if(curVis==='valuechain')renderValueChain(data,vc);
   else if(curVis==='tile')renderTile(data,vc);
   else if(curVis==='matrix2x2')renderMatrix(data,vc);
   else if(curVis==='heatmap')renderHeatmap(data,vc);
   else if(curVis==='bubble')renderBubble(data,vc);
+  else if(curVis==='ecosystem')renderEcosystem(data,vc);
+  else if(curVis==='radar')renderRadar(data,vc);
+  else if(curVis==='whitespace')renderWhitespace(data,vc);
+  else if(curVis==='funding')renderFunding(data,vc);
 }
 
 // VALUE CHAIN
 function renderValueChain(data,vc){
   const cols=['Ingredient / Science','Platform','Brand','Distribution / Channel'];
   const colClass=['vc-orange','vc-navy','vc-green','vc-rose'];
-  const colData={};
-  cols.forEach(c=>colData[c]=[]);
-  data.forEach(r=>{const pos=r['Ecosystem Position'];if(colData[pos])colData[pos].push(r);});
+  const colData={};cols.forEach(c=>colData[c]=[]);
+  data.forEach(r=>{const pos=r['Ecosystem Position'];if(pos&&colData[pos])colData[pos].push(r);});
   vc.innerHTML=`<div class="vis-card">
-    <div class="vis-card-hdr"><span class="vis-card-title">Value Chain Map</span><button class="btn-dl-vis" onclick="dlVis('vc-inner')">↓ Download PNG</button></div>
-    <div class="vis-card-desc">Companies positioned by their role in the healthspan value chain — from upstream science to end consumer distribution.</div>
-    <div id="vc-inner" style="background:var(--white);padding:20px;border-radius:8px">
-      <div style="display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:16px">
-        ${cols.map((c,i)=>`<div style="flex:1;text-align:center;position:relative">
-          <div style="background:var(--navy);color:var(--white);padding:10px;font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase">${c}</div>
-          ${i<cols.length-1?'<div style="position:absolute;right:-12px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--ink-muted);z-index:1">→</div>':''}
-        </div>`).join('')}
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;min-height:200px">
-        ${cols.map((c,i)=>`<div style="display:flex;flex-direction:column;gap:7px">
-          ${(colData[c]||[]).map(r=>`<div class="vc-chip ${colClass[i]}" title="${r['One-liner']||''}">${r['Company Name']}<div style="font-size:10px;opacity:.8;font-weight:400">${r['TMG Focus Area']||''}</div></div>`).join('')}
-          ${!colData[c]?.length?'<div style="font-size:12px;color:var(--ink-muted);padding:10px;text-align:center">No companies</div>':''}
-        </div>`).join('')}
+    <div class="vis-card-hdr"><span class="vis-card-title">Value Chain Map</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="vcStyle" onchange="renderVis()" style="padding:5px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;outline:none">
+          <option value="column">Column view</option>
+          <option value="flow">Flow-with-arrows</option>
+        </select>
+        <button class="btn-dl-vis" onclick="dlVis('vc-inner')">↓ PNG</button>
       </div>
     </div>
+    <div class="vis-card-desc">Companies positioned by their role in the healthspan value chain.</div>
+    <div id="vc-inner" style="background:var(--white);padding:16px;border-radius:8px">
+      <div id="vc-render"></div>
+    </div>
   </div>`;
+  setTimeout(()=>{
+    const style=document.getElementById('vcStyle')?.value||'column';
+    const target=document.getElementById('vc-render');
+    if(style==='flow'){
+      target.innerHTML=`<div class="vc-flow">${cols.map((c,i)=>`
+        ${i>0?'<div class="vc-flow-arrow">→</div>':''}
+        <div class="vc-flow-col">
+          <div class="vc-flow-hdr">${c}</div>
+          <div class="vc-flow-body">${(colData[c]||[]).map(r=>`<div class="vc-chip ${colClass[i]}" title="${r['One-liner']||''}" onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\\'")}')"><div>${r['Company Name']}</div><div style="font-size:9px;opacity:.8">${r['Sub-category']||''}</div></div>`).join('')||'<div style="font-size:11px;color:var(--ink-muted);text-align:center;padding:8px">—</div>'}</div>
+        </div>`).join('')}</div>`;
+    } else {
+      target.innerHTML=`<div class="vc-grid" style="grid-template-columns:repeat(${cols.length},1fr)">
+        ${cols.map(c=>`<div class="vc-col-hdr">${c}</div>`).join('')}
+        ${cols.map((c,i)=>`<div class="vc-col-body">${(colData[c]||[]).map(r=>`<div class="vc-chip ${colClass[i]}" onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\\'")}')"><div>${r['Company Name']}</div><div style="font-size:9px;opacity:.8">${r['Sub-category']||''}</div></div>`).join('')||'<div style="font-size:11px;color:var(--ink-muted);text-align:center;padding:8px">—</div>'}</div>`).join('')}
+      </div>`;
+    }
+  },50);
 }
 
 // TILE LANDSCAPE
 function renderTile(data,vc){
   const areas=['Precision Nutrition','Intelligent Health','Food & Medicine'];
   const aClass=['pn','ih','fm'];
+  const aColors={'pn':'#e07535','ih':'#162535','fm':'#b85050'};
   vc.innerHTML=`<div class="vis-card">
-    <div class="vis-card-hdr"><span class="vis-card-title">Tile Landscape</span><button class="btn-dl-vis" onclick="dlVis('tile-inner')">↓ Download PNG</button></div>
-    <div class="vis-card-desc">All companies mapped as tiles across TMG's three focus areas. Click any tile to view company details.</div>
-    <div id="tile-inner" style="background:var(--white);padding:20px;border-radius:8px">
+    <div class="vis-card-hdr"><span class="vis-card-title">Tile Landscape</span><button class="btn-dl-vis" onclick="dlVis('tile-inner')">↓ PNG</button></div>
+    <div class="vis-card-desc">All companies as tiles across TMG's focus areas. Logos loaded via Clearbit.</div>
+    <div id="tile-inner" style="background:var(--white);padding:16px;border-radius:8px">
       ${areas.map((area,i)=>{
         const companies=data.filter(r=>r['TMG Focus Area']===area);
         return`<div class="tile-section">
-          <div class="tile-section-title ${aClass[i]}">${area} — ${companies.length} companies</div>
-          <div class="tiles-grid">${companies.map(r=>`<div class="tile ${aClass[i]}" onclick="openPanel('${r['Company Name'].replace(/'/g,"\\'")}');showSection('companies')">
-            <div>${r['Company Name']}</div>
-            <div class="tile-stage">${r['Stage']||''} · ${r['Sub-category']||''}</div>
-          </div>`).join('')}
-          ${!companies.length?'<span style="font-size:12px;color:var(--ink-muted)">No companies in this area</span>':''}
-          </div>
+          <div class="tile-section-hdr ${aClass[i]}">${area} <span style="font-weight:400;opacity:.7">${companies.length} companies</span></div>
+          <div class="tiles-grid">${companies.map(r=>{
+            const domain=r['Website']?r['Website'].replace(/https?:\/\/(www\.)?/,'').split('/')[0]:'';
+            const logoUrl=domain?`https://logo.clearbit.com/${domain}`:'';
+            return`<div class="tile ${aClass[i]}" onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\\'")}')">
+              ${logoUrl?`<img class="tile-logo" src="${logoUrl}" alt="${r['Company Name']}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:''}
+              <div class="tile-logo-fallback" style="background:${aColors[aClass[i]]};${logoUrl?'display:none':''}">${(r['Company Name']||'?')[0].toUpperCase()}</div>
+              <div class="tile-name">${r['Company Name']}</div>
+            </div>`;
+          }).join('')}${!companies.length?'<span style="font-size:11px;color:var(--ink-muted)">No companies</span>':''}</div>
         </div>`;
       }).join('')}
     </div>
@@ -1002,61 +986,38 @@ function renderTile(data,vc){
 // 2x2 MATRIX
 let matChart=null;
 function renderMatrix(data,vc){
+  const numCols=SCORE_COLS;
   vc.innerHTML=`<div class="vis-card">
-    <div class="vis-card-hdr"><span class="vis-card-title">2×2 Matrix</span><button class="btn-dl-vis" onclick="dlMatrixChart()">↓ Download PNG</button></div>
-    <div class="vis-card-desc">Plot companies on configurable axes to identify leaders, challengers, and emerging players. Best scores are top-right.</div>
+    <div class="vis-card-hdr"><span class="vis-card-title">2×2 Matrix</span><button class="btn-dl-vis" onclick="dlMatrixChart()">↓ PNG</button></div>
+    <div class="vis-card-desc">Plot any two scored dimensions. Quadrant lines at 2.5. Best = top-right.</div>
     <div class="vis-controls">
       <label>X Axis:</label>
-      <select id="mx_x" onchange="updateMatrix()">
-        <option value="Market Traction (1-5)">Market Traction</option>
-        <option value="Product Differentiation (1-5)">Product Differentiation</option>
-        <option value="Capital Efficiency (1-5)">Capital Efficiency</option>
-      </select>
+      <select id="mx_x" onchange="updateMatrix()"><option value="">Sheet axes…</option>${numCols.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
       <label>Y Axis:</label>
-      <select id="mx_y" onchange="updateMatrix()">
-        <option value="Product Differentiation (1-5)">Product Differentiation</option>
-        <option value="Market Traction (1-5)">Market Traction</option>
-        <option value="Capital Efficiency (1-5)">Capital Efficiency</option>
-      </select>
+      <select id="mx_y" onchange="updateMatrix()"><option value="">Sheet axes…</option>${numCols.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
     </div>
-    <div class="vis-render" style="padding:0;background:var(--white)">
-      <div style="position:relative;height:380px;padding:20px"><canvas id="matrixChart"></canvas></div>
+    <div style="font-size:11px;color:var(--ink-muted);margin-bottom:10px">Or score companies manually on custom axes:</div>
+    <div class="vis-controls">
+      <label>Custom X label:</label><input type="text" id="mx_cx" placeholder="e.g. Regulatory Readiness" style="padding:5px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;width:180px;outline:none">
+      <label>Custom Y label:</label><input type="text" id="mx_cy" placeholder="e.g. Clinical Urgency" style="padding:5px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;width:180px;outline:none">
     </div>
+    <div class="vis-render" style="padding:0;background:var(--white)"><div style="position:relative;height:360px;padding:16px"><canvas id="matrixChart"></canvas></div></div>
   </div>`;
   updateMatrix(data);
 }
 function updateMatrix(data){
   if(!data)data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
-  const xKey=document.getElementById('mx_x')?.value||'Market Traction (1-5)';
-  const yKey=document.getElementById('mx_y')?.value||'Product Differentiation (1-5)';
-  const cmap={'Precision Nutrition':'#e07535cc','Intelligent Health':'#162535cc','Food & Medicine':'#2a7f5fcc'};
+  const xKey=document.getElementById('mx_x')?.value||'Market Traction';
+  const yKey=document.getElementById('mx_y')?.value||'Product Differentiation';
+  const cxLabel=document.getElementById('mx_cx')?.value||xKey;
+  const cyLabel=document.getElementById('mx_cy')?.value||yKey;
+  const cmap={'Precision Nutrition':'#e07535bb','Intelligent Health':'#162535bb','Food & Medicine':'#2a7f5fbb'};
   const grp={};
-  data.filter(r=>r[xKey]&&r[yKey]).forEach(r=>{
-    const a=r['TMG Focus Area']||'Other';
-    if(!grp[a])grp[a]=[];
-    grp[a].push({x:+r[xKey],y:+r[yKey],label:r['Company Name']});
-  });
-  if(matChart){matChart.destroy();matChart=null;}
+  data.filter(r=>r[xKey]&&r[yKey]).forEach(r=>{const a=r['TMG Focus Area']||'Other';if(!grp[a])grp[a]=[];grp[a].push({x:+r[xKey],y:+r[yKey],label:r['Company Name']});});
+  if(matChart){try{matChart.destroy();}catch(e){}matChart=null;}
   const ctx=document.getElementById('matrixChart');if(!ctx)return;
-  matChart=new Chart(ctx,{
-    type:'scatter',
-    data:{datasets:Object.entries(grp).map(([a,pts])=>({label:a,data:pts,backgroundColor:cmap[a]||'#888cc',pointRadius:9,pointHoverRadius:11}))},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{
-        legend:{position:'bottom',labels:{font:{size:11},boxWidth:10}},
-        tooltip:{callbacks:{label:c=>`${c.raw.label} (${c.raw.x}, ${c.raw.y})`}},
-        annotation:{annotations:{
-          vLine:{type:'line',xMin:2.5,xMax:2.5,borderColor:'#dde4ec',borderWidth:1,borderDash:[4,4]},
-          hLine:{type:'line',yMin:2.5,yMax:2.5,borderColor:'#dde4ec',borderWidth:1,borderDash:[4,4]}
-        }}
-      },
-      scales:{
-        x:{min:0,max:6,title:{display:true,text:xKey.replace(' (1-5)',''),font:{size:11}},grid:{color:'#eef2f6'}},
-        y:{min:0,max:6,title:{display:true,text:yKey.replace(' (1-5)',''),font:{size:11}},grid:{color:'#eef2f6'}}
-      }
-    }
-  });
+  matChart=new Chart(ctx,{type:'scatter',data:{datasets:Object.entries(grp).map(([a,pts])=>({label:a,data:pts,backgroundColor:cmap[a]||'#888bb',pointRadius:9,pointHoverRadius:11}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:8}},tooltip:{callbacks:{label:c=>`${c.raw.label} (${c.raw.x}, ${c.raw.y})`}}},scales:{x:{min:0,max:6,title:{display:true,text:cxLabel,font:{size:10}},grid:{color:'#eef2f6'}},y:{min:0,max:6,title:{display:true,text:cyLabel,font:{size:10}},grid:{color:'#eef2f6'}}}}});
+  visCharts.matrix=matChart;
 }
 function dlMatrixChart(){if(matChart){const a=document.createElement('a');a.download='TMG_Matrix.png';a.href=matChart.toBase64Image('image/png',1);a.click();}}
 
@@ -1064,32 +1025,25 @@ function dlMatrixChart(){if(matChart){const a=document.createElement('a');a.down
 function renderHeatmap(data,vc){
   const areas=['Precision Nutrition','Intelligent Health','Food & Medicine'];
   const targets=['Metabolic Control','Gut Health','Cardiovascular Health','Neurological Health','Inflammation','Musculoskeletal'];
-  const matrix={};
-  areas.forEach(a=>{matrix[a]={};targets.forEach(t=>matrix[a][t]=0);});
+  const matrix={};areas.forEach(a=>{matrix[a]={};targets.forEach(t=>matrix[a][t]=0);});
   data.forEach(r=>{if(matrix[r['TMG Focus Area']]&&r['Healthspan Target'])matrix[r['TMG Focus Area']][r['Healthspan Target']]=(matrix[r['TMG Focus Area']][r['Healthspan Target']]||0)+1;});
-  const max=Math.max(...areas.flatMap(a=>targets.map(t=>matrix[a][t]||0)));
-  function hmClass(n){if(n===0)return 'hm-0';if(n===1)return 'hm-1';if(n===2)return 'hm-2';if(n===3)return 'hm-3';return 'hm-4';}
+  function hmC(n){return n===0?'hm-0':n===1?'hm-1':n===2?'hm-2':n===3?'hm-3':'hm-4';}
   vc.innerHTML=`<div class="vis-card">
-    <div class="vis-card-hdr"><span class="vis-card-title">Heatmap</span><button class="btn-dl-vis" onclick="dlVis('hm-inner')">↓ Download PNG</button></div>
-    <div class="vis-card-desc">Company density across Focus Areas × Healthspan Targets. Darker = more companies. White = potential white space.</div>
-    <div id="hm-inner" style="background:var(--white);padding:20px;border-radius:8px;overflow-x:auto">
+    <div class="vis-card-hdr"><span class="vis-card-title">Heatmap</span><button class="btn-dl-vis" onclick="dlVis('hm-inner')">↓ PNG</button></div>
+    <div class="vis-card-desc">Company density by Focus Area × Healthspan Target. White cells = potential white space.</div>
+    <div id="hm-inner" style="background:var(--white);padding:16px;border-radius:8px;overflow-x:auto">
       <table class="heatmap-table">
-        <thead><tr>
-          <th class="row-hdr">Focus Area</th>
-          ${targets.map(t=>`<th>${t}</th>`).join('')}
-        </tr></thead>
-        <tbody>${areas.map(a=>`<tr>
-          <td style="font-weight:600;font-size:12px;background:var(--slate);white-space:nowrap;padding:10px 14px">${a}</td>
-          ${targets.map(t=>`<td class="${hmClass(matrix[a][t]||0)}">${matrix[a][t]||0}</td>`).join('')}
-        </tr>`).join('')}</tbody>
+        <thead><tr><th class="row-hdr">Focus Area</th>${targets.map(t=>`<th>${t}</th>`).join('')}</tr></thead>
+        <tbody>${areas.map(a=>`<tr><td style="font-weight:600;font-size:11px;background:var(--slate);padding:9px 12px;white-space:nowrap">${a}</td>${targets.map(t=>`<td class="${hmC(matrix[a][t]||0)}">${matrix[a][t]||0}</td>`).join('')}</tr>`).join('')}</tbody>
       </table>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:14px;font-size:11px;color:var(--ink-muted)">
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:10px;color:var(--ink-muted)">
         <span>Density:</span>
-        <span class="hm-0" style="padding:3px 8px;border-radius:4px">0</span>
-        <span class="hm-1" style="padding:3px 8px;border-radius:4px">1</span>
-        <span class="hm-2" style="padding:3px 8px;border-radius:4px">2</span>
-        <span class="hm-3" style="padding:3px 8px;border-radius:4px;color:var(--white)">3</span>
-        <span class="hm-4" style="padding:3px 8px;border-radius:4px;color:var(--white)">4+</span>
+        <span class="hm-0" style="padding:2px 7px;border-radius:4px">0</span>
+        <span class="hm-1" style="padding:2px 7px;border-radius:4px">1</span>
+        <span class="hm-2" style="padding:2px 7px;border-radius:4px">2</span>
+        <span class="hm-3" style="padding:2px 7px;border-radius:4px;color:var(--white)">3</span>
+        <span class="hm-4" style="padding:2px 7px;border-radius:4px;color:var(--white)">4+</span>
+        <span style="margin-left:12px;font-style:italic">0 = potential white space</span>
       </div>
     </div>
   </div>`;
@@ -1098,108 +1052,231 @@ function renderHeatmap(data,vc){
 // BUBBLE CHART
 let bubbleChart=null;
 function renderBubble(data,vc){
+  const numCols=SCORE_COLS;
   vc.innerHTML=`<div class="vis-card">
-    <div class="vis-card-hdr"><span class="vis-card-title">Bubble Chart</span><button class="btn-dl-vis" onclick="dlBubbleChart()">↓ Download PNG</button></div>
-    <div class="vis-card-desc">Bubble size = Capital Efficiency score. X = Market Traction, Y = Product Differentiation. Larger bubbles are more capital efficient.</div>
-    <div class="vis-render" style="padding:0;background:var(--white)">
-      <div style="position:relative;height:380px;padding:20px"><canvas id="bubbleChartVis"></canvas></div>
+    <div class="vis-card-hdr"><span class="vis-card-title">Bubble Chart</span><button class="btn-dl-vis" onclick="dlBubbleChart()">↓ PNG</button></div>
+    <div class="vis-card-desc">Strictly quantitative — choose any 3 scored dimensions for X, Y, and bubble size.</div>
+    <div class="vis-controls">
+      <label>X:</label><select id="bx" onchange="updateBubble()">${numCols.map(c=>`<option value="${c}">${c}</option>`).join('')}</select>
+      <label>Y:</label><select id="by" onchange="updateBubble()">${numCols.map((c,i)=>`<option value="${c}" ${i===1?'selected':''}>${c}</option>`).join('')}</select>
+      <label>Bubble size:</label><select id="bsize" onchange="updateBubble()">${numCols.map((c,i)=>`<option value="${c}" ${i===2?'selected':''}>${c}</option>`).join('')}</select>
     </div>
+    <div class="vis-render" style="padding:0;background:var(--white)"><div style="position:relative;height:360px;padding:16px"><canvas id="bubbleChartVis"></canvas></div></div>
   </div>`;
+  updateBubble(data);
+}
+function updateBubble(data){
+  if(!data)data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
+  const xKey=document.getElementById('bx')?.value||'Market Traction';
+  const yKey=document.getElementById('by')?.value||'Product Differentiation';
+  const sKey=document.getElementById('bsize')?.value||'Capital Efficiency';
   const cmap={'Precision Nutrition':'#e07535bb','Intelligent Health':'#162535bb','Food & Medicine':'#2a7f5fbb'};
   const grp={};
-  data.filter(r=>r['Market Traction (1-5)']&&r['Product Differentiation (1-5)']).forEach(r=>{
-    const a=r['TMG Focus Area']||'Other';
-    if(!grp[a])grp[a]=[];
-    grp[a].push({x:+r['Market Traction (1-5)'],y:+r['Product Differentiation (1-5)'],r:Math.max(6,(+r['Capital Efficiency (1-5)']||3)*5),label:r['Company Name']});
-  });
-  if(bubbleChart){bubbleChart.destroy();bubbleChart=null;}
+  data.filter(r=>r[xKey]&&r[yKey]).forEach(r=>{const a=r['TMG Focus Area']||'Other';if(!grp[a])grp[a]=[];grp[a].push({x:+r[xKey],y:+r[yKey],r:Math.max(6,(+r[sKey]||2)*5),label:r['Company Name']});});
+  if(bubbleChart){try{bubbleChart.destroy();}catch(e){}bubbleChart=null;}
   const ctx=document.getElementById('bubbleChartVis');if(!ctx)return;
-  bubbleChart=new Chart(ctx,{
-    type:'bubble',
-    data:{datasets:Object.entries(grp).map(([a,pts])=>({label:a,data:pts,backgroundColor:cmap[a]||'#888bb',borderColor:'transparent'}))},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:10}},tooltip:{callbacks:{label:c=>`${c.raw.label}`}}},
-      scales:{
-        x:{min:0,max:6,title:{display:true,text:'Market Traction',font:{size:11}},grid:{color:'#eef2f6'}},
-        y:{min:0,max:6,title:{display:true,text:'Product Differentiation',font:{size:11}},grid:{color:'#eef2f6'}}
-      }
-    }
-  });
+  bubbleChart=new Chart(ctx,{type:'bubble',data:{datasets:Object.entries(grp).map(([a,pts])=>({label:a,data:pts,backgroundColor:cmap[a]||'#888bb',borderColor:'transparent'}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:8}},tooltip:{callbacks:{label:c=>`${c.raw.label}`}}},scales:{x:{min:0,max:6,title:{display:true,text:xKey,font:{size:10}},grid:{color:'#eef2f6'}},y:{min:0,max:6,title:{display:true,text:yKey,font:{size:10}},grid:{color:'#eef2f6'}}}}});
+  visCharts.bubble=bubbleChart;
 }
 function dlBubbleChart(){if(bubbleChart){const a=document.createElement('a');a.download='TMG_Bubble.png';a.href=bubbleChart.toBase64Image('image/png',1);a.click();}}
 
-// DOWNLOAD SVG-BASED VISUALS AS PNG
-function dlVis(innerId){
-  const el=document.getElementById(innerId);if(!el)return;
-  import('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js').then(()=>{
-    html2canvas(el,{scale:2,backgroundColor:'#ffffff'}).then(canvas=>{
-      const a=document.createElement('a');a.download='TMG_Visual.png';a.href=canvas.toDataURL('image/png');a.click();
+// ECOSYSTEM MAP
+function renderEcosystem(data,vc){
+  const areas=['Precision Nutrition','Intelligent Health','Food & Medicine'];
+  const colors={'Precision Nutrition':'#e07535','Intelligent Health':'#162535','Food & Medicine':'#b85050'};
+  const W=800,H=420,cx=W/2,cy=H/2,outerR=160,innerR=60;
+  const hubs=areas.map((a,i)=>{const angle=(i/areas.length)*2*Math.PI-Math.PI/2;return{label:a,x:cx+outerR*Math.cos(angle),y:cy+outerR*Math.sin(angle),color:colors[a],companies:data.filter(r=>r['TMG Focus Area']===a)};});
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${W}px;height:auto">
+    <text x="${cx}" y="${cy-8}" text-anchor="middle" font-family="DM Serif Display,serif" font-size="13" fill="#162535">Consumer</text>
+    <text x="${cx}" y="${cy+10}" text-anchor="middle" font-family="DM Serif Display,serif" font-size="13" fill="#162535">Healthspan</text>
+    <circle cx="${cx}" cy="${cy}" r="${innerR-4}" fill="#f2f5f8" stroke="#dde4ec" stroke-width="1.5"/>`;
+  hubs.forEach(hub=>{
+    svg+=`<line x1="${cx}" y1="${cy}" x2="${hub.x}" y2="${hub.y}" stroke="${hub.color}" stroke-width="1.5" stroke-opacity=".4"/>`;
+    const nodeR=42;svg+=`<circle cx="${hub.x}" cy="${hub.y}" r="${nodeR}" fill="${hub.color}" opacity=".9"/>`;
+    const words=hub.label.split(' ');
+    words.forEach((w,wi)=>svg+=`<text x="${hub.x}" y="${hub.y+(wi-words.length/2+0.7)*13}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="white" font-weight="600">${w}</text>`);
+    hub.companies.forEach((comp,ci)=>{
+      const spread=hub.companies.length>1?(ci/(hub.companies.length-1)-0.5)*1.4:0;
+      const baseAngle=Math.atan2(hub.y-cy,hub.x-cx);
+      const angle=baseAngle+spread;
+      const dist=nodeR+50+Math.floor(ci/6)*40;
+      const nx=hub.x+dist*Math.cos(angle),ny=hub.y+dist*Math.sin(angle);
+      svg+=`<line x1="${hub.x}" y1="${hub.y}" x2="${nx}" y2="${ny}" stroke="${hub.color}" stroke-width="1" stroke-opacity=".3"/>`;
+      svg+=`<circle cx="${nx}" cy="${ny}" r="22" fill="${hub.color}" opacity=".75"/>`;
+      const n=comp['Company Name']||'';const short=n.length>10?n.slice(0,9)+'…':n;
+      svg+=`<text x="${nx}" y="${ny+4}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="white" font-weight="500">${short}</text>`;
     });
-  }).catch(()=>{
-    // fallback: load html2canvas dynamically
-    const s=document.createElement('script');
-    s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    s.onload=()=>{html2canvas(el,{scale:2,backgroundColor:'#ffffff'}).then(canvas=>{const a=document.createElement('a');a.download='TMG_Visual.png';a.href=canvas.toDataURL('image/png');a.click();});};
-    document.head.appendChild(s);
   });
+  svg+='</svg>';
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">Ecosystem Map</span><button class="btn-dl-vis" onclick="dlSvg('eco-svg')">↓ PNG</button></div>
+    <div class="vis-card-desc">Hub-and-spoke map — Consumer Healthspan at centre, focus areas as hubs, companies as nodes.</div>
+    <div id="eco-inner" style="background:var(--white);padding:16px;border-radius:8px"><div id="eco-svg">${svg}</div></div>
+  </div>`;
 }
 
+// RADAR CHART
+let radarChart=null;
+function renderRadar(data,vc){
+  const opts=data.map(r=>`<option value="${r['Company Name']}">${r['Company Name']}</option>`).join('');
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">Radar Chart</span><button class="btn-dl-vis" onclick="dlRadarChart()">↓ PNG</button></div>
+    <div class="vis-card-desc">Compare up to 4 companies across 6 strategic dimensions on a spider chart.</div>
+    <div class="vis-controls">
+      ${[0,1,2,3].map(i=>`<select id="rad_${i}" onchange="updateRadar()"><option value="">Company ${i+1}…</option>${opts}</select>`).join('')}
+    </div>
+    <div class="vis-render" style="padding:0;background:var(--white)"><div class="radar-wrap" style="padding:16px"><canvas id="radarChart"></canvas></div></div>
+  </div>`;
+}
+function updateRadar(){
+  const dims=['Market Traction','Product Differentiation','Clinical Validation','AI Actionability','Data Moat','Scalability'];
+  const colors=['#e07535','#162535','#2a7f5f','#b85050'];
+  const selected=[0,1,2,3].map(i=>document.getElementById('rad_'+i)?.value).filter(Boolean);
+  const companies=selected.map(n=>allData.find(r=>r['Company Name']===n)).filter(Boolean);
+  if(!companies.length)return;
+  if(radarChart){try{radarChart.destroy();}catch(e){}radarChart=null;}
+  const ctx=document.getElementById('radarChart');if(!ctx)return;
+  radarChart=new Chart(ctx,{type:'radar',data:{labels:dims,datasets:companies.map((c,i)=>({label:c['Company Name'],data:dims.map(d=>+c[d]||0),borderColor:colors[i],backgroundColor:colors[i]+'22',pointBackgroundColor:colors[i],borderWidth:2}))},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:5,ticks:{stepSize:1,font:{size:9}},pointLabels:{font:{size:10}}}},plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:8}}}}});
+  visCharts.radar=radarChart;
+}
+function dlRadarChart(){if(radarChart){const a=document.createElement('a');a.download='TMG_Radar.png';a.href=radarChart.toBase64Image('image/png',1);a.click();}}
+window.updateRadar=updateRadar;window.updateBubble=updateBubble;
+
+// WHITE SPACE MATRIX
+function renderWhitespace(data,vc){
+  const targets=['Metabolic Control','Gut Health','Cardiovascular Health','Neurological Health','Inflammation','Musculoskeletal'];
+  const ecos=['Ingredient / Science','Platform','Brand','Distribution / Channel'];
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">White Space Matrix</span><button class="btn-dl-vis" onclick="dlVis('ws-inner')">↓ PNG</button></div>
+    <div class="vis-card-desc">Healthspan Target × Ecosystem Position. Empty cells = investment white space opportunities.</div>
+    <div id="ws-inner" style="background:var(--white);padding:16px;border-radius:8px;overflow-x:auto">
+      <table class="wspace-table">
+        <thead><tr><th class="row-hdr">Healthspan Target</th>${ecos.map(e=>`<th>${e}</th>`).join('')}</tr></thead>
+        <tbody>${targets.map(t=>{
+          return`<tr><td style="font-weight:600;font-size:11px;padding:8px 10px;background:var(--slate)">${t}</td>${ecos.map(e=>{
+            const comps=data.filter(r=>r['Healthspan Target']===t&&r['Ecosystem Position']===e);
+            return comps.length?`<td class="wspace-cell-filled">${comps.map(r=>`<div style="font-size:10px;font-weight:500;color:var(--orange)">${r['Company Name']}</div>`).join('')}</td>`:`<td class="wspace-cell-empty">white space</td>`;
+          }).join('')}</tr>`;
+        }).join('')}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// FUNDING TIMELINE
+function renderFunding(data,vc){
+  const stageOrder={'Pre-seed':1,'Seed':2,'Series A':3,'Series B':4,'Public':5};
+  const sorted=[...data].filter(r=>r['Stage']&&stageOrder[r['Stage']]).sort((a,b)=>stageOrder[a['Stage']]-stageOrder[b['Stage']]);
+  const colors={'Precision Nutrition':'#e07535','Intelligent Health':'#162535','Food & Medicine':'#b85050'};
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">Funding Timeline</span><button class="btn-dl-vis" onclick="dlVis('ft-inner')">↓ PNG</button></div>
+    <div class="vis-card-desc">Companies arranged by funding stage — left to right from earliest to most mature.</div>
+    <div id="ft-inner" style="background:var(--white);padding:16px;border-radius:8px;overflow-x:auto">
+      ${['Pre-seed','Seed','Series A','Series B','Public'].map(stage=>{
+        const comps=sorted.filter(r=>r['Stage']===stage);
+        if(!comps.length)return'';
+        return`<div style="margin-bottom:20px">
+          <div style="font-size:10px;font-weight:600;color:var(--ink-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px">
+            <div style="height:2px;flex:1;background:var(--border)"></div>${stage}<div style="height:2px;flex:1;background:var(--border)"></div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+            ${comps.map(r=>`<div style="background:${colors[r['TMG Focus Area']]||'#888'};color:white;padding:7px 12px;border-radius:8px;font-size:11px;font-weight:500;text-align:center;cursor:pointer;min-width:100px" onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\\'")}')">
+              <div>${r['Company Name']}</div>
+              <div style="font-size:9px;opacity:.75;margin-top:2px">${r['Funding Raised']||'Undisclosed'}</div>
+            </div>`).join('')}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+
+// DOWNLOAD HELPERS
+function dlVis(innerId){
+  const el=document.getElementById(innerId);if(!el)return;
+  const script=document.createElement('script');
+  script.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  script.onload=()=>html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true}).then(canvas=>{const a=document.createElement('a');a.download='TMG_Visual.png';a.href=canvas.toDataURL('image/png');a.click();});
+  if(window.html2canvas){html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true}).then(canvas=>{const a=document.createElement('a');a.download='TMG_Visual.png';a.href=canvas.toDataURL('image/png');a.click();});}
+  else document.head.appendChild(script);
+}
+function dlSvg(containerId){dlVis(containerId);}
+
 // --- AI ---
-function selPrompt(btn,type){document.querySelectorAll('.ai-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');curPrompt=type;}
-function saveKey(){const k=document.getElementById('apiKeyInput').value.trim();if(k){localStorage.setItem('tmg_apiKey',k);alert('API key saved!');}}
+function updateKeyLabel(){
+  const p=document.getElementById('aiProvider')?.value||'claude';
+  const lbl=document.getElementById('aiKeyLbl');
+  if(lbl)lbl.textContent=p==='gemini'?'Gemini API Key:':'Anthropic API Key:';
+  const inp=document.getElementById('apiKeyInput');
+  if(inp)inp.placeholder=p==='gemini'?'AIza…':'sk-ant-…';
+  if(inp)inp.value=p==='gemini'?(localStorage.getItem('tmg_geminiKey')||''):(localStorage.getItem('tmg_claudeKey')||'');
+}
+function saveKey(){const p=document.getElementById('aiProvider')?.value||'claude';const k=document.getElementById('apiKeyInput').value.trim();if(k){localStorage.setItem(p==='gemini'?'tmg_geminiKey':'tmg_claudeKey',k);alert('API key saved!');}}
+function selPrompt(btn,type){document.querySelectorAll('.ai-panel .ai-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');curPrompt=type;}
+
+async function callAI(prompt){
+  const provider=document.getElementById('aiProvider')?.value||localStorage.getItem('tmg_provider')||'claude';
+  if(provider==='gemini'){
+    const key=localStorage.getItem('tmg_geminiKey')||document.getElementById('apiKeyInput').value.trim();
+    if(!key)return'Please add your Gemini API key in Settings. Get a free key at aistudio.google.com';
+    try{
+      const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
+      const data=await res.json();
+      if(data.error)throw new Error(data.error.message);
+      return data.candidates?.[0]?.content?.parts?.[0]?.text||'No response.';
+    }catch(e){return'Gemini error: '+e.message;}
+  } else {
+    const key=localStorage.getItem('tmg_claudeKey')||document.getElementById('apiKeyInput').value.trim();
+    if(!key)return'Please add your Anthropic API key in Settings. Get one at console.anthropic.com (requires billing setup).';
+    const w=localStorage.getItem('tmg_workspaceId');
+    const headers={'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
+    if(w)headers['anthropic-workspace-id']=w;
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+      const data=await res.json();
+      if(data.error)throw new Error(data.error.message);
+      return data.content?.[0]?.text||'No response.';
+    }catch(e){return'Claude error: '+e.message;}
+  }
+}
+
 function buildPrompt(type){
   const data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
-  const summary=data.map(r=>`${r['Company Name']} (${r['TMG Focus Area']}, ${r['Stage']}, ${r['Healthspan Target']}, Traction:${r['Market Traction (1-5)']}/5 Diff:${r['Product Differentiation (1-5)']}/5): ${r['One-liner']}`).join('\n');
+  const summary=data.map(r=>`${r['Company Name']} (${r['TMG Focus Area']}, ${r['Stage']}, Traction:${r['Market Traction']}/5, DataMoat:${r['Data Moat']}/5): ${r['One-liner']}`).join('\n');
   const prompts={
-    newsletter:`You are a senior analyst at The March Group (TMG), a VC fund focused on the Consumer Healthspan Economy. Write a 180-word newsletter paragraph covering key trends across Precision Nutrition, Intelligent Health, and Food & Medicine. Reference specific companies. Professional but engaging tone.\n\nLandscape data:\n${summary}`,
-    whitespace:`You are a senior analyst at The March Group. Identify 3 specific white spaces — underserved segments where few companies operate — that represent compelling investment opportunities for TMG. For each: name the gap, explain why it exists, suggest what a winning company looks like.\n\nData:\n${summary}`,
-    priority:`You are a senior analyst at The March Group. Write a 200-word investment memo identifying the top 3 priority targets for TMG to engage. For each: explain strategic fit, note key differentiator, flag one risk.\n\nData:\n${summary}`,
-    thesis:`Assess how this landscape validates TMG's three structural shifts: (1) Calories → Health Outcomes, (2) Brands → Platforms, (3) Reactive Care → Preventative Health. Which shift has most activity? Which is underserved? 180 words.\n\nData:\n${summary}`,
-    diligence:`As a TMG analyst, identify top competitive dynamics: which companies compete directly, where is platform risk highest, what is the biggest execution risk for early-stage startups here? 200 words.\n\nData:\n${summary}`
+    newsletter:`You are a senior analyst at The March Group (TMG), a VC fund focused on the Consumer Healthspan Economy. Write a 180-word newsletter paragraph covering key trends across Precision Nutrition, Intelligent Health, and Food & Medicine. Reference specific companies. Professional but engaging.\n\nData:\n${summary}`,
+    whitespace:`Identify 3 specific white spaces in this landscape where few companies operate. For each: name the gap, explain why it exists, describe what a winning company looks like.\n\nData:\n${summary}`,
+    priority:`Write a 200-word investment memo identifying TMG's top 3 priority targets. For each: strategic fit, key differentiator, main risk.\n\nData:\n${summary}`,
+    thesis:`Assess how this landscape validates TMG's three structural shifts: (1) Calories → Health Outcomes, (2) Brands → Platforms, (3) Reactive Care → Preventative Health. 180 words.\n\nData:\n${summary}`,
+    diligence:`Identify top competitive dynamics: which companies compete directly, where is platform risk highest, biggest execution risk for early-stage startups here. 200 words.\n\nData:\n${summary}`
   };
   return prompts[type];
 }
 async function generateAI(){
-  const key=localStorage.getItem('tmg_apiKey')||document.getElementById('apiKeyInput').value.trim();
-  if(!key){alert('Please enter your Anthropic API key first');return;}
   const btn=document.getElementById('btnGen');const out=document.getElementById('aiOutput');
-  btn.disabled=true;btn.textContent='Generating…';out.textContent='Analysing landscape data…';out.className='ai-output idle';
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:Object.assign({'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-        (()=>{const w=localStorage.getItem('tmg_workspaceId');return w?{'anthropic-workspace-id':w}:{};})()),
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:buildPrompt(curPrompt)}]})
-    });
-    const data=await res.json();
-    if(data.error)throw new Error(data.error.message);
-    out.textContent=data.content?.[0]?.text||'No response.';out.className='ai-output';
-  }catch(e){out.textContent='Error: '+e.message;out.className='ai-output';}
+  btn.disabled=true;btn.textContent='Generating…';out.textContent='Analysing…';out.className='ai-output idle';
+  out.textContent=await callAI(buildPrompt(curPrompt));out.className='ai-output';
   btn.disabled=false;btn.textContent='Generate';
 }
-function copyAI(){navigator.clipboard.writeText(document.getElementById('aiOutput').textContent).then(()=>{const b=event.target;b.textContent='Copied!';setTimeout(()=>b.textContent='Copy text',1500);});}
+function copyAI(){navigator.clipboard.writeText(document.getElementById('aiOutput').textContent).then(()=>{const b=event.target;b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1500);});}
 
 // --- SETTINGS ---
 function openSettings(){
-  const k=localStorage.getItem('tmg_apiKey');const u=localStorage.getItem('tmg_csvUrl');const w=localStorage.getItem('tmg_workspaceId');
-  if(k)document.getElementById('s_apiKey').value=k;
-  if(w)document.getElementById('s_workspaceId').value=w;
-  document.getElementById('s_csvUrl').value=u||DEFAULT_CSV;
+  const load=(id,key)=>{const el=document.getElementById(id);if(el){const v=localStorage.getItem(key);if(v)el.value=v;}};
+  load('s_claudeKey','tmg_claudeKey');load('s_workspaceId','tmg_workspaceId');load('s_geminiKey','tmg_geminiKey');
+  const p=localStorage.getItem('tmg_provider')||'claude';
+  const el=document.getElementById('s_provider');if(el)el.value=p;
   document.getElementById('settingsModal').classList.add('open');
 }
 function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
 function saveSettings(){
-  const k=document.getElementById('s_apiKey').value.trim();
-  const u=document.getElementById('s_csvUrl').value.trim();
-  const w=document.getElementById('s_workspaceId').value.trim();
-  if(k){localStorage.setItem('tmg_apiKey',k);document.getElementById('apiKeyInput').value=k;}
-  if(w)localStorage.setItem('tmg_workspaceId',w);
-  if(u)localStorage.setItem('tmg_csvUrl',u);
-  closeSettings();loadData();alert('Settings saved!');
+  const save=(id,key)=>{const el=document.getElementById(id);if(el&&el.value.trim())localStorage.setItem(key,el.value.trim());};
+  save('s_claudeKey','tmg_claudeKey');save('s_workspaceId','tmg_workspaceId');save('s_geminiKey','tmg_geminiKey');
+  const p=document.getElementById('s_provider')?.value||'claude';localStorage.setItem('tmg_provider',p);
+  document.getElementById('aiProvider').value=p;updateKeyLabel();
+  const u=document.getElementById('s_csvUrl')?.value;if(u)localStorage.setItem('tmg_csvUrl',u);
+  closeSettings();alert('Settings saved!');
 }
-
-init();
 </script>
 </body>
 </html>
