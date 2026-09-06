@@ -57,14 +57,12 @@ function showSection(id){
 function renderStats(data){
   const s=data.filter(r=>r['Company Type']==='Startup').length;
   const p=data.filter(r=>r['TMG Interest Level']==='Priority').length;
-  const hiPed=data.filter(r=>['Repeat Founder','Ex-FAANG','PhD-Researcher'].includes(r['Founder Pedigree'])).length;
-  const patent=data.filter(r=>['Applied','Granted'].includes(r['IP / Patent Status'])).length;
   const inc=data.filter(r=>['Incumbent','Acquirer'].includes(r['Company Type'])).length;
+  const raising=data.filter(r=>r['Estimated Runway (months)']&&+r['Estimated Runway (months)']<=12).length;
   document.getElementById('statsRow').innerHTML=`
     <div class="stat-card"><div class="stat-val">${s}</div><div class="stat-lbl">Startups tracked</div></div>
     <div class="stat-card s2"><div class="stat-val">${p}</div><div class="stat-lbl">Priority targets</div></div>
-    <div class="stat-card s3"><div class="stat-val">${hiPed}</div><div class="stat-lbl">High-pedigree teams</div></div>
-    <div class="stat-card s4"><div class="stat-val">${patent}</div><div class="stat-lbl">IP / Patents</div></div>
+    <div class="stat-card s4"><div class="stat-val">${raising}</div><div class="stat-lbl">Raising soon (&lt;12mo runway)</div></div>
     <div class="stat-card s5"><div class="stat-val">${inc}</div><div class="stat-lbl">Incumbents & acquirers</div></div>`;
 }
 
@@ -74,7 +72,8 @@ function renderCharts(data){
   const ORG='#e07535',NAV='#162535',GRN='#2a7f5f',RSE='#b85050',PUR='#6a3fa0';
   const PAL=[ORG,NAV,GRN,RSE,PUR,'#c9a84c','#3a8fa0','#7a5f30','#2a5f8f','#a05030'];
   const sc=cnt(data,'Sub-category');
-  charts.cPie=new Chart(document.getElementById('cPie'),{type:'doughnut',data:{labels:Object.keys(sc),datasets:[{data:Object.values(sc),backgroundColor:PAL,borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:9,padding:7}}}}});
+  const total=Object.values(sc).reduce((a,b)=>a+b,0);
+  charts.cPie=new Chart(document.getElementById('cPie'),{type:'doughnut',data:{labels:Object.keys(sc),datasets:[{data:Object.values(sc),backgroundColor:PAL,borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:9},boxWidth:9,padding:7}},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.raw} (${Math.round(ctx.raw/total*100)}%)`}},datalabels:{display:false}}}});
   const stgOrder=['Pre-seed','Seed','Series A','Series B','Public'];
   const stgCnt=cnt(data,'Stage');const sl=stgOrder.filter(s=>stgCnt[s]);
   charts.cFunding=new Chart(document.getElementById('cFunding'),{type:'bar',data:{labels:sl,datasets:[{data:sl.map(s=>stgCnt[s]||0),backgroundColor:[ORG,NAV,GRN,RSE,PUR],borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#eef2f6'},ticks:{stepSize:1}}}}});
@@ -226,17 +225,29 @@ async function scrapeAndFill(){
   const url=document.getElementById('scrapeUrl').value.trim();if(!url){alert('Please paste a URL first');return;}
   const btn=document.getElementById('btnScrape');const status=document.getElementById('scrapeStatus');
   btn.disabled=true;btn.textContent='Scraping...';status.textContent='Fetching page content...';
-  const proxies=[u=>`https://corsproxy.io/?${encodeURIComponent(u)}`,u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`];
+  // Use r.jina.ai - designed for AI text extraction, handles CORS
   let pageText='';
-  for(const px of proxies){
+  try{
+    status.textContent='Reading page via Jina AI...';
+    const jinaUrl='https://r.jina.ai/'+url;
+    const controller=new AbortController();
+    setTimeout(()=>controller.abort(),15000);
+    const r=await fetch(jinaUrl,{signal:controller.signal,headers:{'Accept':'text/plain'}});
+    if(r.ok){
+      pageText=(await r.text()).replace(/\s+/g,' ').trim().slice(0,5000);
+    }
+  }catch(e){
+    // fallback to corsproxy
     try{
-      const r=await fetch(px(url),{signal:AbortSignal.timeout(8000)});if(!r.ok)continue;
-      const html=await r.text();const div=document.createElement('div');div.innerHTML=html;
-      pageText=(div.innerText||div.textContent||'').replace(/\s+/g,' ').trim().slice(0,4000);
-      if(pageText.length>100)break;
-    }catch(e){continue;}
+      const r2=await fetch('https://corsproxy.io/?'+encodeURIComponent(url),{signal:AbortSignal.timeout(8000)});
+      if(r2.ok){const h=await r2.text();const d=document.createElement('div');d.innerHTML=h;pageText=(d.innerText||d.textContent||'').replace(/\s+/g,' ').trim().slice(0,5000);}
+    }catch(e2){}
   }
-  if(!pageText||pageText.length<50){btn.disabled=false;btn.textContent='AI Scrape and Fill';status.textContent='Could not fetch page. Try pasting the company description manually.';return;}
+  if(!pageText||pageText.length<50){
+    btn.disabled=false;btn.textContent='AI Scrape and Fill';
+    status.textContent='Could not read page. Some sites block all scrapers. Try a different URL or paste the company description manually above.';
+    return;
+  }
   status.textContent='AI extracting company info...';
   const prompt=`You are a VC analyst. Extract structured company info from this website text and return ONLY a JSON object with these exact keys (use empty string if unknown): Company_Name, One_liner, TMG_Focus_Area (one of: Precision Nutrition/Intelligent Health/Food and Medicine), Sub_category, Healthspan_Target (one of: Metabolic Control/Gut Health/Cardiovascular Health/Neurological Health/Inflammation/Musculoskeletal/Multiple), Ecosystem_Position (one of: Ingredient / Science/Platform/Brand/Distribution / Channel), Business_Model (B2C/B2B/B2B2C/Marketplace/SaaS), Company_Type (Startup/Incumbent/Acquirer), Geography, Stage (Pre-seed/Seed/Series A/Series B/Public), Funding_Raised, Last_Funded_Date, Number_of_Founders, Founder_Pedigree (Repeat Founder/Ex-FAANG/PhD-Researcher/First-time/Mixed), Key_Investors, Key_Technology, IP_Patent_Status (None/Applied/Granted/Trade Secret), Pricing_Model, Target_Customer, Core_Moat, Key_Competitors, Execution_Risk.\n\nWebsite text:\n${pageText}\n\nReturn ONLY the JSON object, no markdown, no explanation.`;
   const result=await callAI(prompt);
@@ -252,7 +263,19 @@ async function scrapeAndFill(){
   btn.disabled=false;btn.textContent='AI Scrape and Fill';
 }
 async function extractPedigree(){
-  const bio=document.getElementById('linkedinBio').value.trim();if(!bio){alert('Paste a LinkedIn bio first');return;}
+  const input=document.getElementById('linkedinBio').value.trim();
+  if(!input){alert('Paste LinkedIn URL or founder bio text here.');return;}
+  let bio=input;
+  // If it looks like a URL, try r.jina.ai to extract profile content
+  if(input.startsWith('http')){
+    const status=document.getElementById('scrapeStatus');
+    if(status)status.textContent='Reading LinkedIn profile via Jina AI...';
+    try{
+      const r=await fetch('https://r.jina.ai/'+input,{signal:AbortSignal.timeout(12000),headers:{'Accept':'text/plain'}});
+      if(r.ok){const t=await r.text();bio=t.slice(0,3000);}
+      else{alert('Could not read LinkedIn profile. Paste the bio/experience text directly instead.');return;}
+    }catch(e){alert('Could not read LinkedIn profile (LinkedIn blocks scrapers). Paste the bio text directly instead.');return;}
+  }
   const prompt=`Based on this LinkedIn bio, classify the founder pedigree as exactly one of: "Repeat Founder", "Ex-FAANG", "PhD-Researcher", "First-time", "Mixed". Return ONLY the classification.\n\nBio:\n${bio}`;
   const result=await callAI(prompt);
   const clean=result.trim().replace(/['"]/g,'');
@@ -329,21 +352,50 @@ function renderVis(){
   const data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
   const vc=document.getElementById('visContent');if(!vc)return;
   Object.values(visCharts).forEach(c=>{try{c.destroy();}catch(e){}});visCharts={};
-  const renders={valuechain:renderValueChain,tile:renderTile,classic:renderClassic,matrix2x2:renderMatrix,heatmap:renderHeatmap,bubble:renderBubble,ecosystem:renderEcosystem,radar:renderRadar,whitespace:renderWhitespace,funding:renderFunding,geomap:renderGeoMap,architecture:renderArchitecture};
+  const renders={valuechain:renderValueChain,tile:renderTile,classic:renderClassic,matrix2x2:renderMatrix,heatmap:renderHeatmap,bubble:renderBubble,ecosystem:renderEcosystem,radar:renderRadar,whitespace:renderWhitespace,funding:renderFunding,geomap:renderGeoMap,architecture:renderArchitecture,fundingcomp:renderFundingComp,scorerank:renderScoreRankings,bizmodel:renderBizModelMix,iplandscape:renderIPLandscape,compnet:renderCompetitorNetwork};
   if(renders[curVis])renders[curVis](data,vc);
 }
 
+function updateVCStyle(){
+  const style=document.getElementById('vcStyle')?.value||'column';
+  const t=document.getElementById('vc-render');
+  if(!t||!window._vcData)return;
+  renderVCInner(window._vcData,style);
+}
 function renderValueChain(data,vc){
+  window._vcData=data;
   const cols=['Ingredient / Science','Platform','Brand','Distribution / Channel'];
   const cls=['vc-orange','vc-navy','vc-green','vc-rose'];
   const colData={};cols.forEach(c=>colData[c]=[]);
   data.forEach(r=>{const p=r['Ecosystem Position'];if(p&&colData[p])colData[p].push(r);});
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Value Chain Map</span><div style="display:flex;gap:7px;align-items:center"><select id="vcStyle" onchange="renderVis()" style="padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-size:10px;font-family:inherit;outline:none"><option value="column">Column view</option><option value="flow">Flow with arrows</option></select><button class="btn-dl-vis" onclick="dlVis('vc-inner')">Download PNG</button></div></div><div class="vis-card-desc">Companies positioned by role in the healthspan value chain.</div><div id="vc-inner" style="background:var(--white);padding:14px;border-radius:7px"><div id="vc-render"></div></div></div>`;
+  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Value Chain Map</span><div style="display:flex;gap:7px;align-items:center"><select id="vcStyle" onchange="updateVCStyle()" style="padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-size:10px;font-family:inherit;outline:none"><option value="column">Column view</option><option value="flow">Flow with arrows</option></select><button class="btn-dl-vis" onclick="dlVis('vc-inner')">Download PNG</button></div></div><div class="vis-card-desc">Companies positioned by role in the healthspan value chain.</div><div id="vc-inner" style="background:var(--white);padding:14px;border-radius:7px"><div id="vc-render"></div></div></div>`;
   setTimeout(()=>{
-    const style=document.getElementById('vcStyle')?.value||'column';const t=document.getElementById('vc-render');
-    if(style==='flow'){t.innerHTML=`<div style="display:flex;align-items:stretch;overflow-x:auto">${cols.map((c,i)=>`${i>0?'<div style="display:flex;align-items:center;padding:0 6px;color:var(--ink-muted);font-size:18px">-&gt;</div>':''}<div style="flex:1;min-width:130px"><div style="background:var(--navy);color:var(--white);padding:8px;font-size:9px;font-weight:600;text-transform:uppercase;text-align:center">${c}</div><div style="padding:9px;background:var(--orange-pale);border:2px solid var(--orange);border-top:none;min-height:140px">${(colData[c]||[]).map(r=>`<div class="vc-chip ${cls[i]}" onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\\'")}')">${r['Company Name']}</div>`).join('')||'<div style="font-size:10px;color:var(--ink-muted);text-align:center;padding:8px">-</div>'}</div></div>`).join('')}</div>`;}
-    else{t.innerHTML=`<div style="display:grid;grid-template-columns:repeat(${cols.length},1fr)">${cols.map(c=>`<div style="background:var(--navy);color:var(--white);padding:8px;font-size:9px;font-weight:600;text-transform:uppercase;text-align:center;border-right:1px solid #2a4560">${c}</div>`).join('')}${cols.map((c,i)=>`<div style="padding:9px;border-right:1px solid var(--border);min-height:140px">${(colData[c]||[]).map(r=>`<div class="vc-chip ${cls[i]}" onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\\'")}')">${r['Company Name']}</div>`).join('')||'<div style="font-size:10px;color:var(--ink-muted);text-align:center;padding:8px">-</div>'}</div>`).join('')}</div>`;}
+    renderVCInner(data,'column');
   },50);
+}
+function renderVCInner(data,style){
+  const cols=['Ingredient / Science','Platform','Brand','Distribution / Channel'];
+  const cls=['vc-orange','vc-navy','vc-green','vc-rose'];
+  const colData={};cols.forEach(c=>colData[c]=[]);
+  data.forEach(r=>{const p=r['Ecosystem Position'];if(p&&colData[p])colData[p].push(r);});
+  const t=document.getElementById('vc-render');if(!t)return;
+  if(style==='flow'){
+    const parts=cols.map((c,i)=>{
+      const arrow=i>0?'<div style="display:flex;align-items:center;padding:0 6px;color:var(--ink-muted);font-size:18px">&rarr;</div>':'';
+      const chips=(colData[c]||[]).map(r=>`<div class="vc-chip ${cls[i]}" onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\'")}')">
+        ${r['Company Name']}</div>`).join('')||'<div style="font-size:10px;color:var(--ink-muted);text-align:center;padding:8px">-</div>';
+      return arrow+`<div style="flex:1;min-width:130px"><div style="background:var(--navy);color:var(--white);padding:8px;font-size:9px;font-weight:600;text-transform:uppercase;text-align:center">${c}</div><div style="padding:9px;background:var(--orange-pale);border:2px solid var(--orange);border-top:none;min-height:140px">${chips}</div></div>`;
+    });
+    t.innerHTML='<div style="display:flex;align-items:stretch;overflow-x:auto">'+parts.join('')+'</div>';
+  }else{
+    const hdrs=cols.map(c=>`<div style="background:var(--navy);color:var(--white);padding:8px;font-size:9px;font-weight:600;text-transform:uppercase;text-align:center;border-right:1px solid #2a4560">${c}</div>`).join('');
+    const bodies=cols.map((c,i)=>{
+      const chips=(colData[c]||[]).map(r=>`<div class="vc-chip ${cls[i]}" onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\'")}')">
+        ${r['Company Name']}</div>`).join('')||'<div style="font-size:10px;color:var(--ink-muted);text-align:center;padding:8px">-</div>';
+      return `<div style="padding:9px;border-right:1px solid var(--border);min-height:140px">${chips}</div>`;
+    }).join('');
+    t.innerHTML='<div style="display:grid;grid-template-columns:repeat('+cols.length+',1fr)">'+hdrs+bodies+'</div>';
+  }
 }
 
 function renderTile(data,vc){
@@ -410,71 +462,216 @@ function updateBubble(data){
 function dlBubbleChart(){if(bubbleChart){const a=document.createElement('a');a.download='TMG_Bubble.png';a.href=bubbleChart.toBase64Image('image/png',1);a.click();}}
 
 function renderEcosystem(data,vc){
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Ecosystem Map</span></div><div class="vis-card-desc">Force-directed network: companies, investors, and healthspan targets as interconnected nodes.</div><div id="eco-svg-wrap" style="background:var(--white);border-radius:7px;border:1px solid var(--border)"></div></div>`;
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">Ecosystem Map</span><button class="btn-dl-vis" onclick="dlVis('eco-wrap')">Download PNG</button></div>
+    <div class="vis-card-desc">Concentric rings showing the Consumer Healthspan ecosystem — companies positioned by focus area and ecosystem role, with investor and market context in the outer ring.</div>
+    <div id="eco-wrap" style="background:#f8faff;border-radius:8px;overflow:hidden;padding:10px"></div>
+  </div>`;
   setTimeout(()=>{
-    const W=900,H=500;
-    const nodes=[],links=[];
-    const aColor={'Precision Nutrition':'#e07535','Intelligent Health':'#162535','Food & Medicine':'#b85050'};
-    const investorSet=new Set();const healthSet=new Set();
-    data.forEach(r=>{nodes.push({id:r['Company Name'],type:'company',color:aColor[r['TMG Focus Area']]||'#888'});if(r['Healthspan Target']&&r['Healthspan Target']!=='Multiple')healthSet.add(r['Healthspan Target']);if(r['Key Investors']){r['Key Investors'].split(/[,\/]/).slice(0,2).forEach(inv=>{const i=inv.trim();if(i&&i.length>2)investorSet.add(i);});}});
-    healthSet.forEach(h=>nodes.push({id:h,type:'health',color:'#2a7f5f'}));
-    investorSet.forEach(inv=>nodes.push({id:inv,type:'investor',color:'#c9a84c'}));
-    data.forEach(r=>{if(r['Healthspan Target']&&r['Healthspan Target']!=='Multiple'&&healthSet.has(r['Healthspan Target']))links.push({source:r['Company Name'],target:r['Healthspan Target']});if(r['Key Investors']){r['Key Investors'].split(/[,\/]/).slice(0,2).forEach(inv=>{const i=inv.trim();if(investorSet.has(i))links.push({source:r['Company Name'],target:i});});}});
-    const svg=d3.select('#eco-svg-wrap').append('svg').attr('viewBox',`0 0 ${W} ${H}`).attr('style','width:100%;height:auto');
-    const sim=d3.forceSimulation(nodes).force('link',d3.forceLink(links).id(d=>d.id).distance(80)).force('charge',d3.forceManyBody().strength(-120)).force('center',d3.forceCenter(W/2,H/2)).force('collision',d3.forceCollide(32));
-    const link=svg.append('g').selectAll('line').data(links).join('line').attr('stroke','#dde4ec').attr('stroke-width',1);
-    const node=svg.append('g').selectAll('g').data(nodes).join('g').call(d3.drag().on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;}).on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;}).on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}));
-    node.append('circle').attr('r',d=>d.type==='company'?16:d.type==='investor'?12:14).attr('fill',d=>d.color).attr('opacity',.85);
-    node.append('text').attr('text-anchor','middle').attr('dy',d=>d.type==='company'?26:22).attr('font-size',d=>d.type==='company'?9:8).attr('fill','#4a6070').text(d=>{const n=d.id||'';return n.length>14?n.slice(0,12)+'...':n;});
-    node.append('title').text(d=>d.id);
-    sim.on('tick',()=>{link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);node.attr('transform',d=>`translate(${Math.max(20,Math.min(W-20,d.x))},${Math.max(20,Math.min(H-20,d.y))})`);});
-    const leg=svg.append('g').attr('transform',`translate(14,${H-70})`);
-    [{label:'Company',color:'#e07535'},{label:'Investor',color:'#c9a84c'},{label:'Healthspan Target',color:'#2a7f5f'}].forEach(({label,color},i)=>{leg.append('circle').attr('cx',0).attr('cy',i*20).attr('r',7).attr('fill',color).attr('opacity',.85);leg.append('text').attr('x',14).attr('y',i*20+4).attr('font-size',9).attr('fill','#4a6070').text(label);});
+    const W=860,H=760,cx=W/2,cy=H/2;
+    const R={center:55,inner:130,mid:230,outer:320,label:370};
+    const aColors={'Precision Nutrition':'#e07535','Intelligent Health':'#2563eb','Food & Medicine':'#16a34a'};
+    const ecoColors={'Ingredient / Science':'#7c3aed','Platform':'#0891b2','Brand':'#db2777','Distribution / Channel':'#92400e'};
+    const areas=['Precision Nutrition','Intelligent Health','Food & Medicine'];
+
+    // Build investor list from data
+    const investorSet=new Set();
+    data.forEach(r=>{if(r['Key Investors']){r['Key Investors'].split(/[,\/]/).slice(0,1).forEach(inv=>{const i=inv.trim();if(i&&i.length>2&&i.length<30)investorSet.add(i);});}});
+    const investors=[...investorSet].slice(0,8);
+
+    const svg=d3.select('#eco-wrap').append('svg').attr('viewBox',`0 0 ${W} ${H}`).attr('style','width:100%;height:auto');
+
+    // Background rings
+    [R.outer+60,R.outer,R.mid,R.inner].forEach((r,i)=>{
+      svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',r).attr('fill',['#e8f0fe','#dbeafe','#eff6ff','#f0fdf4'][i]).attr('stroke','#cbd5e1').attr('stroke-width',1).attr('stroke-dasharray',i===0?'4,4':'none');
+    });
+
+    // Ring labels
+    const ringLabels=[{r:R.mid+75,text:'MARKET CONTEXT'},{r:R.mid+10,text:'COMPANIES'},{r:R.inner+15,text:'FOCUS AREAS'},{r:28,text:'VALUE HUB'}];
+    // Centre label
+    svg.append('text').attr('x',cx).attr('y',cy-8).attr('text-anchor','middle').attr('font-family','DM Serif Display,serif').attr('font-size',12).attr('fill','#162535').attr('font-weight','400').text('Consumer');
+    svg.append('text').attr('x',cx).attr('y',cy+8).attr('text-anchor','middle').attr('font-family','DM Serif Display,serif').attr('font-size',12).attr('fill','#162535').attr('font-weight','400').text('Healthspan');
+    svg.append('text').attr('x',cx).attr('y',cy+22).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',9).attr('fill','#7a9ab0').text('Economy');
+    svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',R.center).attr('fill','#162535').attr('opacity',.9);
+    svg.append('text').attr('x',cx).attr('y',cy-8).attr('text-anchor','middle').attr('font-family','DM Serif Display,serif').attr('font-size',12).attr('fill','white').text('Consumer');
+    svg.append('text').attr('x',cx).attr('y',cy+6).attr('text-anchor','middle').attr('font-family','DM Serif Display,serif').attr('font-size',12).attr('fill','white').text('Healthspan');
+    svg.append('text').attr('x',cx).attr('y',cy+20).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',8).attr('fill','rgba(255,255,255,.7)').text('Economy');
+
+    // Inner ring: Focus areas as segments
+    areas.forEach((area,i)=>{
+      const angle=(i/areas.length)*2*Math.PI - Math.PI/2;
+      const ax=cx+(R.inner-18)*Math.cos(angle);
+      const ay=cy+(R.inner-18)*Math.sin(angle);
+      const color=aColors[area];
+      svg.append('circle').attr('cx',ax).attr('cy',ay).attr('r',34).attr('fill',color).attr('opacity',.85);
+      const words=area.split(' ');
+      words.forEach((w,wi)=>{
+        svg.append('text').attr('x',ax).attr('y',ay+(wi-words.length/2+0.6)*12).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',9).attr('fill','white').attr('font-weight','600').text(w);
+      });
+    });
+
+    // Mid ring: Companies positioned by focus area sector + ecosystem position
+    const ecoPositions=['Ingredient / Science','Platform','Brand','Distribution / Channel'];
+    areas.forEach((area,ai)=>{
+      const companies=data.filter(r=>r['TMG Focus Area']===area);
+      const sectorAngleStart=(ai/areas.length)*2*Math.PI - Math.PI/2;
+      const sectorAngleEnd=((ai+1)/areas.length)*2*Math.PI - Math.PI/2;
+      const color=aColors[area];
+      companies.forEach((comp,ci)=>{
+        const t=(ci+0.5)/Math.max(companies.length,1);
+        const angle=sectorAngleStart+(sectorAngleEnd-sectorAngleStart)*t;
+        const radVar=R.mid-20+Math.sin(ci*1.7)*25;
+        const nx=cx+radVar*Math.cos(angle);
+        const ny=cy+radVar*Math.sin(angle);
+        // Eco position determines inner border color
+        const ecoBorder=ecoColors[comp['Ecosystem Position']]||'#888';
+        svg.append('circle').attr('cx',nx).attr('cy',ny).attr('r',18).attr('fill',color).attr('opacity',.75).attr('stroke',ecoBorder).attr('stroke-width',2.5);
+        const n=comp['Company Name']||'';
+        const short=n.length>9?n.slice(0,8)+'…':n;
+        svg.append('text').attr('x',nx).attr('y',ny+3).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',7).attr('fill','white').attr('font-weight','600').text(short);
+        svg.append('text').attr('x',nx).attr('y',ny+28).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',7).attr('fill','#4a6070').text(comp['Stage']||'');
+        // Connection line from focus area hub
+        const aAngle=(ai/areas.length)*2*Math.PI - Math.PI/2;
+        const ax=cx+(R.inner-18)*Math.cos(aAngle);
+        const ay=cy+(R.inner-18)*Math.sin(aAngle);
+        svg.insert('line','circle').attr('x1',ax).attr('y1',ay).attr('x2',nx).attr('y2',ny).attr('stroke',color).attr('stroke-width',0.8).attr('stroke-opacity',.3);
+      });
+    });
+
+    // Outer ring: Investors + market context nodes
+    const outerNodes=[
+      ...investors.map(inv=>({label:inv,type:'investor',color:'#d97706'})),
+      {label:'GLP-1 Trend',type:'trend',color:'#7c3aed'},
+      {label:'AI in Health',type:'trend',color:'#7c3aed'},
+      {label:'FDA Regulation',type:'context',color:'#64748b'},
+      {label:'Incumbents',type:'context',color:'#64748b'},
+    ];
+    outerNodes.forEach((node,i)=>{
+      const angle=(i/outerNodes.length)*2*Math.PI - Math.PI/2;
+      const nx=cx+R.outer*Math.cos(angle);
+      const ny=cy+R.outer*Math.sin(angle);
+      svg.append('circle').attr('cx',nx).attr('cy',ny).attr('r',node.type==='investor'?22:18).attr('fill',node.color).attr('opacity',.8);
+      const words=node.label.split(' ');
+      words.forEach((w,wi)=>{
+        svg.append('text').attr('x',nx).attr('y',ny+(wi-words.length/2+0.6)*10).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',7).attr('fill','white').attr('font-weight','500').text(w);
+      });
+    });
+
+    // Legend
+    const leg=svg.append('g').attr('transform','translate(14,14)');
+    const legItems=[
+      {color:'#e07535',label:'Precision Nutrition'},{color:'#2563eb',label:'Intelligent Health'},{color:'#16a34a',label:'Food & Medicine'},
+      {color:'#d97706',label:'Investor (outer)'},{color:'#7c3aed',label:'Market Trend'},
+    ];
+    legItems.forEach(({color,label},i)=>{
+      leg.append('circle').attr('cx',8).attr('cy',i*18+8).attr('r',6).attr('fill',color).attr('opacity',.85);
+      leg.append('text').attr('x',18).attr('y',i*18+12).attr('font-family','DM Sans,sans-serif').attr('font-size',9).attr('fill','#4a6070').text(label);
+    });
+    // Eco position legend (border colors)
+    const leg2=svg.append('g').attr('transform',`translate(${W-160},14)`);
+    leg2.append('text').attr('x',0).attr('y',10).attr('font-family','DM Sans,sans-serif').attr('font-size',9).attr('fill','#7a9ab0').attr('font-weight','600').text('Border = Ecosystem Role');
+    Object.entries(ecoColors).forEach(([eco,color],i)=>{
+      const short={'Ingredient / Science':'Ingredient/Science','Platform':'Platform','Brand':'Brand','Distribution / Channel':'Distribution'}[eco]||eco;
+      leg2.append('rect').attr('x',0).attr('y',i*16+16).attr('width',20).attr('height',4).attr('rx',2).attr('fill',color);
+      leg2.append('text').attr('x',24).attr('y',i*16+23).attr('font-family','DM Sans,sans-serif').attr('font-size',8).attr('fill','#4a6070').text(short);
+    });
   },100);
 }
 
-let radarChart=null;
-function renderRadar(data,vc){
-  const opts=data.map(r=>`<option value="${r['Company Name']}">${r['Company Name']}</option>`).join('');
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Radar Chart</span><button class="btn-dl-vis" onclick="dlRadarChart()">Download PNG</button></div><div class="vis-card-desc">Compare up to 4 companies across 6 strategic dimensions.</div><div class="vis-controls">${[0,1,2,3].map(i=>`<select id="rad_${i}" onchange="updateRadar()"><option value="">Company ${i+1}...</option>${opts}</select>`).join('')}</div><div class="vis-render" style="padding:0"><div style="position:relative;height:320px;padding:14px"><canvas id="radarChart"></canvas></div></div></div>`;
-}
-function updateRadar(){
-  const dims=['Market Traction','Product Differentiation','Clinical Validation','AI Actionability','Data Moat','Scalability'];
-  const colors=['#e07535','#162535','#2a7f5f','#b85050'];
-  const sel=[0,1,2,3].map(i=>document.getElementById('rad_'+i)?.value).filter(Boolean);
-  const companies=sel.map(n=>allData.find(r=>r['Company Name']===n)).filter(Boolean);
-  if(!companies.length)return;
-  if(radarChart){try{radarChart.destroy();}catch(e){}radarChart=null;}
-  const ctx=document.getElementById('radarChart');if(!ctx)return;
-  radarChart=new Chart(ctx,{type:'radar',data:{labels:dims,datasets:companies.map((c,i)=>({label:c['Company Name'],data:dims.map(d=>+c[d]||0),borderColor:colors[i],backgroundColor:colors[i]+'22',pointBackgroundColor:colors[i],borderWidth:2}))},options:{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:5,ticks:{stepSize:1,font:{size:8}},pointLabels:{font:{size:9}}}},plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:7}}}}});
-  visCharts.radar=radarChart;
-}
-function dlRadarChart(){if(radarChart){const a=document.createElement('a');a.download='TMG_Radar.png';a.href=radarChart.toBase64Image('image/png',1);a.click();}}
-
-function renderWhitespace(data,vc){
-  const targets=['Metabolic Control','Gut Health','Cardiovascular Health','Neurological Health','Inflammation','Musculoskeletal'];
-  const ecos=['Ingredient / Science','Platform','Brand','Distribution / Channel'];
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">White Space Matrix</span><button class="btn-dl-vis" onclick="dlVis('ws-inner')">Download PNG</button></div><div class="vis-card-desc">Healthspan Target x Ecosystem Position. Empty = investment opportunity.</div><div id="ws-inner" style="background:var(--white);padding:14px;border-radius:7px;overflow-x:auto"><table class="wspace-table"><thead><tr><th class="row-hdr">Healthspan Target</th>${ecos.map(e=>`<th>${e}</th>`).join('')}</tr></thead><tbody>${targets.map(t=>`<tr><td style="font-weight:600;font-size:10px;padding:7px 9px;background:var(--slate)">${t}</td>${ecos.map(e=>{const comps=data.filter(r=>r['Healthspan Target']===t&&r['Ecosystem Position']===e);return comps.length?`<td class="ws-filled">${comps.map(r=>`<div style="font-size:9px">${r['Company Name']}</div>`).join('')}</td>`:`<td class="ws-empty">white space</td>`;}).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+// FUNDING COMPARISON
+function renderFundingComp(data,vc){
+  const companies=data.filter(r=>r['Funding Raised']&&r['Funding Raised']!=='-').slice(0,20);
+  const parseFunding=s=>{if(!s)return 0;const m=s.replace(/,/g,'').match(/[\d.]+/);if(!m)return 0;const n=parseFloat(m[0]);if(s.includes('B'))return n*1000;return n;};
+  const sorted=[...companies].sort((a,b)=>parseFunding(b['Funding Raised'])-parseFunding(a['Funding Raised']));
+  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Funding Comparison</span><button class="btn-dl-vis" onclick="dlChart('cFundComp')">Download PNG</button></div><div class="vis-card-desc">Funding raised by company (USD millions). Click bar to view company.</div><div class="chart-wrap" style="height:${Math.max(200,sorted.length*28)}px"><canvas id="cFundComp"></canvas></div></div>`;
+  const colors={'Precision Nutrition':'#e07535','Intelligent Health':'#2563eb','Food & Medicine':'#16a34a'};
+  setTimeout(()=>{
+    const ctx=document.getElementById('cFundComp');if(!ctx)return;
+    const c=new Chart(ctx,{type:'bar',data:{labels:sorted.map(r=>r['Company Name']),datasets:[{data:sorted.map(r=>parseFunding(r['Funding Raised'])),backgroundColor:sorted.map(r=>colors[r['TMG Focus Area']]||'#888'),borderRadius:4,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`$${ctx.raw}M`}}},scales:{x:{grid:{color:'#eef2f6'},title:{display:true,text:'USD (millions)',font:{size:9}}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
+    visCharts.cFundComp=c;charts.cFundComp=c;
+  },50);
 }
 
-function renderFunding(data,vc){
-  const stageOrder={'Pre-seed':1,'Seed':2,'Series A':3,'Series B':4,'Public':5};
-  const sorted=[...data].filter(r=>stageOrder[r['Stage']]).sort((a,b)=>stageOrder[a['Stage']]-stageOrder[b['Stage']]);
-  const colors={'Precision Nutrition':'#e07535','Intelligent Health':'#162535','Food & Medicine':'#b85050'};
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Funding Timeline</span><button class="btn-dl-vis" onclick="dlVis('ft-inner')">Download PNG</button></div><div class="vis-card-desc">Companies arranged by funding stage from earliest to most mature.</div><div id="ft-inner" style="background:var(--white);padding:14px;border-radius:7px">${['Pre-seed','Seed','Series A','Series B','Public'].map(stage=>{const comps=sorted.filter(r=>r['Stage']===stage);if(!comps.length)return'';return`<div style="margin-bottom:18px"><div style="font-size:9px;font-weight:600;color:var(--ink-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px"><div style="height:1px;flex:1;background:var(--border)"></div>${stage}<div style="height:1px;flex:1;background:var(--border)"></div></div><div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center">${comps.map(r=>`<div onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\\'")}');" style="cursor:pointer;background:${colors[r['TMG Focus Area']]||'#888'};color:white;padding:6px 11px;border-radius:7px;font-size:10px;font-weight:500;min-width:90px;text-align:center"><div>${r['Company Name']}</div><div style="font-size:8px;opacity:.75">${r['Funding Raised']||'Undisclosed'}</div>${r['Last Funded Date']?`<div style="font-size:8px;opacity:.6">${r['Last Funded Date']}</div>`:''}</div>`).join('')}</div></div>`;}).join('')}</div></div>`;
+// SCORE RANKINGS
+function renderScoreRankings(data,vc){
+  const dims=['Market Traction','Product Differentiation','Data Moat','Clinical Validation','AI Actionability','Scalability'];
+  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Score Rankings</span></div><div class="vis-card-desc">Top companies ranked by each score dimension. Click a tab to switch dimension.</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${dims.map(d=>`<button onclick="updateScoreRank('${d}')" class="btn-sm" id="srank_${d.replace(/ /g,'_')}">${d}</button>`).join('')}</div>
+    <div id="scoreRankContent"></div></div>`;
+  window.updateScoreRank=function(dim){
+    document.querySelectorAll('[id^=srank_]').forEach(b=>b.style.background='');
+    const btn=document.getElementById('srank_'+dim.replace(/ /g,'_'));
+    if(btn)btn.style.cssText='background:var(--orange);border-color:var(--orange);color:white';
+    const sorted=[...data].filter(r=>r[dim]).sort((a,b)=>(+b[dim]||0)-(+a[dim]||0)).slice(0,15);
+    const colors={'Precision Nutrition':'#e07535','Intelligent Health':'#2563eb','Food & Medicine':'#16a34a'};
+    const html=sorted.map((r,i)=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;cursor:pointer" onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\'")}')">
+      <span style="font-size:10px;color:var(--ink-muted);width:18px;text-align:right">${i+1}</span>
+      <div style="flex:1;background:var(--border);border-radius:4px;height:24px;overflow:hidden;position:relative">
+        <div style="height:100%;width:${(+r[dim]/5*100)}%;background:${colors[r['TMG Focus Area']]||'#888'};opacity:.85"></div>
+        <span style="position:absolute;left:8px;top:4px;font-size:10px;font-weight:500;color:white">${r['Company Name']}</span>
+      </div>
+      <span style="font-size:11px;font-weight:600;color:var(--ink);width:20px">${r[dim]}</span>
+    </div>`).join('');
+    document.getElementById('scoreRankContent').innerHTML=html;
+  };
+  window.updateScoreRank(dims[0]);
+  window.openPanel=window.openPanel;
 }
 
-function renderGeoMap(data,vc){
-  const geoCoords={'US':{x:200,y:180},'USA':{x:200,y:180},'UK':{x:430,y:120},'United Kingdom':{x:430,y:120},'France':{x:445,y:135},'Ireland':{x:420,y:118},'Israel':{x:500,y:165},'Switzerland':{x:452,y:130},'Sweden':{x:465,y:100},'Singapore':{x:635,y:230},'Germany':{x:455,y:118},'Canada':{x:185,y:130}};
-  const W=820,H=380;
-  const companies=data.filter(r=>r['Geography']&&geoCoords[r['Geography'].trim()]);
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Geographic Map</span><button class="btn-dl-vis" onclick="dlVis('geo-inner')">Download PNG</button></div><div class="vis-card-desc">Company HQs plotted geographically. Bubble size = number of companies.</div><div id="geo-inner" style="background:#eef6ff;border-radius:7px;overflow:hidden"><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><rect width="${W}" height="${H}" fill="#ddeeff"/><ellipse cx="200" cy="175" rx="140" ry="100" fill="#c8dfc8" opacity=".7"/><ellipse cx="230" cy="290" rx="70" ry="80" fill="#c8dfc8" opacity=".7"/><ellipse cx="450" cy="125" rx="55" ry="45" fill="#c8dfc8" opacity=".7"/><ellipse cx="460" cy="230" rx="60" ry="80" fill="#c8dfc8" opacity=".7"/><ellipse cx="600" cy="155" rx="130" ry="90" fill="#c8dfc8" opacity=".7"/><ellipse cx="680" cy="290" rx="50" ry="35" fill="#c8dfc8" opacity=".7"/>${Object.entries(geoCoords).map(([geo,pos])=>{const comps=companies.filter(r=>r['Geography']?.trim()===geo);if(!comps.length)return'';const r=Math.max(14,comps.length*10);const focus=comps[0]['TMG Focus Area'];const color=focus==='Precision Nutrition'?'#e07535':focus==='Intelligent Health'?'#162535':'#b85050';return`<circle cx="${pos.x}" cy="${pos.y}" r="${r}" fill="${color}" opacity=".75"/><text x="${pos.x}" y="${pos.y+3}" text-anchor="middle" font-size="9" fill="white" font-weight="600">${comps.length}</text><title>${geo}: ${comps.map(c=>c['Company Name']).join(', ')}</title>`;}).join('')}<rect x="14" y="${H-55}" width="200" height="50" fill="white" opacity=".8" rx="5"/><circle cx="28" cy="${H-40}" r="7" fill="#e07535" opacity=".85"/><text x="40" y="${H-36}" font-size="9" fill="#4a6070">Precision Nutrition</text><circle cx="28" cy="${H-22}" r="7" fill="#162535" opacity=".85"/><text x="40" y="${H-18}" font-size="9" fill="#4a6070">Intelligent Health</text><circle cx="120" cy="${H-40}" r="7" fill="#b85050" opacity=".85"/><text x="132" y="${H-36}" font-size="9" fill="#4a6070">Food and Medicine</text></svg></div></div>`;
+// BUSINESS MODEL MIX
+function renderBizModelMix(data,vc){
+  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Business Model Mix</span><button class="btn-dl-vis" onclick="dlChart('cBizMix')">Download PNG</button></div><div class="vis-card-desc">B2C vs B2B vs B2B2C distribution across focus areas.</div><div class="chart-wrap" style="height:220px"><canvas id="cBizMix"></canvas></div></div>`;
+  setTimeout(()=>{
+    const areas=['Precision Nutrition','Intelligent Health','Food & Medicine'];
+    const models=['B2C','B2B','B2B2C','SaaS','Marketplace'];
+    const modelColors={'B2C':'#e07535','B2B':'#2563eb','B2B2C':'#16a34a','SaaS':'#7c3aed','Marketplace':'#d97706'};
+    const datasets=models.map(m=>({label:m,data:areas.map(a=>data.filter(r=>r['TMG Focus Area']===a&&r['Business Model']===m).length),backgroundColor:modelColors[m],borderRadius:4}));
+    const ctx=document.getElementById('cBizMix');if(!ctx)return;
+    const c=new Chart(ctx,{type:'bar',data:{labels:areas,datasets},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:9}}},scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:'#eef2f6'},ticks:{stepSize:1}}}}});
+    visCharts.cBizMix=c;charts.cBizMix=c;
+  },50);
 }
 
-function renderArchitecture(data,vc){
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Platform Architecture</span><button class="btn-dl-vis" onclick="dlVis('arch-inner')">Download PNG</button></div><div class="vis-card-desc">How data flows from web sources through the platform to deliver investment intelligence.</div><div id="arch-inner" style="background:var(--white);padding:20px;border-radius:7px"><svg viewBox="0 0 900 320" style="width:100%;height:auto"><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e07535"/></marker></defs><text x="450" y="22" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7a9ab0" font-weight="600">DATA SOURCES</text><rect x="40" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="110" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Startup Website</text><text x="110" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">URL Scraper</text><text x="110" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">AI fills form</text><rect x="260" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="330" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">LinkedIn Bio</text><text x="330" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">AI Extracts</text><text x="330" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Founder Pedigree</text><rect x="480" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="550" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Google Sheet</text><text x="550" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">CSV Sync</text><text x="550" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Manual entry</text><line x1="110" y1="82" x2="110" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="330" y1="82" x2="330" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="550" y1="82" x2="550" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="110" y1="115" x2="550" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="330" y1="115" x2="330" y2="128" stroke="#e07535" stroke-width="1.5" marker-end="url(#arr)"/><rect x="200" y="128" width="260" height="48" rx="8" fill="#ff8000" opacity=".9"/><text x="330" y="149" text-anchor="middle" font-family="sans-serif" font-size="13" fill="white">Firebase Firestore</text><text x="330" y="165" text-anchor="middle" font-family="sans-serif" font-size="9" fill="rgba(255,255,255,.8)">Real-time - Shared across all 5 teammates</text><line x1="230" y1="176" x2="140" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="280" y1="176" x2="320" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="380" y1="176" x2="500" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="430" y1="176" x2="680" y2="210" stroke="#dde4ec" stroke-width="1.2"/><rect x="70" y="210" width="140" height="48" rx="7" fill="#162535"/><text x="140" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Dashboard Charts</text><text x="140" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">12 Visual types</text><rect x="250" y="210" width="140" height="48" rx="7" fill="#7a3fd0"/><text x="320" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">AI Analysis</text><text x="320" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Claude / Gemini</text><rect x="430" y="210" width="140" height="48" rx="7" fill="#2a7f5f"/><text x="500" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">CSV Export</text><text x="500" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Google Sheets backup</text><rect x="610" y="210" width="140" height="48" rx="7" fill="#e07535"/><text x="680" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Newsletter PNGs</text><text x="680" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Visuals tab</text><rect x="210" y="268" width="220" height="34" rx="6" fill="#f0e8fe" stroke="#7a3fd0" stroke-width="1.5"/><text x="320" y="283" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#5a1a9a" font-weight="600">Send to Claude connector</text><text x="320" y="296" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a3fd0">Query your landscape from Claude chat</text><line x1="320" y1="258" x2="320" y2="268" stroke="#7a3fd0" stroke-width="1.2"/></svg></div></div>`;
+// IP LANDSCAPE
+function renderIPLandscape(data,vc){
+  const statuses=['None','Applied','Granted','Trade Secret'];
+  const statusColors={'None':'#e5e7eb','Applied':'#fbbf24','Granted':'#16a34a','Trade Secret':'#7c3aed'};
+  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">IP Landscape</span><button class="btn-dl-vis" onclick="dlVis('ip-inner')">Download PNG</button></div><div class="vis-card-desc">Patent and IP status across all tracked companies.</div>
+    <div id="ip-inner" style="background:var(--white);padding:14px;border-radius:7px">
+      <div style="display:flex;gap:14px;margin-bottom:16px;flex-wrap:wrap">
+        ${statuses.map(s=>{const n=data.filter(r=>r['IP / Patent Status']===s).length;return`<div style="text-align:center;padding:10px 16px;border-radius:8px;background:${statusColors[s]}22;border:2px solid ${statusColors[s]}"><div style="font-size:22px;font-weight:700;color:${statusColors[s]}">${n}</div><div style="font-size:10px;color:var(--ink-muted)">${s}</div></div>`;}).join('')}
+      </div>
+      <div>${data.filter(r=>r['IP / Patent Status']&&r['IP / Patent Status']!=='None').map(r=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px;padding:6px 10px;background:var(--slate);border-radius:6px;cursor:pointer" onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\'")}')">
+        <div style="width:8px;height:8px;border-radius:50%;background:${statusColors[r['IP / Patent Status']]||'#888'}"></div>
+        <span style="font-size:11px;font-weight:500">${r['Company Name']}</span>
+        <span class="badge ${r['TMG Focus Area']==='Precision Nutrition'?'b-pn':r['TMG Focus Area']==='Intelligent Health'?'b-ih':'b-fm'}">${r['TMG Focus Area']||''}</span>
+        <span style="margin-left:auto;font-size:10px;font-weight:600;color:${statusColors[r['IP / Patent Status']]}">${r['IP / Patent Status']}</span>
+        ${r['Key Technology']?`<span style="font-size:9px;color:var(--ink-muted)">${r['Key Technology'].slice(0,40)}</span>`:''}
+      </div>`).join('')}</div>
+    </div>
+  </div>`;
 }
 
+// COMPETITOR NETWORK
+function renderCompetitorNetwork(data,vc){
+  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Competitor Network</span></div><div class="vis-card-desc">Who lists whom as a competitor. Lines show competitive relationships.</div><div id="comp-net" style="background:var(--white);border-radius:7px;border:1px solid var(--border)"></div></div>`;
+  setTimeout(()=>{
+    const W=860,H=460;
+    const nodes=[],links=[];
+    const nameSet=new Set(data.map(r=>r['Company Name']));
+    data.forEach(r=>nodes.push({id:r['Company Name'],focus:r['TMG Focus Area']}));
+    data.forEach(r=>{if(r['Key Competitors']){r['Key Competitors'].split(/[,\/]/).forEach(comp=>{const c=comp.trim();if(nameSet.has(c)&&c!==r['Company Name'])links.push({source:r['Company Name'],target:c});});}});
+    const colors={'Precision Nutrition':'#e07535','Intelligent Health':'#2563eb','Food & Medicine':'#16a34a'};
+    const svg=d3.select('#comp-net').append('svg').attr('viewBox',`0 0 ${W} ${H}`).attr('style','width:100%;height:auto');
+    const sim=d3.forceSimulation(nodes).force('link',d3.forceLink(links).id(d=>d.id).distance(90)).force('charge',d3.forceManyBody().strength(-100)).force('center',d3.forceCenter(W/2,H/2)).force('collision',d3.forceCollide(28));
+    const link=svg.append('g').selectAll('line').data(links).join('line').attr('stroke','#e07535').attr('stroke-width',1.5).attr('stroke-opacity',.5);
+    const node=svg.append('g').selectAll('g').data(nodes).join('g').call(d3.drag().on('start',(e,d)=>{if(!e.active)sim.alphaTarget(.3).restart();d.fx=d.x;d.fy=d.y;}).on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y;}).on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null;}));
+    node.append('circle').attr('r',15).attr('fill',d=>colors[d.focus]||'#888').attr('opacity',.85);
+    node.append('text').attr('text-anchor','middle').attr('dy',24).attr('font-size',8).attr('fill','#4a6070').text(d=>{const n=d.id||'';return n.length>12?n.slice(0,10)+'..':n;});
+    node.append('title').text(d=>d.id);
+    sim.on('tick',()=>{link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);node.attr('transform',d=>`translate(${Math.max(18,Math.min(W-18,d.x))},${Math.max(18,Math.min(H-18,d.y))})`);});
+  },100);
+}
 function dlVis(innerId){
   const el=document.getElementById(innerId);if(!el)return;
   const go=()=>window.html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true}).then(canvas=>{const a=document.createElement('a');a.download='TMG_Visual.png';a.href=canvas.toDataURL('image/png');a.click();});
@@ -514,8 +711,20 @@ async function callAI(prompt){
   const provider=document.getElementById('aiProvider')?.value||localStorage.getItem('tmg_provider')||'gemini';
   if(provider==='gemini'){
     const key=localStorage.getItem('tmg_geminiKey')||document.getElementById('apiKeyInput')?.value.trim();
-    if(!key)return'Please add your Gemini API key in Settings. Get a free key at aistudio.google.com/app/apikey';
-    try{const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});const data=await res.json();if(data.error)throw new Error(data.error.message);return data.candidates?.[0]?.content?.parts?.[0]?.text||'No response.';}catch(e){return'Gemini error: '+e.message;}
+    if(!key)return'Please add your Gemini API key in Settings. Free key at aistudio.google.com/app/apikey';
+    const MODELS=['gemini-2.0-flash','gemini-1.5-flash','gemini-pro'];
+    try{
+      let gemData=null;
+      for(const model of MODELS){
+        try{
+          const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
+          const d=await r.json();
+          if(!d.error){gemData=d;break;}
+        }catch(e){continue;}
+      }
+      if(!gemData||gemData.error)throw new Error(gemData?.error?.message||'All Gemini models unavailable');
+      return gemData.candidates?.[0]?.content?.parts?.[0]?.text||'No response.';
+    }catch(e){return'Gemini error: '+e.message;}
   }else{
     const key=localStorage.getItem('tmg_claudeKey')||document.getElementById('apiKeyInput')?.value.trim();
     if(!key)return'Please add your Claude API key in Settings.';
