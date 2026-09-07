@@ -361,11 +361,8 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle}
       <button class="vis-btn" onclick="setVis('funding',this)">Funding Timeline</button>
       <button class="vis-btn" onclick="setVis('geomap',this)">Geographic Map</button>
       <button class="vis-btn" onclick="setVis('architecture',this)">Architecture</button>
-      <button class="vis-btn" onclick="setVis('fundingcomp',this)">Funding Comparison</button>
-      <button class="vis-btn" onclick="setVis('scorerank',this)">Score Rankings</button>
       <button class="vis-btn" onclick="setVis('bizmodel',this)">Business Model Mix</button>
       <button class="vis-btn" onclick="setVis('iplandscape',this)">IP Landscape</button>
-      <button class="vis-btn" onclick="setVis('compnet',this)">Competitor Network</button>
     </div>
     <div id="visContent"></div>
   </div>
@@ -380,11 +377,7 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle}
         <div class="scraper-title">AI Magic - Auto-fill from URL</div>
         <div class="scraper-row"><input class="scraper-input" id="scrapeUrl" type="text" placeholder="Paste startup website URL e.g. https://zoescience.co"><button class="btn-scrape" id="btnScrape" onclick="scrapeAndFill()">AI Scrape and Fill</button></div>
         <div class="scrape-status" id="scrapeStatus">Paste a URL above and let AI auto-populate the form below.</div>
-        <div class="linkedin-row">
-          <div style="font-size:10px;font-weight:500;color:var(--ink-soft);margin-bottom:4px">Founder LinkedIn URL or bio text → extract pedigree:</div>
-          <textarea id="linkedinBio" placeholder="Paste LinkedIn profile URL (e.g. linkedin.com/in/name) or paste bio text directly..."></textarea>
-          <button class="btn-scrape" style="margin-top:5px;padding:5px 12px;font-size:10px" onclick="extractPedigree()">Extract Pedigree</button>
-        </div>
+
       </div>
       <input type="hidden" id="f_docId">
       <div class="form-grid">

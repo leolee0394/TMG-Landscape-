@@ -11,12 +11,16 @@ let allData=[], filteredData=[], curView='targets', curSection='dashboard';
 let sortCol='', sortDir=1, curPrompt='newsletter', curVis='valuechain', cmpPrompt='compare', numCmpSlots=3;
 let charts={}, visCharts={}, claudePromptType='overview', claudePayload='';
 
-const exp = {setView,showSection,openAddModal,closeAddModal,saveCompany,openSettings,closeSettings,saveSettings,applyFilters,srt,openPanel,closePanel,editCompany,deleteCompany,addLink,delLink,saveNotes,renderCompare,addCmpSlot,selPrompt,selCmpPrompt,generateAI,generateCmpAI,copyAI,copyCmpAI,saveKey,updateKeyLabel,setVis,exportCSV,importFromSheet,dlVis,dlChart,updateMatrix,updateBubble,updateRadar,dlRadarChart,renderVis,scrapeAndFill,extractPedigree,openClaudeModal,closeClaudeModal,setClaude,copyForClaude,openClaude,loadData};
+const exp = {setView,showSection,openAddModal,closeAddModal,saveCompany,openSettings,closeSettings,saveSettings,applyFilters,srt,openPanel,closePanel,editCompany,deleteCompany,addLink,delLink,saveNotes,renderCompare,addCmpSlot,selPrompt,selCmpPrompt,generateAI,generateCmpAI,copyAI,copyCmpAI,saveKey,updateKeyLabel,setVis,exportCSV,importFromSheet,dlVis,dlChart,updateMatrix,updateBubble,updateRadar,dlRadarChart,renderVis,scrapeAndFill,openClaudeModal,closeClaudeModal,setClaude,copyForClaude,openClaude,loadData};
 Object.entries(exp).forEach(([k,v])=>window[k]=v);
 window.updateRadar=updateRadar;window.dlRadarChart=dlRadarChart;window.updateVCStyle=updateVCStyle;
 
 onSnapshot(collection(db,COL),(snap)=>{
-  allData=snap.docs.map(d=>({...d.data(),_id:d.id}));
+  // Deduplicate by Company Name - keep most recent if dupes exist
+  const raw=snap.docs.map(d=>({...d.data(),_id:d.id}));
+  const seen=new Map();
+  raw.forEach(r=>{const n=r['Company Name']||'';if(!seen.has(n)||r['Last Updated']>seen.get(n)['Last Updated'])seen.set(n,r);});
+  allData=[...seen.values()];
   document.getElementById('loadingMsg').style.display='none';
   document.getElementById('syncDot').className='sync-dot live';
   document.getElementById('lastUpd').textContent='Live - '+new Date().toLocaleTimeString();
@@ -215,7 +219,7 @@ function editCompany(name){
 function openAddModal(){
   document.getElementById('modalTitle').textContent='Add Company';
   document.getElementById('f_docId').value='';
-  document.getElementById('scrapeUrl').value='';document.getElementById('scrapeStatus').textContent='Paste a URL above and let AI auto-populate the form below.';document.getElementById('linkedinBio').value='';
+  document.getElementById('scrapeUrl').value='';document.getElementById('scrapeStatus').textContent='Paste a URL above and let AI auto-populate the form below.';
   ['f_name','f_oneliner','f_sub','f_geo','f_funding','f_lastfunded','f_runway','f_founders','f_investors','f_tech','f_pricing','f_customer','f_moat','f_competitors','f_risk','f_website'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   ['f_focus','f_health','f_eco','f_biz','f_type','f_stage','f_pedigree','f_ip','f_traction','f_diff','f_capeff','f_cv','f_ai','f_reg','f_pers','f_dm','f_sc','f_interest'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('addModal').classList.add('open');
@@ -263,29 +267,6 @@ async function scrapeAndFill(){
   }catch(e){status.textContent='AI returned data but could not parse it. Raw: '+result.slice(0,100);}
   btn.disabled=false;btn.textContent='AI Scrape and Fill';
 }
-async function extractPedigree(){
-  const input=document.getElementById('linkedinBio').value.trim();
-  if(!input){alert('Paste LinkedIn URL or founder bio text here.');return;}
-  let bio=input;
-  // If it looks like a URL, try r.jina.ai to extract profile content
-  if(input.startsWith('http')){
-    const status=document.getElementById('scrapeStatus');
-    if(status)status.textContent='Reading LinkedIn profile via Jina AI...';
-    try{
-      const r=await fetch('https://r.jina.ai/'+input,{signal:AbortSignal.timeout(12000),headers:{'Accept':'text/plain'}});
-      if(r.ok){const t=await r.text();bio=t.slice(0,3000);}
-      else{alert('Could not read LinkedIn profile. Paste the bio/experience text directly instead.');return;}
-    }catch(e){alert('Could not read LinkedIn profile (LinkedIn blocks scrapers). Paste the bio text directly instead.');return;}
-  }
-  const prompt=`Based on this LinkedIn bio, classify the founder pedigree as exactly one of: "Repeat Founder", "Ex-FAANG", "PhD-Researcher", "First-time", "Mixed". Return ONLY the classification.\n\nBio:\n${bio}`;
-  const result=await callAI(prompt);
-  const clean=result.trim().replace(/['"]/g,'');
-  const el=document.getElementById('f_pedigree');
-  const opts=['Repeat Founder','Ex-FAANG','PhD-Researcher','First-time','Mixed'];
-  if(el&&opts.includes(clean)){el.value=clean;alert('Pedigree set to: '+clean);}
-  else alert('Result: '+clean+' - please select manually.');
-}
-
 async function importFromSheet(){
   const csvUrl=localStorage.getItem('tmg_csvUrl')||'https://docs.google.com/spreadsheets/d/e/2PACX-1vR8LViFyryNqnjbQxgOO3SKHjHWAzY-2-S5mERrp7xABQc8_y2iw4mK2DV6PX5HsCN6Yj1wL6HtMOiY/pub?output=csv';
   const btn=event.target;btn.textContent='Syncing...';btn.disabled=true;
@@ -353,26 +334,19 @@ function renderVis(){
   const data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
   const vc=document.getElementById('visContent');if(!vc)return;
   Object.values(visCharts).forEach(c=>{try{c.destroy();}catch(e){}});visCharts={};
-  const renders={valuechain:renderValueChain,tile:renderTile,classic:renderClassic,matrix2x2:renderMatrix,heatmap:renderHeatmap,bubble:renderBubble,ecosystem:renderEcosystem,radar:renderRadar,whitespace:renderWhitespace,funding:renderFunding,geomap:renderGeoMap,architecture:renderArchitecture,fundingcomp:renderFundingComp,scorerank:renderScoreRankings,bizmodel:renderBizModelMix,iplandscape:renderIPLandscape,compnet:renderCompetitorNetwork};
+  const renders={valuechain:renderValueChain,tile:renderTile,classic:renderClassic,matrix2x2:renderMatrix,heatmap:renderHeatmap,bubble:renderBubble,ecosystem:renderEcosystem,radar:renderRadar,whitespace:renderWhitespace,funding:renderFunding,geomap:renderGeoMap,architecture:renderArchitecture,bizmodel:renderBizModelMix,iplandscape:renderIPLandscape};
   if(renders[curVis])renders[curVis](data,vc);
 }
 
-function updateVCStyle(){
-  const style=document.getElementById('vcStyle')?.value||'column';
-  const t=document.getElementById('vc-render');
-  if(!t||!window._vcData)return;
-  renderVCInner(window._vcData,style);
-}
+function updateVCStyle(){renderVCInner(window._vcData||[],'column');}
 function renderValueChain(data,vc){
   window._vcData=data;
   const cols=['Ingredient / Science','Platform','Brand','Distribution / Channel'];
   const cls=['vc-orange','vc-navy','vc-green','vc-rose'];
   const colData={};cols.forEach(c=>colData[c]=[]);
   data.forEach(r=>{const p=r['Ecosystem Position'];if(p&&colData[p])colData[p].push(r);});
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Value Chain Map</span><div style="display:flex;gap:7px;align-items:center"><select id="vcStyle" onchange="updateVCStyle()" style="padding:4px 8px;border:1px solid var(--border);border-radius:5px;font-size:10px;font-family:inherit;outline:none"><option value="column">Column view</option><option value="flow">Flow with arrows</option></select><button class="btn-dl-vis" onclick="dlVis('vc-inner')">Download PNG</button></div></div><div class="vis-card-desc">Companies positioned by role in the healthspan value chain.</div><div id="vc-inner" style="background:var(--white);padding:14px;border-radius:7px"><div id="vc-render"></div></div></div>`;
-  setTimeout(()=>{
-    renderVCInner(data,'column');
-  },50);
+  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Value Chain Map</span><div style="display:flex;gap:7px;align-items:center"><button class="btn-dl-vis" onclick="dlVis('vc-inner')">Download PNG</button></div></div><div class="vis-card-desc">Companies positioned by role in the healthspan value chain.</div><div id="vc-inner" style="background:var(--white);padding:14px;border-radius:7px"><div id="vc-render"></div></div></div>`;
+  setTimeout(()=>renderVCInner(data,'column'),50);
 }
 function renderVCInner(data,style){
   const cols=['Ingredient / Science','Platform','Brand','Distribution / Channel'];
@@ -705,12 +679,80 @@ function renderFunding(data,vc){
 }
 
 function renderGeoMap(data,vc){
-  const geoCoords={'US':{x:200,y:175},'USA':{x:200,y:175},'UK':{x:435,y:112},'United Kingdom':{x:435,y:112},'France':{x:448,y:128},'Ireland':{x:422,y:110},'Israel':{x:502,y:158},'Switzerland':{x:454,y:122},'Sweden':{x:468,y:94},'Singapore':{x:638,y:228},'Germany':{x:458,y:112},'Canada':{x:185,y:125}};
-  const W=900,H=420;
+  const geoCoords={
+    'US':{x:180,y:175,label:'United States'},'USA':{x:180,y:175,label:'United States'},
+    'UK':{x:435,y:110,label:'UK'},'United Kingdom':{x:435,y:110,label:'UK'},
+    'France':{x:450,y:130,label:'France'},'Ireland':{x:415,y:108,label:'Ireland'},
+    'Israel':{x:500,y:158,label:'Israel'},'Switzerland':{x:455,y:122,label:'Switzerland'},
+    'Sweden':{x:468,y:90,label:'Sweden'},'Singapore':{x:635,y:228,label:'Singapore'},
+    'Germany':{x:460,y:112,label:'Germany'},'Canada':{x:175,y:120,label:'Canada'},
+    'Australia':{x:675,y:285,label:'Australia'},'India':{x:580,y:190,label:'India'},
+    'China':{x:638,y:155,label:'China'},'Japan':{x:690,y:148,label:'Japan'}
+  };
+  const W=880,H=420;
   const companies=data.filter(r=>r['Geography']&&geoCoords[r['Geography'].trim()]);
-  const worldPaths=['M 130,80 L 80,90 L 60,110 L 70,140 L 100,160 L 130,165 L 160,150 L 175,130 L 170,100 Z','M 130,165 L 100,200 L 110,240 L 130,270 L 155,280 L 170,260 L 165,220 L 150,185 Z','M 380,60 L 340,70 L 310,90 L 305,115 L 320,130 L 345,135 L 375,125 L 400,110 L 410,85 Z','M 375,135 L 355,150 L 350,185 L 360,220 L 380,240 L 410,235 L 425,210 L 420,175 L 405,150 Z','M 420,75 L 450,65 L 490,70 L 530,80 L 570,90 L 610,100 L 650,110 L 680,130 L 700,160 L 690,190 L 660,200 L 620,195 L 580,185 L 540,170 L 500,155 L 460,140 L 430,120 L 415,100 Z','M 490,195 L 510,200 L 530,215 L 525,240 L 505,255 L 485,245 L 478,220 Z','M 650,260 L 695,255 L 720,270 L 715,300 L 695,315 L 665,310 L 645,290 Z','M 780,155 L 810,145 L 835,155 L 840,180 L 820,200 L 790,195 L 775,175 Z'];
   const colors={'Precision Nutrition':'#e07535','Intelligent Health':'#2563eb','Food & Medicine':'#16a34a'};
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Geographic Map</span><button class="btn-dl-vis" onclick="dlVis('geo-inner')">Download PNG</button></div><div class="vis-card-desc">Company HQs plotted geographically. Bubble size = number of companies in location.</div><div id="geo-inner" style="background:#c8e6f5;border-radius:7px;overflow:hidden"><svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><rect width="${W}" height="${H}" fill="#b8d4e8"/>${worldPaths.map(p=>`<path d="${p}" fill="#d4e8c8" stroke="#b0cba0" stroke-width="0.8"/>`).join('')}${Object.entries(geoCoords).map(([geo,pos])=>{const comps=companies.filter(r=>r['Geography']?.trim()===geo);if(!comps.length)return'';const r=Math.max(14,comps.length*10);const focus=comps[0]['TMG Focus Area'];const color=colors[focus]||'#888';const names=comps.map(c=>c['Company Name']).join(', ');return`<circle cx="${pos.x}" cy="${pos.y}" r="${r}" fill="${color}" opacity=".85"/><text x="${pos.x}" y="${pos.y+3}" text-anchor="middle" font-size="9" fill="white" font-weight="600">${comps.length}</text><title>${geo}: ${names}</title>`;}).join('')}<rect x="12" y="${H-58}" width="210" height="52" fill="white" opacity=".85" rx="5"/><circle cx="26" cy="${H-42}" r="7" fill="#e07535" opacity=".9"/><text x="38" y="${H-38}" font-size="9" fill="#333">Precision Nutrition</text><circle cx="26" cy="${H-24}" r="7" fill="#2563eb" opacity=".9"/><text x="38" y="${H-20}" font-size="9" fill="#333">Intelligent Health</text><circle cx="130" cy="${H-42}" r="7" fill="#16a34a" opacity=".9"/><text x="142" y="${H-38}" font-size="9" fill="#333">Food and Medicine</text><text x="130" y="${H-20}" font-size="8" fill="#7a9ab0">Size = no. of companies</text></svg></div></div>`;
+  // Group companies by location
+  const locGroups={};
+  companies.forEach(r=>{const g=r['Geography'].trim();if(!locGroups[g])locGroups[g]=[];locGroups[g].push(r);});
+
+  const bubbles=Object.entries(locGroups).map(([geo,comps])=>{
+    const pos=geoCoords[geo];if(!pos)return'';
+    const r=Math.max(16,comps.length*12);
+    // Use first company focus for color, but show count
+    const focus=comps[0]['TMG Focus Area'];
+    const color=colors[focus]||'#888';
+    const names=comps.map(c=>c['Company Name']).join(', ');
+    // If multiple focus areas, use a split approach visually
+    const focusCounts={};comps.forEach(c=>{focusCounts[c['TMG Focus Area']]=(focusCounts[c['TMG Focus Area']]||0)+1;});
+    const dominant=Object.entries(focusCounts).sort((a,b)=>b[1]-a[1])[0][0];
+    return `<circle cx="${pos.x}" cy="${pos.y}" r="${r}" fill="${colors[dominant]||'#888'}" opacity=".82" stroke="white" stroke-width="2"/><text x="${pos.x}" y="${pos.y+3}" text-anchor="middle" font-size="${r>20?10:9}" fill="white" font-weight="700">${comps.length}</text><text x="${pos.x}" y="${pos.y+r+12}" text-anchor="middle" font-size="8" fill="#4a6070">${pos.label}</text><title>${geo}: ${names}</title>`;
+  }).join('');
+
+  // Simple flat map background with labeled regions
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">Geographic Map</span><button class="btn-dl-vis" onclick="dlVis('geo-inner')">Download PNG</button></div>
+    <div class="vis-card-desc">Company HQs plotted geographically. Bubble size = number of companies in that location.</div>
+    <div id="geo-inner" style="background:#ddeeff;border-radius:7px;overflow:hidden">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">
+        <!-- Ocean background -->
+        <rect width="${W}" height="${H}" fill="#c8dff0"/>
+        <!-- Landmasses - simplified but recognisable -->
+        <!-- North America -->
+        <path d="M60,60 L70,50 L120,45 L165,52 L200,65 L230,80 L245,100 L250,130 L240,160 L220,180 L195,195 L170,200 L145,195 L120,185 L95,170 L75,150 L60,125 L50,95 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- Central America -->
+        <path d="M195,195 L205,210 L210,235 L205,250 L195,245 L188,225 L185,205 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- South America -->
+        <path d="M200,255 L220,248 L248,258 L262,280 L268,310 L260,340 L240,360 L215,365 L195,352 L182,325 L178,295 L183,268 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- Europe -->
+        <path d="M390,55 L410,48 L445,50 L468,60 L480,75 L478,95 L460,105 L440,110 L415,108 L398,98 L385,80 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- Scandinavia -->
+        <path d="M430,38 L445,30 L462,32 L472,48 L460,55 L440,52 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- Africa -->
+        <path d="M395,115 L420,110 L450,115 L468,130 L475,160 L470,200 L455,235 L435,255 L410,262 L385,252 L368,225 L360,190 L362,158 L372,132 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- Middle East -->
+        <path d="M478,100 L505,95 L522,105 L525,125 L510,135 L490,130 L476,118 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- Asia (main) -->
+        <path d="M520,45 L560,38 L610,40 L660,48 L705,58 L730,75 L738,100 L725,125 L700,140 L665,148 L625,150 L590,145 L555,135 L525,120 L508,100 L510,72 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- India subcontinent -->
+        <path d="M545,148 L570,145 L590,155 L598,180 L588,208 L568,218 L548,208 L538,182 L538,162 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- SE Asia + Indonesia -->
+        <path d="M625,175 L648,168 L665,178 L668,195 L652,205 L630,200 L618,190 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- Japan -->
+        <path d="M688,85 L698,80 L708,88 L705,105 L694,110 L684,102 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- Australia -->
+        <path d="M640,270 L678,262 L712,268 L728,285 L730,310 L715,328 L688,335 L660,330 L640,315 L630,295 L632,276 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
+        <!-- Bubbles -->
+        ${bubbles}
+        <!-- Legend -->
+        <rect x="10" y="${H-58}" width="215" height="52" fill="white" opacity=".88" rx="5"/>
+        <circle cx="24" cy="${H-42}" r="7" fill="#e07535" opacity=".9"/><text x="36" y="${H-38}" font-size="9" fill="#333">Precision Nutrition</text>
+        <circle cx="24" cy="${H-24}" r="7" fill="#2563eb" opacity=".9"/><text x="36" y="${H-20}" font-size="9" fill="#333">Intelligent Health</text>
+        <circle cx="128" cy="${H-42}" r="7" fill="#16a34a" opacity=".9"/><text x="140" y="${H-38}" font-size="9" fill="#333">Food and Medicine</text>
+        <text x="128" y="${H-20}" font-size="8" fill="#7a9ab0">Number = companies in location</text>
+      </svg>
+    </div>
+  </div>`;
 }
 
 function renderArchitecture(data,vc){
@@ -757,19 +799,23 @@ async function callAI(prompt){
   if(provider==='gemini'){
     const key=localStorage.getItem('tmg_geminiKey')||document.getElementById('apiKeyInput')?.value.trim();
     if(!key)return'Please add your Gemini API key in Settings. Free key at aistudio.google.com/app/apikey';
-    const MODELS=['gemini-2.0-flash','gemini-1.5-flash','gemini-pro'];
-    try{
-      let gemData=null;
-      for(const model of MODELS){
-        try{
-          const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+model+':generateContent?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
-          const d=await r.json();
-          if(!d.error){gemData=d;break;}
-        }catch(e){continue;}
-      }
-      if(!gemData||gemData.error)throw new Error(gemData?.error?.message||'All Gemini models unavailable');
-      return gemData.candidates?.[0]?.content?.parts?.[0]?.text||'No response.';
-    }catch(e){return'Gemini error: '+e.message;}
+    const ENDPOINTS=[
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
+      'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+    ];
+    let lastErr='';
+    for(const endpoint of ENDPOINTS){
+      try{
+        const r=await fetch(endpoint+'?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
+        const d=await r.json();
+        if(d.error){lastErr=d.error.message;continue;}
+        return d.candidates?.[0]?.content?.parts?.[0]?.text||'No response.';
+      }catch(e){lastErr=e.message;continue;}
+    }
+    return 'Gemini error: '+lastErr+'. Check your API key in Settings - get a free key at aistudio.google.com/app/apikey';
   }else{
     const key=localStorage.getItem('tmg_claudeKey')||document.getElementById('apiKeyInput')?.value.trim();
     if(!key)return'Please add your Claude API key in Settings.';
