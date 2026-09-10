@@ -952,7 +952,7 @@ async function callAI(prompt){
         const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
           method:'POST',
           headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-          body:JSON.stringify({model:m,messages:[{role:'user',content:prompt}],max_completion_tokens:4096,reasoning_effort:'low'})
+          body:JSON.stringify({model:m,messages:[{role:'user',content:prompt}],max_completion_tokens:4096,reasoning_effort:'medium',temperature:0.2})
         });
         const d=await r.json();
         if(d.error){lastErr=d.error.message;continue;}
@@ -974,7 +974,7 @@ async function callAI(prompt){
       try{
         const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+key,{
           method:'POST',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:2048}})
+          body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:2048,temperature:0.2}})
         });
         const d=await r.json();
         if(d.error){lastErr=d.error.message;continue;}
@@ -991,7 +991,7 @@ async function callAI(prompt){
   const headers={'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
   if(w)headers['anthropic-workspace-id']=w;
   try{
-    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2048,messages:[{role:'user',content:prompt}]})});
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2048,temperature:0.2,messages:[{role:'user',content:prompt}]})});
     const d=await r.json();
     if(d.error)throw new Error(d.error.message);
     return d.content?.[0]?.text||'No response.';
