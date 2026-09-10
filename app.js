@@ -291,7 +291,7 @@ async function scrapeAndFill(){
     return;
   }
 
-  const prompt='You are a VC analyst assistant. Extract company info from this webpage text. Return ONLY a valid JSON object - no markdown, no explanation - with these keys (empty string if unknown): Company_Name, One_liner, Sub_category, Geography, Stage (Pre-seed/Seed/Series A/Series B/Public), Funding_Raised (e.g. $10M), Last_Funded_Date (e.g. Q2 2024), Number_of_Founders, Founder_Pedigree (Repeat Founder/Ex-FAANG/PhD-Researcher/First-time/Mixed or empty), Key_Investors, Key_Technology, IP_Patent_Status (None/Applied/Granted/Trade Secret or empty), Pricing_Model, Target_Customer, Core_Moat, Key_Competitors, Execution_Risk, Website_URL, TMG_Focus_Area (Precision Nutrition/Intelligent Health/Food and Medicine), Healthspan_Target (Metabolic Control/Gut Health/Cardiovascular Health/Neurological Health/Inflammation/Musculoskeletal/Multiple), Ecosystem_Position (Ingredient / Science/Platform/Brand/Distribution / Channel), Business_Model (B2C/B2B/B2B2C/Marketplace/SaaS), Company_Type (Startup/Incumbent/Acquirer).\n\nWebpage text ('+pageText.length+' chars):\n'+pageText.slice(0,5000);
+  const prompt='You are a VC analyst assistant. Extract company info from this webpage text. Return ONLY a valid JSON object - no markdown, no explanation - with these keys (empty string if unknown): Company_Name, One_liner, Sub_category, Geography, Stage (Pre-seed/Seed/Series A/Series B/Public), Funding_Raised (e.g. $10M), Last_Funded_Date (e.g. Q2 2024), Number_of_Founders, Founder_Pedigree (Repeat Founder/Ex-FAANG/PhD-Researcher/First-time/Mixed or empty), Key_Investors, Key_Technology, IP_Patent_Status (None/Applied/Granted/Trade Secret or empty), Pricing_Model, Target_Customer, Core_Moat, Key_Competitors, Execution_Risk, Website_URL, TMG_Focus_Area (Precision Nutrition/Intelligent Health/Food and Medicine), Healthspan_Target (Metabolic Control/Gut Health/Cardiovascular Health/Neurological Health/Inflammation/Musculoskeletal/Multiple), Ecosystem_Position (Ingredient / Science/Platform/Brand/Distribution / Channel), Business_Model (B2C/B2B/B2B2C/Marketplace/SaaS), Company_Type (Startup/Incumbent/Acquirer).\n\nAlso suggest a score from 1 to 5 for each of these dimensions, based ONLY on evidence actually present in the page text (customer numbers, press mentions, clinical/study language, technology claims, pricing/model structure) - if the page gives no real signal for a dimension, return an empty string for it rather than guessing: Market_Traction, Product_Differentiation, Capital_Efficiency, Clinical_Validation, AI_Actionability, Regulatory_Complexity, Personalization_Depth, Data_Moat, Scalability.\n\nWebpage text ('+pageText.length+' chars):\n'+pageText.slice(0,5000);
 
   status.textContent='AI analysing page content...';
   const result=await callAI(prompt);
@@ -301,11 +301,13 @@ async function scrapeAndFill(){
     if(!data)throw new Error('unparseable');
     const textMap={Company_Name:'f_name',One_liner:'f_oneliner',Sub_category:'f_sub',Geography:'f_geo',Stage:'f_stage',Funding_Raised:'f_funding',Last_Funded_Date:'f_lastfunded',Number_of_Founders:'f_founders',Founder_Pedigree:'f_pedigree',Key_Investors:'f_investors',Key_Technology:'f_tech',Pricing_Model:'f_pricing',Target_Customer:'f_customer',Core_Moat:'f_moat',Key_Competitors:'f_competitors',Execution_Risk:'f_risk'};
     const selMap={TMG_Focus_Area:'f_focus',Healthspan_Target:'f_health',Ecosystem_Position:'f_eco',Business_Model:'f_biz',Company_Type:'f_type',Founder_Pedigree:'f_pedigree',IP_Patent_Status:'f_ip'};
-    let filled=0;
+    const scoreMap={Market_Traction:'f_traction',Product_Differentiation:'f_diff',Capital_Efficiency:'f_capeff',Clinical_Validation:'f_cv',AI_Actionability:'f_ai',Regulatory_Complexity:'f_reg',Personalization_Depth:'f_pers',Data_Moat:'f_dm',Scalability:'f_sc'};
+    let filled=0,scoresFilled=0;
     Object.entries(textMap).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&data[k]&&data[k].trim()){el.value=data[k];filled++;}});
     Object.entries(selMap).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&data[k]&&data[k].trim()){el.value=data[k];filled++;}});
+    Object.entries(scoreMap).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&data[k]&&String(data[k]).trim()&&[1,2,3,4,5].includes(+data[k])){el.value=data[k];el.style.outline='2px solid #e07535';el.style.outlineOffset='1px';el.title='AI-suggested from page content - verify before saving';filled++;scoresFilled++;}});
     const web=document.getElementById('f_website');if(web&&!web.value){web.value=data.Website_URL||url;}
-    status.textContent=filled>0?'Filled '+filled+' fields. Review and adjust before saving.':'AI could not extract structured data from this page. The page may be mostly JavaScript-rendered or behind a login.';
+    status.textContent=filled>0?'Filled '+filled+' fields'+(scoresFilled?' ('+scoresFilled+' scores suggested by AI - highlighted orange, please verify)':'')+'. Review and adjust before saving.':'AI could not extract structured data from this page. The page may be mostly JavaScript-rendered or behind a login.';
   }catch(e){
     status.textContent='Parse error. Raw AI response: '+result.slice(0,120)+'...';
   }
@@ -330,9 +332,11 @@ async function importFromSheet(){
     row['Last Updated']=row['Last Updated']||new Date().toLocaleDateString('en-GB').replace(/\//g,'.');
     const sid=safeId(name);
     try{
-      // setDoc with a stable id (safeId(name)) always merges into the same doc -
-      // no duplicates whether it's the first sync or the hundredth.
-      await setDoc(doc(db,COL,existingMap[sid]||sid),row);
+      // {merge:true} is the fix: without it, setDoc replaces the WHOLE document
+      // with just what's in the Sheet's columns, wiping any field (scores,
+      // geography, etc.) that only exists in Firestore because it was added
+      // through the platform and never had a matching Sheet column.
+      await setDoc(doc(db,COL,existingMap[sid]||sid),row,{merge:true});
       existingMap[sid]?updated++:created++;
     }catch(e){console.error('Sync error',name,e);}
   }
@@ -731,7 +735,7 @@ function renderFunding(data,vc){
   const stageOrder={'Pre-seed':1,'Seed':2,'Series A':3,'Series B':4,'Public':5};
   const sorted=[...data].filter(r=>stageOrder[r['Stage']]).sort((a,b)=>stageOrder[a['Stage']]-stageOrder[b['Stage']]);
   const colors={'Precision Nutrition':'#e07535','Intelligent Health':'#2563eb','Food & Medicine':'#16a34a'};
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Funding Timeline</span><button class="btn-dl-vis" onclick="dlVis('ft-inner')">Download PNG</button></div><div class="vis-card-desc">Companies arranged by funding stage from earliest to most mature.</div><div id="ft-inner" style="background:var(--white);padding:14px;border-radius:7px">${['Pre-seed','Seed','Series A','Series B','Public'].map(stage=>{const comps=sorted.filter(r=>r['Stage']===stage);if(!comps.length)return'';return`<div style="margin-bottom:18px"><div style="font-size:9px;font-weight:600;color:var(--ink-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px"><div style="height:1px;flex:1;background:var(--border)"></div>${stage}<div style="height:1px;flex:1;background:var(--border)"></div></div><div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center">${comps.map(r=>`<div onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\'")}');" style="cursor:pointer;background:${colors[r['TMG Focus Area']]||'#888'};color:white;padding:6px 11px;border-radius:7px;font-size:10px;font-weight:500;min-width:90px;text-align:center"><div>${r['Company Name']}</div><div style="font-size:8px;opacity:.75">${r['Funding Raised']||'Undisclosed'}</div>${r['Last Funded Date']?`<div style="font-size:8px;opacity:.6">${r['Last Funded Date']}</div>`:''}</div>`).join('')}</div></div>`;}).join('')}</div></div>`;
+  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Funding Timeline</span><button class="btn-dl-vis" onclick="dlVis('ft-inner')">Download PNG</button></div><div class="vis-card-desc">Companies arranged by funding stage from earliest to most mature. Card color = TMG Focus Area.</div><div style="display:flex;gap:16px;align-items:center;margin-bottom:10px;font-size:10px;color:var(--ink-soft)"><span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:3px;background:#e07535;display:inline-block"></span>Precision Nutrition</span><span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:3px;background:#2563eb;display:inline-block"></span>Intelligent Health</span><span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:3px;background:#16a34a;display:inline-block"></span>Food &amp; Medicine</span></div><div id="ft-inner" style="background:var(--white);padding:14px;border-radius:7px">${['Pre-seed','Seed','Series A','Series B','Public'].map(stage=>{const comps=sorted.filter(r=>r['Stage']===stage);if(!comps.length)return'';return`<div style="margin-bottom:18px"><div style="font-size:9px;font-weight:600;color:var(--ink-muted);letter-spacing:.05em;text-transform:uppercase;margin-bottom:7px;display:flex;align-items:center;gap:7px"><div style="height:1px;flex:1;background:var(--border)"></div>${stage}<div style="height:1px;flex:1;background:var(--border)"></div></div><div style="display:flex;flex-wrap:wrap;gap:7px;justify-content:center">${comps.map(r=>`<div onclick="showSection('companies');openPanel('${r['Company Name'].replace(/'/g,"\'")}');" style="cursor:pointer;background:${colors[r['TMG Focus Area']]||'#888'};color:white;padding:6px 11px;border-radius:7px;font-size:10px;font-weight:500;min-width:90px;text-align:center"><div>${r['Company Name']}</div><div style="font-size:8px;opacity:.75">${r['Funding Raised']||'Undisclosed'}</div>${r['Last Funded Date']?`<div style="font-size:8px;opacity:.6">${r['Last Funded Date']}</div>`:''}</div>`).join('')}</div></div>`;}).join('')}</div></div>`;
 }
 
 function renderGeoMap(data,vc){
@@ -775,11 +779,13 @@ function renderGeoMap(data,vc){
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">
         <image href="./worldmap.png" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>
         ${bubbles}
-        <rect x="10" y="${H-58}" width="215" height="52" fill="white" opacity=".9" rx="5"/>
-        <circle cx="24" cy="${H-42}" r="7" fill="#e07535" opacity=".9"/><text x="36" y="${H-38}" font-size="9" fill="#333">Precision Nutrition</text>
-        <circle cx="24" cy="${H-24}" r="7" fill="#2563eb" opacity=".9"/><text x="36" y="${H-20}" font-size="9" fill="#333">Intelligent Health</text>
-        <circle cx="128" cy="${H-42}" r="7" fill="#16a34a" opacity=".9"/><text x="140" y="${H-38}" font-size="9" fill="#333">Food and Medicine</text>
-        <text x="128" y="${H-20}" font-size="8" fill="#7a9ab0">Number = companies in location</text>
+        <rect x="12" y="${H-116}" width="172" height="104" fill="white" opacity=".92" rx="6"/>
+        <text x="24" y="${H-97}" font-size="9" font-weight="700" fill="#162535" style="text-transform:uppercase;letter-spacing:.04em">Dominant Focus</text>
+        <circle cx="24" cy="${H-79}" r="6" fill="#e07535"/><text x="36" y="${H-76}" font-size="9.5" fill="#333">Precision Nutrition</text>
+        <circle cx="24" cy="${H-59}" r="6" fill="#2563eb"/><text x="36" y="${H-56}" font-size="9.5" fill="#333">Intelligent Health</text>
+        <circle cx="24" cy="${H-39}" r="6" fill="#16a34a"/><text x="36" y="${H-36}" font-size="9.5" fill="#333">Food &amp; Medicine</text>
+        <line x1="24" y1="${H-28}" x2="172" y2="${H-28}" stroke="#dde4ec" stroke-width="1"/>
+        <text x="24" y="${H-16}" font-size="8.5" fill="#7a9ab0">Bubble size/number = companies</text>
       </svg>
     </div>
   </div>`;
@@ -788,50 +794,59 @@ function renderArchitecture(data,vc){
   vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Platform Architecture</span><button class="btn-dl-vis" onclick="dlVis('arch-inner')">Download PNG</button></div><div class="vis-card-desc">How data flows from web sources through the platform to deliver investment intelligence.</div><div id="arch-inner" style="background:var(--white);padding:20px;border-radius:7px"><svg viewBox="0 0 900 320" style="width:100%;height:auto"><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e07535"/></marker></defs><text x="450" y="22" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7a9ab0" font-weight="600">DATA SOURCES</text><rect x="40" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="110" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Startup Website</text><text x="110" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Jina AI Scraper</text><text x="110" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">AI fills form</text><rect x="260" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="330" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">LinkedIn Profile</text><text x="330" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Jina AI Reader</text><text x="330" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Founder Pedigree</text><rect x="480" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="550" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Google Sheet</text><text x="550" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">CSV Sync</text><text x="550" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Manual entry</text><line x1="110" y1="82" x2="110" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="330" y1="82" x2="330" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="550" y1="82" x2="550" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="110" y1="115" x2="550" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="330" y1="115" x2="330" y2="128" stroke="#e07535" stroke-width="1.5" marker-end="url(#arr)"/><rect x="200" y="128" width="260" height="48" rx="8" fill="#ff8000" opacity=".9"/><text x="330" y="149" text-anchor="middle" font-family="sans-serif" font-size="13" fill="white">Firebase Firestore</text><text x="330" y="165" text-anchor="middle" font-family="sans-serif" font-size="9" fill="rgba(255,255,255,.8)">Real-time - Shared across all 5 teammates</text><line x1="230" y1="176" x2="140" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="280" y1="176" x2="320" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="380" y1="176" x2="500" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="430" y1="176" x2="680" y2="210" stroke="#dde4ec" stroke-width="1.2"/><rect x="70" y="210" width="140" height="48" rx="7" fill="#162535"/><text x="140" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Dashboard Charts</text><text x="140" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">17 Visual types</text><rect x="250" y="210" width="140" height="48" rx="7" fill="#7a3fd0"/><text x="320" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">AI Analysis</text><text x="320" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Claude / Gemini</text><rect x="430" y="210" width="140" height="48" rx="7" fill="#2a7f5f"/><text x="500" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">CSV Export</text><text x="500" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Google Sheets backup</text><rect x="610" y="210" width="140" height="48" rx="7" fill="#e07535"/><text x="680" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Newsletter PNGs</text><text x="680" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Visuals tab</text><rect x="210" y="268" width="220" height="34" rx="6" fill="#f0e8fe" stroke="#7a3fd0" stroke-width="1.5"/><text x="320" y="283" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#5a1a9a" font-weight="600">Send to Claude connector</text><text x="320" y="296" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a3fd0">Query your landscape from Claude chat</text><line x1="320" y1="258" x2="320" y2="268" stroke="#7a3fd0" stroke-width="1.2"/></svg></div></div>`;
 }
 
+function wrapLines(text,maxChars){
+  const words=text.split(' ');const lines=[];let cur='';
+  words.forEach(w=>{
+    if((cur+' '+w).trim().length<=maxChars)cur=(cur+' '+w).trim();
+    else{if(cur)lines.push(cur);cur=w;}
+  });
+  if(cur)lines.push(cur);
+  return lines;
+}
 function renderWhyNow(data,vc){
-  const W=1000,H=680;
+  const W=1000,H=700;
   const rows=[
-    {color:'#7c3aed',title:'Demographic Shift',sub:'The addressable market is expanding structurally, not cyclically.',milestones:[
+    {color:'#7c3aed',title:'Demographic Shift',sub:'The market is expanding structurally, not cyclically.',milestones:[
       {y:'2020',t:'Global 60+ population passes 1 billion'},
       {y:'2024',t:'Healthy aging becomes the #1 consumer health priority'},
       {y:'2035E',t:'$14.5T projected food and health market'}]},
-    {color:'#e07535',title:'GLP-1 Revolution',sub:'A single drug class rewired consumer behavior around metabolic health.',milestones:[
+    {color:'#e07535',title:'GLP-1 Revolution',sub:'One drug class rewired consumer behavior around metabolic health.',milestones:[
       {y:'2021',t:'FDA approves Ozempic for chronic weight management'},
-      {y:'2023',t:'$1.5B Poppi acquisition signals functional-beverage repricing'},
+      {y:'2023',t:'$1.5B Poppi acquisition reprices functional beverages'},
       {y:'2024',t:'Food companies reformulate around GLP-1 users'}]},
-    {color:'#2563eb',title:'AI-Enabled Discovery',sub:'Small teams can now do what only large pharma R&D budgets could before.',milestones:[
+    {color:'#2563eb',title:'AI-Enabled Discovery',sub:'Small teams now match what only big pharma R&D could do.',milestones:[
       {y:'2022',t:'AlphaFold2 solves protein structure prediction at scale'},
       {y:'2023',t:'AI-driven bioactive discovery runs 10 to 100x faster'},
       {y:'2024',t:'Small teams match large pharma R&D output'}]},
-    {color:'#16a34a',title:'Data and Biomarkers',sub:'Personalization finally has the measurement layer to back it up.',milestones:[
-      {y:'2021',t:'Continuous glucose monitoring goes mainstream consumer'},
+    {color:'#16a34a',title:'Data and Biomarkers',sub:'Personalization finally has a measurement layer behind it.',milestones:[
+      {y:'2021',t:'Continuous glucose monitoring goes mainstream'},
       {y:'2022',t:'Microbiome sequencing costs fall roughly 90%'},
-      {y:'2024',t:'100+ biomarker panels available for under $500 a year'}]},
-    {color:'#db2777',title:'Capital Formation',sub:'Investors are already voting with checks, ahead of the category label.',milestones:[
+      {y:'2024',t:'100+ biomarker panels available under $500 a year'}]},
+    {color:'#db2777',title:'Capital Formation',sub:'Investors are voting with checks ahead of the category label.',milestones:[
       {y:'2021',t:'Longevity VC investment hits a record $4B'},
-      {y:'2023',t:'Danone acquires Kate Farms, validating functional nutrition'},
+      {y:'2023',t:'Danone acquires Kate Farms, validating the space'},
       {y:'2025',t:'TMG thesis holds across all three focus verticals'}]},
   ];
-  const rowH=108, topPad=96, nodeX=54, chipStartX=104, chipW=272, chipGap=10;
+  const rowH=118, topPad=90, nodeX=44, chipStartX=94, chipW=278, chipGap=12, chipH=78;
   const rowsSvg=rows.map((row,i)=>{
     const y=topPad+i*rowH;
     const chips=row.milestones.map((m,j)=>{
       const cx=chipStartX+j*(chipW+chipGap);
+      const lines=wrapLines(m.t,34).slice(0,3);
+      const textLines=lines.map((ln,k)=>`<text x="${cx+56}" y="${y-chipH/2+22+k*13}" font-family="DM Sans,sans-serif" font-size="10.5" fill="#1a2530" font-weight="500">${ln}</text>`).join('');
       return `<g>
-        <rect x="${cx}" y="${y-30}" width="${chipW}" height="64" rx="8" fill="${row.color}0d" stroke="${row.color}55" stroke-width="1"/>
-        <rect x="${cx}" y="${y-30}" width="44" height="64" rx="8" fill="${row.color}"/>
-        <rect x="${cx+22}" y="${y-30}" width="22" height="64" fill="${row.color}"/>
-        <text x="${cx+22}" y="${y+5}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="white">${m.y}</text>
-        <foreignObject x="${cx+54}" y="${y-27}" width="${chipW-64}" height="58">
-          <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'DM Sans',sans-serif;font-size:11px;line-height:1.35;color:#1a2530;font-weight:500">${m.t}</div>
-        </foreignObject>
+        <rect x="${cx}" y="${y-chipH/2}" width="${chipW}" height="${chipH}" rx="7" fill="${row.color}10" stroke="${row.color}45" stroke-width="1"/>
+        <rect x="${cx}" y="${y-chipH/2}" width="46" height="${chipH}" rx="7" fill="${row.color}"/>
+        <rect x="${cx+23}" y="${y-chipH/2}" width="23" height="${chipH}" fill="${row.color}"/>
+        <text x="${cx+23}" y="${y+5}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="white">${m.y}</text>
+        ${textLines}
       </g>`;
     }).join('');
     return `<g>
-      <circle cx="${nodeX}" cy="${y}" r="19" fill="${row.color}"/>
-      <text x="${nodeX}" y="${y+5}" text-anchor="middle" font-family="DM Serif Display,serif" font-size="16" fill="white">${i+1}</text>
-      <text x="${chipStartX}" y="${y-42}" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#162535">${row.title}</text>
-      <text x="${chipStartX}" y="${y-42+15}" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4a6070" font-style="italic">${row.sub}</text>
+      <circle cx="${nodeX}" cy="${y}" r="20" fill="${row.color}"/>
+      <text x="${nodeX}" y="${y+6}" text-anchor="middle" font-family="DM Serif Display,serif" font-size="17" fill="white">${i+1}</text>
+      <text x="${chipStartX}" y="${y-chipH/2-16}" font-family="DM Sans,sans-serif" font-size="14" font-weight="700" fill="#162535">${row.title}</text>
+      <text x="${chipStartX}" y="${y-chipH/2-3}" font-family="DM Sans,sans-serif" font-size="10" fill="#4a6070" font-style="italic">${row.sub}</text>
       ${chips}
     </g>`;
   }).join('');
@@ -840,15 +855,15 @@ function renderWhyNow(data,vc){
   vc.innerHTML=`<div class="vis-card">
     <div class="vis-card-hdr"><span class="vis-card-title">Why Now - Converging Catalysts</span><button class="btn-dl-vis" onclick="dlVis('wn-inner')">Download PNG</button></div>
     <div class="vis-card-desc">5 independent forces converging on the same window. Framework pre-populated with known milestones - extend with your own as new evidence lands.</div>
-    <div id="wn-inner" style="background:var(--white);padding:22px 20px;border-radius:8px">
+    <div id="wn-inner" style="background:var(--white);padding:24px 22px;border-radius:8px">
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">
-        <text x="0" y="34" font-family="DM Serif Display,serif" font-size="21" fill="#162535">The Healthspan Investment Window Is Open Now</text>
-        <text x="0" y="58" font-family="DM Sans,sans-serif" font-size="11.5" fill="#4a6070">Five structural shifts, each independently sufficient to justify attention - together, a conviction-level thesis.</text>
+        <text x="0" y="30" font-family="DM Serif Display,serif" font-size="22" fill="#162535">The Healthspan Investment Window Is Open Now</text>
+        <text x="0" y="52" font-family="DM Sans,sans-serif" font-size="11.5" fill="#4a6070">Five structural shifts, each independently sufficient to justify attention - together, a conviction-level thesis.</text>
         <line x1="${nodeX}" y1="${lineTop}" x2="${nodeX}" y2="${lineBottom}" stroke="#dde4ec" stroke-width="3"/>
         ${rowsSvg}
-        <rect x="0" y="${H-64}" width="${W}" height="48" rx="6" fill="#fef3ec"/>
-        <rect x="0" y="${H-64}" width="5" height="48" fill="#e07535"/>
-        <text x="20" y="${H-35}" font-family="DM Serif Display,serif" font-size="13.5" fill="#162535">All five forces reinforce each other - an exceptional entry point across Precision Nutrition, Intelligent Health, and Food &amp; Medicine.</text>
+        <rect x="0" y="${H-58}" width="${W}" height="44" rx="6" fill="#fef3ec"/>
+        <rect x="0" y="${H-58}" width="5" height="44" fill="#e07535"/>
+        <text x="20" y="${H-31}" font-family="DM Serif Display,serif" font-size="13.5" fill="#162535">All five forces reinforce each other - an exceptional entry point across Precision Nutrition, Intelligent Health, and Food &amp; Medicine.</text>
       </svg>
     </div>
   </div>`;
