@@ -259,10 +259,10 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle}
       <div class="chart-card"><div class="chart-title">Sub-vertical Breakdown</div><div class="chart-wrap"><canvas id="cPie"></canvas></div></div>
       <div class="chart-card"><div class="chart-title">Funding by Stage</div><div class="chart-wrap"><canvas id="cFunding"></canvas></div></div>
       <div class="chart-card"><div class="chart-title">Healthspan Coverage</div><div class="chart-wrap"><canvas id="cHealth"></canvas></div></div>
-      <div class="chart-card"><div class="chart-title">Traction vs Differentiation</div><div class="chart-wrap"><canvas id="cScatter"></canvas></div></div>
+      <div class="chart-card" id="liveFeedPanel"><div class="chart-title" style="display:none">Live Intelligence Feed</div></div>
     </div>
     <div class="ai-panel">
-      <div class="ai-hdr"><span class="ai-title">AI Analysis</span><span class="ai-badge">Claude / Gemini</span></div>
+      <div class="ai-hdr"><span class="ai-title">AI Analysis</span><span class="ai-badge">Groq / Gemini / Claude</span></div>
       <div class="ai-options">
         <button class="ai-opt active" onclick="selPrompt(this,'newsletter')">Newsletter</button>
         <button class="ai-opt" onclick="selPrompt(this,'whitespace')">White Space</button>
@@ -274,6 +274,7 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle}
       <div class="ai-provider-row">
         <span class="ai-prov-lbl">Provider:</span>
         <select class="ai-prov-sel" id="aiProvider" onchange="updateKeyLabel()">
+          <option value="groq">Groq Llama 3.3 (Free, recommended)</option>
           <option value="gemini">Gemini Flash (Free)</option>
           <option value="claude">Claude (Anthropic)</option>
         </select>
@@ -335,7 +336,7 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle}
     </div>
     <div id="cmpOutput"><div class="cmp-empty">Select companies above to compare</div></div>
     <div class="cmp-ai-section" id="cmpAiSection" style="display:none">
-      <div class="ai-hdr"><span class="ai-title" style="font-size:14px">AI Insights</span><span class="ai-badge">Claude / Gemini</span></div>
+      <div class="ai-hdr"><span class="ai-title" style="font-size:14px">AI Insights</span><span class="ai-badge">Groq / Gemini / Claude</span></div>
       <div class="ai-options">
         <button class="ai-opt active" onclick="selCmpPrompt(this,'compare')">Compare</button>
         <button class="ai-opt" onclick="selCmpPrompt(this,'winner')">Pick Winner</button>
@@ -349,18 +350,19 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle}
   <div class="section-wrap" id="sec-visuals">
     <div class="page-hdr"><h1>Market Visuals</h1><p>Strategic views - download any visual as PNG for newsletters and reports</p></div>
     <div class="vis-selector">
-      <button class="vis-btn active" onclick="setVis('valuechain',this)">Value Chain</button>
-      <button class="vis-btn" onclick="setVis('tile',this)">Tile Landscape</button>
-      <button class="vis-btn" onclick="setVis('classic',this)">VC Grid</button>
-      <button class="vis-btn" onclick="setVis('matrix2x2',this)">2x2 Matrix</button>
-      <button class="vis-btn" onclick="setVis('heatmap',this)">Heatmap</button>
-      <button class="vis-btn" onclick="setVis('bubble',this)">Bubble Chart</button>
+      <button class="vis-btn active" onclick="setVis('architecture',this)">Architecture</button>
       <button class="vis-btn" onclick="setVis('ecosystem',this)">Ecosystem Map</button>
-      <button class="vis-btn" onclick="setVis('radar',this)">Radar</button>
+      <button class="vis-btn" onclick="setVis('whynow',this)">Why Now</button>
+      <button class="vis-btn" onclick="setVis('valuechain',this)">Value Chain</button>
+      <button class="vis-btn" onclick="setVis('classic',this)">VC Grid</button>
+      <button class="vis-btn" onclick="setVis('tile',this)">Tile Landscape</button>
+      <button class="vis-btn" onclick="setVis('matrix2x2',this)">2x2 Matrix</button>
+      <button class="vis-btn" onclick="setVis('bubble',this)">Bubble Chart</button>
+      <button class="vis-btn" onclick="setVis('heatmap',this)">Heatmap</button>
       <button class="vis-btn" onclick="setVis('whitespace',this)">White Space</button>
+      <button class="vis-btn" onclick="setVis('radar',this)">Radar</button>
       <button class="vis-btn" onclick="setVis('funding',this)">Funding Timeline</button>
       <button class="vis-btn" onclick="setVis('geomap',this)">Geographic Map</button>
-      <button class="vis-btn" onclick="setVis('architecture',this)">Architecture</button>
       <button class="vis-btn" onclick="setVis('bizmodel',this)">Business Model Mix</button>
       <button class="vis-btn" onclick="setVis('iplandscape',this)">IP Landscape</button>
     </div>
@@ -428,7 +430,8 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle}
   <div class="settings-inner modal">
     <div class="modal-hdr"><span class="modal-title">Settings</span><button class="modal-close" onclick="closeSettings()">X</button></div>
     <div class="modal-body">
-      <div class="form-field" style="margin-bottom:12px"><label>AI Provider</label><select id="s_provider" style="margin-top:4px;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;width:100%;outline:none"><option value="gemini">Gemini Flash (Free)</option><option value="claude">Claude (Anthropic)</option></select></div>
+      <div class="form-field" style="margin-bottom:12px"><label>AI Provider</label><select id="s_provider" style="margin-top:4px;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;width:100%;outline:none"><option value="groq">Groq Llama 3.3 (Free, recommended)</option><option value="gemini">Gemini Flash (Free)</option><option value="claude">Claude (Anthropic)</option></select></div>
+      <div class="form-field" style="margin-bottom:12px"><label>Groq API Key - free at console.groq.com</label><input id="s_groqKey" type="password" placeholder="gsk_..." style="margin-top:4px;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;width:100%;outline:none"></div>
       <div class="form-field" style="margin-bottom:12px"><label>Gemini API Key - free at aistudio.google.com/app/apikey</label><input id="s_geminiKey" type="password" placeholder="AIza..." style="margin-top:4px;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;width:100%;outline:none"></div>
       <div class="form-field" style="margin-bottom:12px"><label>Claude API Key</label><input id="s_claudeKey" type="password" placeholder="sk-ant-..." style="margin-top:4px;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;width:100%;outline:none"></div>
       <div class="form-field" style="margin-bottom:12px"><label>Claude Workspace ID (if identity-linked key)</label><input id="s_workspaceId" type="text" placeholder="wrkspc-..." style="margin-top:4px;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;width:100%;outline:none"></div>

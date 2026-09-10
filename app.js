@@ -8,7 +8,7 @@ const COL = 'companies';
 const SCORE_COLS = ['Market Traction','Product Differentiation','Capital Efficiency','Clinical Validation','AI Actionability','Regulatory Complexity','Personalization Depth','Data Moat','Scalability'];
 
 let allData=[], filteredData=[], curView='targets', curSection='dashboard';
-let sortCol='', sortDir=1, curPrompt='newsletter', curVis='valuechain', cmpPrompt='compare', numCmpSlots=3;
+let sortCol='', sortDir=1, curPrompt='newsletter', curVis='architecture', cmpPrompt='compare', numCmpSlots=3;
 let charts={}, visCharts={}, claudePromptType='overview', claudePayload='';
 
 const exp = {setView,showSection,openAddModal,closeAddModal,saveCompany,openSettings,closeSettings,saveSettings,applyFilters,srt,openPanel,closePanel,editCompany,deleteCompany,addLink,delLink,saveNotes,renderCompare,addCmpSlot,selPrompt,selCmpPrompt,generateAI,generateCmpAI,copyAI,copyCmpAI,saveKey,updateKeyLabel,setVis,exportCSV,importFromSheet,dlVis,dlChart,updateMatrix,updateBubble,updateRadar,dlRadarChart,renderVis,scrapeAndFill,openClaudeModal,closeClaudeModal,setClaude,copyForClaude,openClaude,loadData};
@@ -31,8 +31,8 @@ function loadData(){document.getElementById('lastUpd').textContent='Refreshed '+
 
 function init(){
   const load=(id,key)=>{const v=localStorage.getItem(key);if(v&&document.getElementById(id))document.getElementById(id).value=v;};
-  load('s_geminiKey','tmg_geminiKey');load('s_claudeKey','tmg_claudeKey');load('s_workspaceId','tmg_workspaceId');
-  const p=localStorage.getItem('tmg_provider')||'gemini';
+  load('s_geminiKey','tmg_geminiKey');load('s_claudeKey','tmg_claudeKey');load('s_workspaceId','tmg_workspaceId');load('s_groqKey','tmg_groqKey');
+  const p=localStorage.getItem('tmg_provider')||'groq';
   ['aiProvider','s_provider'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=p;});
   updateKeyLabel();
 }
@@ -84,12 +84,43 @@ function renderCharts(data){
   charts.cFunding=new Chart(document.getElementById('cFunding'),{type:'bar',data:{labels:sl,datasets:[{data:sl.map(s=>stgCnt[s]||0),backgroundColor:[ORG,NAV,GRN,RSE,PUR],borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false}},y:{grid:{color:'#eef2f6'},ticks:{stepSize:1}}}}});
   const hc=cnt(data,'Healthspan Target');
   charts.cHealth=new Chart(document.getElementById('cHealth'),{type:'bar',data:{labels:Object.keys(hc),datasets:[{data:Object.values(hc),backgroundColor:GRN,borderRadius:5,borderSkipped:false}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#eef2f6'},ticks:{stepSize:1}},y:{grid:{display:false},ticks:{font:{size:9}}}}}});
-  const cmap={'Precision Nutrition':ORG+'bb','Intelligent Health':NAV+'bb','Food & Medicine':GRN+'bb'};
-  const grp={};
-  data.filter(r=>r['Market Traction']&&r['Product Differentiation']).forEach(r=>{const a=r['TMG Focus Area']||'Other';if(!grp[a])grp[a]=[];grp[a].push({x:+r['Market Traction'],y:+r['Product Differentiation'],label:r['Company Name']});});
-  charts.cScatter=new Chart(document.getElementById('cScatter'),{type:'scatter',data:{datasets:Object.entries(grp).map(([a,p])=>({label:a,data:p,backgroundColor:cmap[a]||'#888bb',pointRadius:7,pointHoverRadius:9}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:7}},tooltip:{callbacks:{label:c=>`${c.raw.label} (${c.raw.x},${c.raw.y})`}}},scales:{x:{min:0,max:6,title:{display:true,text:'Market Traction',font:{size:9}},grid:{color:'#eef2f6'}},y:{min:0,max:6,title:{display:true,text:'Product Diff.',font:{size:9}},grid:{color:'#eef2f6'}}}}});
+  // 4th dashboard slot = Live Intelligence Feed (AI-generated, not a chart)
+  renderLiveFeed();
 }
 function dlChart(id){const c=charts[id];if(!c)return;const a=document.createElement('a');a.download=id+'_TMG.png';a.href=c.toBase64Image('image/png',1);a.click();}
+
+function renderLiveFeed(){
+  const el=document.getElementById('liveFeedPanel');if(!el)return;
+  el.innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div style="font-size:12px;font-weight:600;color:var(--ink)">Live Market Intelligence</div>
+    <button onclick="refreshFeed()" style="padding:4px 11px;background:var(--orange);border:none;color:white;border-radius:5px;font-size:10px;cursor:pointer;font-family:inherit">Refresh</button>
+  </div>
+  <div id="feedContent" style="font-size:11px;color:var(--ink-muted);font-style:italic">Click Refresh to load AI-generated market intelligence for TMG focus areas.</div>`;
+}
+window.refreshFeed=async function(){
+  const el=document.getElementById('feedContent');if(!el)return;
+  el.innerHTML='<div style="color:var(--ink-muted);font-style:italic">Generating intelligence brief...</div>';
+  const data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
+  const tracked=data.map(r=>r['Company Name']).join(', ');
+  const prompt='You are a market intelligence analyst for The March Group (TMG), a VC fund focused on the Consumer Healthspan Economy covering Precision Nutrition, Intelligent Health, and Food and Medicine. Generate a brief market intelligence update with exactly 4 items. Format as a JSON array: [{"category":"Regulatory","headline":"...","detail":"...","relevance":"..."},{"category":"Clinical","headline":"...","detail":"...","relevance":"..."},{"category":"Capital","headline":"...","detail":"...","relevance":"..."},{"category":"Technology","headline":"...","detail":"...","relevance":"..."}]. Categories must be one of: Regulatory, Clinical, Capital, Technology, Consumer. Each headline max 10 words. Each detail 1-2 sentences. Relevance = how it affects the TMG portfolio: '+tracked+'. Return ONLY the JSON array, no markdown, no explanation.';
+  const result=await callAI(prompt);
+  try{
+    const items=safeParseJSON(result);
+    if(!items)throw new Error('unparseable');
+    const catColors={Regulatory:'#7c3aed',Clinical:'#16a34a',Capital:'#e07535',Technology:'#2563eb',Consumer:'#db2777'};
+    el.innerHTML=items.map(item=>`
+      <div style="padding:8px 10px;background:var(--slate);border-radius:7px;margin-bottom:7px;border-left:3px solid ${catColors[item.category]||'#888'}">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
+          <span style="font-size:9px;font-weight:600;color:${catColors[item.category]||'#888'};text-transform:uppercase">${item.category}</span>
+          <span style="font-size:11px;font-weight:600;color:var(--ink)">${item.headline}</span>
+        </div>
+        <div style="font-size:10px;color:var(--ink-soft);margin-bottom:2px">${item.detail}</div>
+        <div style="font-size:10px;color:var(--orange)">TMG relevance: ${item.relevance}</div>
+      </div>`).join('');
+  }catch(e){
+    el.innerHTML='<div style="color:var(--ink-soft)">'+result.slice(0,400)+'</div>';
+  }
+};
 
 function applyFilters(){
   const q=(document.getElementById('srch')||{value:''}).value.toLowerCase();
@@ -227,44 +258,57 @@ function openAddModal(){
 function closeAddModal(){document.getElementById('addModal').classList.remove('open');}
 
 async function scrapeAndFill(){
-  const url=document.getElementById('scrapeUrl').value.trim();if(!url){alert('Please paste a URL first');return;}
-  const btn=document.getElementById('btnScrape');const status=document.getElementById('scrapeStatus');
-  btn.disabled=true;btn.textContent='Scraping...';status.textContent='Fetching page content...';
-  // Use r.jina.ai - designed for AI text extraction, handles CORS
+  const url=document.getElementById('scrapeUrl').value.trim();
+  if(!url){alert('Paste a URL first');return;}
+  const btn=document.getElementById('btnScrape');
+  const status=document.getElementById('scrapeStatus');
+  btn.disabled=true;btn.textContent='Reading...';
+  status.textContent='Fetching via Jina AI reader...';
+
   let pageText='';
+  // r.jina.ai is built for AI text extraction - no CORS issues
+  const jinaUrl='https://r.jina.ai/'+url;
   try{
-    status.textContent='Reading page via Jina AI...';
-    const jinaUrl='https://r.jina.ai/'+url;
-    const controller=new AbortController();
-    setTimeout(()=>controller.abort(),15000);
-    const r=await fetch(jinaUrl,{signal:controller.signal,headers:{'Accept':'text/plain'}});
+    const r=await fetch(jinaUrl,{
+      headers:{'Accept':'text/plain','X-Return-Format':'text','X-No-Cache':'true'},
+      signal:AbortSignal.timeout(20000)
+    });
     if(r.ok){
-      pageText=(await r.text()).replace(/\s+/g,' ').trim().slice(0,5000);
+      pageText=(await r.text()).replace(/\s+/g,' ').trim();
+      status.textContent='Got '+pageText.length+' characters. Extracting info...';
     }
   }catch(e){
-    // fallback to corsproxy
+    // try without custom headers (avoids CORS preflight)
     try{
-      const r2=await fetch('https://corsproxy.io/?'+encodeURIComponent(url),{signal:AbortSignal.timeout(8000)});
-      if(r2.ok){const h=await r2.text();const d=document.createElement('div');d.innerHTML=h;pageText=(d.innerText||d.textContent||'').replace(/\s+/g,' ').trim().slice(0,5000);}
+      const r2=await fetch(jinaUrl,{signal:AbortSignal.timeout(15000)});
+      if(r2.ok){pageText=(await r2.text()).replace(/\s+/g,' ').trim();}
     }catch(e2){}
   }
-  if(!pageText||pageText.length<50){
+
+  if(!pageText||pageText.length<80){
     btn.disabled=false;btn.textContent='AI Scrape and Fill';
-    status.textContent='Could not read page. Some sites block all scrapers. Try a different URL or paste the company description manually above.';
+    status.textContent='Could not read page ('+pageText.length+' chars). Some sites block scrapers. Try: ensure URL starts with https://, or use the company Crunchbase/LinkedIn page instead.';
     return;
   }
-  status.textContent='AI extracting company info...';
-  const prompt=`You are a VC analyst. Extract structured company info from this website text and return ONLY a JSON object with these exact keys (use empty string if unknown): Company_Name, One_liner, TMG_Focus_Area (one of: Precision Nutrition/Intelligent Health/Food and Medicine), Sub_category, Healthspan_Target (one of: Metabolic Control/Gut Health/Cardiovascular Health/Neurological Health/Inflammation/Musculoskeletal/Multiple), Ecosystem_Position (one of: Ingredient / Science/Platform/Brand/Distribution / Channel), Business_Model (B2C/B2B/B2B2C/Marketplace/SaaS), Company_Type (Startup/Incumbent/Acquirer), Geography, Stage (Pre-seed/Seed/Series A/Series B/Public), Funding_Raised, Last_Funded_Date, Number_of_Founders, Founder_Pedigree (Repeat Founder/Ex-FAANG/PhD-Researcher/First-time/Mixed), Key_Investors, Key_Technology, IP_Patent_Status (None/Applied/Granted/Trade Secret), Pricing_Model, Target_Customer, Core_Moat, Key_Competitors, Execution_Risk.\n\nWebsite text:\n${pageText}\n\nReturn ONLY the JSON object, no markdown, no explanation.`;
+
+  const prompt='You are a VC analyst assistant. Extract company info from this webpage text. Return ONLY a valid JSON object - no markdown, no explanation - with these keys (empty string if unknown): Company_Name, One_liner, Sub_category, Geography, Stage (Pre-seed/Seed/Series A/Series B/Public), Funding_Raised (e.g. $10M), Last_Funded_Date (e.g. Q2 2024), Number_of_Founders, Founder_Pedigree (Repeat Founder/Ex-FAANG/PhD-Researcher/First-time/Mixed or empty), Key_Investors, Key_Technology, IP_Patent_Status (None/Applied/Granted/Trade Secret or empty), Pricing_Model, Target_Customer, Core_Moat, Key_Competitors, Execution_Risk, Website_URL, TMG_Focus_Area (Precision Nutrition/Intelligent Health/Food and Medicine), Healthspan_Target (Metabolic Control/Gut Health/Cardiovascular Health/Neurological Health/Inflammation/Musculoskeletal/Multiple), Ecosystem_Position (Ingredient / Science/Platform/Brand/Distribution / Channel), Business_Model (B2C/B2B/B2B2C/Marketplace/SaaS), Company_Type (Startup/Incumbent/Acquirer).\n\nWebpage text ('+pageText.length+' chars):\n'+pageText.slice(0,5000);
+
+  status.textContent='AI analysing page content...';
   const result=await callAI(prompt);
+
   try{
-    const data=JSON.parse(result.replace(/```json|```/g,'').trim());
-    const map={Company_Name:'f_name',One_liner:'f_oneliner',Sub_category:'f_sub',Geography:'f_geo',Stage:'f_stage',Funding_Raised:'f_funding',Last_Funded_Date:'f_lastfunded',Number_of_Founders:'f_founders',Key_Investors:'f_investors',Key_Technology:'f_tech',Pricing_Model:'f_pricing',Target_Customer:'f_customer',Core_Moat:'f_moat',Key_Competitors:'f_competitors',Execution_Risk:'f_risk'};
+    const data=safeParseJSON(result);
+    if(!data)throw new Error('unparseable');
+    const textMap={Company_Name:'f_name',One_liner:'f_oneliner',Sub_category:'f_sub',Geography:'f_geo',Stage:'f_stage',Funding_Raised:'f_funding',Last_Funded_Date:'f_lastfunded',Number_of_Founders:'f_founders',Founder_Pedigree:'f_pedigree',Key_Investors:'f_investors',Key_Technology:'f_tech',Pricing_Model:'f_pricing',Target_Customer:'f_customer',Core_Moat:'f_moat',Key_Competitors:'f_competitors',Execution_Risk:'f_risk'};
     const selMap={TMG_Focus_Area:'f_focus',Healthspan_Target:'f_health',Ecosystem_Position:'f_eco',Business_Model:'f_biz',Company_Type:'f_type',Founder_Pedigree:'f_pedigree',IP_Patent_Status:'f_ip'};
-    Object.entries(map).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&data[k])el.value=data[k];});
-    Object.entries(selMap).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&data[k])el.value=data[k];});
-    const web=document.getElementById('f_website');if(web&&!web.value)web.value=url;
-    status.textContent='AI filled the form! Review and adjust before saving.';
-  }catch(e){status.textContent='AI returned data but could not parse it. Raw: '+result.slice(0,100);}
+    let filled=0;
+    Object.entries(textMap).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&data[k]&&data[k].trim()){el.value=data[k];filled++;}});
+    Object.entries(selMap).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&data[k]&&data[k].trim()){el.value=data[k];filled++;}});
+    const web=document.getElementById('f_website');if(web&&!web.value){web.value=data.Website_URL||url;}
+    status.textContent=filled>0?'Filled '+filled+' fields. Review and adjust before saving.':'AI could not extract structured data from this page. The page may be mostly JavaScript-rendered or behind a login.';
+  }catch(e){
+    status.textContent='Parse error. Raw AI response: '+result.slice(0,120)+'...';
+  }
   btn.disabled=false;btn.textContent='AI Scrape and Fill';
 }
 async function importFromSheet(){
@@ -274,14 +318,26 @@ async function importFromSheet(){
   let rows=null;
   for(const px of proxies){try{const r=await fetch(px(csvUrl+'&t='+Date.now()));if(!r.ok)continue;const t=await r.text();if(!t.includes('Company Name'))continue;rows=parseCSV(t);if(rows.length)break;}catch(e){continue;}}
   if(!rows||!rows.length){btn.textContent='Sync from Sheet';btn.disabled=false;alert('Could not fetch sheet. Check Settings - CSV URL.');return;}
-  let count=0;
+
+  // Query-first: build a map of existing docs by Company Name to avoid creating duplicates
+  const existingMap={};
+  allData.forEach(r=>{const name=r['Company Name'];if(name)existingMap[safeId(name)]=r._id||safeId(name);});
+
+  let updated=0,created=0;
   for(const row of rows){
     const name=row['Company Name'];if(!name)continue;
-    row['_source']='sheet';row['Last Updated']=row['Last Updated']||new Date().toLocaleDateString('en-GB').replace(/\//g,'.');
-    try{await setDoc(doc(db,COL,safeId(name)),row);count++;}catch(e){console.error('Sync error',name,e);}
+    row['_source']='sheet';
+    row['Last Updated']=row['Last Updated']||new Date().toLocaleDateString('en-GB').replace(/\//g,'.');
+    const sid=safeId(name);
+    try{
+      // setDoc with a stable id (safeId(name)) always merges into the same doc -
+      // no duplicates whether it's the first sync or the hundredth.
+      await setDoc(doc(db,COL,existingMap[sid]||sid),row);
+      existingMap[sid]?updated++:created++;
+    }catch(e){console.error('Sync error',name,e);}
   }
   btn.textContent='Sync from Sheet';btn.disabled=false;
-  alert('Synced '+count+' companies to Firebase. All teammates see updates immediately!');
+  alert('Sync complete: '+updated+' updated, '+created+' created. No duplicates.');
 }
 function parseCSV(txt){const lines=txt.trim().split('\n');const hdrs=splitLine(lines[0]);return lines.slice(1).map(l=>{const v=splitLine(l),obj={};hdrs.forEach((h,i)=>obj[h.trim()]=(v[i]||'').trim());return obj;}).filter(r=>r['Company Name']);}
 function splitLine(line){const v=[];let cur='',inQ=false;for(let i=0;i<line.length;i++){if(line[i]==='"')inQ=!inQ;else if(line[i]===','&&!inQ){v.push(cur);cur='';}else cur+=line[i];}v.push(cur);return v;}
@@ -334,7 +390,7 @@ function renderVis(){
   const data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
   const vc=document.getElementById('visContent');if(!vc)return;
   Object.values(visCharts).forEach(c=>{try{c.destroy();}catch(e){}});visCharts={};
-  const renders={valuechain:renderValueChain,tile:renderTile,classic:renderClassic,matrix2x2:renderMatrix,heatmap:renderHeatmap,bubble:renderBubble,ecosystem:renderEcosystem,radar:renderRadar,whitespace:renderWhitespace,funding:renderFunding,geomap:renderGeoMap,architecture:renderArchitecture,bizmodel:renderBizModelMix,iplandscape:renderIPLandscape};
+  const renders={architecture:renderArchitecture,ecosystem:renderEcosystem,valuechain:renderValueChain,classic:renderClassic,tile:renderTile,matrix2x2:renderMatrix,bubble:renderBubble,heatmap:renderHeatmap,whitespace:renderWhitespace,radar:renderRadar,funding:renderFunding,geomap:renderGeoMap,bizmodel:renderBizModelMix,iplandscape:renderIPLandscape,whynow:renderWhyNow};
   if(renders[curVis])renders[curVis](data,vc);
 }
 
@@ -679,73 +735,47 @@ function renderFunding(data,vc){
 }
 
 function renderGeoMap(data,vc){
-  const geoCoords={
-    'US':{x:180,y:175,label:'United States'},'USA':{x:180,y:175,label:'United States'},
-    'UK':{x:435,y:110,label:'UK'},'United Kingdom':{x:435,y:110,label:'UK'},
-    'France':{x:450,y:130,label:'France'},'Ireland':{x:415,y:108,label:'Ireland'},
-    'Israel':{x:500,y:158,label:'Israel'},'Switzerland':{x:455,y:122,label:'Switzerland'},
-    'Sweden':{x:468,y:90,label:'Sweden'},'Singapore':{x:635,y:228,label:'Singapore'},
-    'Germany':{x:460,y:112,label:'Germany'},'Canada':{x:175,y:120,label:'Canada'},
-    'Australia':{x:675,y:285,label:'Australia'},'India':{x:580,y:190,label:'India'},
-    'China':{x:638,y:155,label:'China'},'Japan':{x:690,y:148,label:'Japan'}
+  // Real lat/lon projected onto the actual world map image (worldmap.png must
+  // sit alongside index.html/app.js). Projection is calibrated to that image:
+  // x = (180 - lon) / 360 * W   (map's left edge is the Pacific split, ~lon +180)
+  // y = (LAT_TOP - lat) / (LAT_TOP - LAT_BOTTOM) * H
+  const W=1600,H=794,LAT_TOP=83,LAT_BOTTOM=-58;
+  const proj=(lat,lon)=>({x:(180-lon)/360*W, y:(LAT_TOP-lat)/(LAT_TOP-LAT_BOTTOM)*H});
+  const geo={
+    'US':{lat:39.8,lon:-98.6,label:'United States'},'USA':{lat:39.8,lon:-98.6,label:'United States'},'United States':{lat:39.8,lon:-98.6,label:'United States'},
+    'UK':{lat:54.0,lon:-2.0,label:'UK'},'United Kingdom':{lat:54.0,lon:-2.0,label:'UK'},
+    'France':{lat:46.6,lon:2.2,label:'France'},'Ireland':{lat:53.1,lon:-8.0,label:'Ireland'},
+    'Israel':{lat:31.0,lon:34.8,label:'Israel'},'Switzerland':{lat:46.8,lon:8.2,label:'Switzerland'},
+    'Sweden':{lat:62.0,lon:15.0,label:'Sweden'},'Singapore':{lat:1.35,lon:103.8,label:'Singapore'},
+    'Germany':{lat:51.2,lon:10.4,label:'Germany'},'Canada':{lat:56.1,lon:-106.3,label:'Canada'},
+    'Australia':{lat:-25.3,lon:133.8,label:'Australia'},'India':{lat:22.0,lon:79.0,label:'India'},
+    'China':{lat:35.0,lon:103.8,label:'China'},'Japan':{lat:36.5,lon:138.0,label:'Japan'}
   };
-  const W=880,H=420;
-  const companies=data.filter(r=>r['Geography']&&geoCoords[r['Geography'].trim()]);
+  const companies=data.filter(r=>r['Geography']&&geo[r['Geography'].trim()]);
   const colors={'Precision Nutrition':'#e07535','Intelligent Health':'#2563eb','Food & Medicine':'#16a34a'};
-  // Group companies by location
   const locGroups={};
   companies.forEach(r=>{const g=r['Geography'].trim();if(!locGroups[g])locGroups[g]=[];locGroups[g].push(r);});
 
-  const bubbles=Object.entries(locGroups).map(([geo,comps])=>{
-    const pos=geoCoords[geo];if(!pos)return'';
-    const r=Math.max(16,comps.length*12);
-    // Use first company focus for color, but show count
-    const focus=comps[0]['TMG Focus Area'];
-    const color=colors[focus]||'#888';
+  const bubbles=Object.entries(locGroups).map(([geoKey,comps])=>{
+    const info=geo[geoKey];if(!info)return'';
+    const {x,y}=proj(info.lat,info.lon);
+    const r=Math.max(14,comps.length*11);
     const names=comps.map(c=>c['Company Name']).join(', ');
-    // If multiple focus areas, use a split approach visually
     const focusCounts={};comps.forEach(c=>{focusCounts[c['TMG Focus Area']]=(focusCounts[c['TMG Focus Area']]||0)+1;});
     const dominant=Object.entries(focusCounts).sort((a,b)=>b[1]-a[1])[0][0];
-    return `<circle cx="${pos.x}" cy="${pos.y}" r="${r}" fill="${colors[dominant]||'#888'}" opacity=".82" stroke="white" stroke-width="2"/><text x="${pos.x}" y="${pos.y+3}" text-anchor="middle" font-size="${r>20?10:9}" fill="white" font-weight="700">${comps.length}</text><text x="${pos.x}" y="${pos.y+r+12}" text-anchor="middle" font-size="8" fill="#4a6070">${pos.label}</text><title>${geo}: ${names}</title>`;
+    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${colors[dominant]||'#888'}" opacity=".85" stroke="white" stroke-width="2"/><text x="${x}" y="${y+3}" text-anchor="middle" font-size="${r>20?10:9}" fill="white" font-weight="700">${comps.length}</text><text x="${x}" y="${y+r+12}" text-anchor="middle" font-size="9" fill="#162535" font-weight="600" style="paint-order:stroke;stroke:white;stroke-width:3px">${info.label}</text><title>${geoKey}: ${names}</title>`;
   }).join('');
 
-  // Simple flat map background with labeled regions
+  const missing=[...new Set(data.filter(r=>r['Geography']&&!geo[r['Geography'].trim()]).map(r=>r['Geography'].trim()))];
+
   vc.innerHTML=`<div class="vis-card">
     <div class="vis-card-hdr"><span class="vis-card-title">Geographic Map</span><button class="btn-dl-vis" onclick="dlVis('geo-inner')">Download PNG</button></div>
-    <div class="vis-card-desc">Company HQs plotted geographically. Bubble size = number of companies in that location.</div>
-    <div id="geo-inner" style="background:#ddeeff;border-radius:7px;overflow:hidden">
-      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">
-        <!-- Ocean background -->
-        <rect width="${W}" height="${H}" fill="#c8dff0"/>
-        <!-- Landmasses - simplified but recognisable -->
-        <!-- North America -->
-        <path d="M60,60 L70,50 L120,45 L165,52 L200,65 L230,80 L245,100 L250,130 L240,160 L220,180 L195,195 L170,200 L145,195 L120,185 L95,170 L75,150 L60,125 L50,95 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- Central America -->
-        <path d="M195,195 L205,210 L210,235 L205,250 L195,245 L188,225 L185,205 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- South America -->
-        <path d="M200,255 L220,248 L248,258 L262,280 L268,310 L260,340 L240,360 L215,365 L195,352 L182,325 L178,295 L183,268 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- Europe -->
-        <path d="M390,55 L410,48 L445,50 L468,60 L480,75 L478,95 L460,105 L440,110 L415,108 L398,98 L385,80 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- Scandinavia -->
-        <path d="M430,38 L445,30 L462,32 L472,48 L460,55 L440,52 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- Africa -->
-        <path d="M395,115 L420,110 L450,115 L468,130 L475,160 L470,200 L455,235 L435,255 L410,262 L385,252 L368,225 L360,190 L362,158 L372,132 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- Middle East -->
-        <path d="M478,100 L505,95 L522,105 L525,125 L510,135 L490,130 L476,118 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- Asia (main) -->
-        <path d="M520,45 L560,38 L610,40 L660,48 L705,58 L730,75 L738,100 L725,125 L700,140 L665,148 L625,150 L590,145 L555,135 L525,120 L508,100 L510,72 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- India subcontinent -->
-        <path d="M545,148 L570,145 L590,155 L598,180 L588,208 L568,218 L548,208 L538,182 L538,162 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- SE Asia + Indonesia -->
-        <path d="M625,175 L648,168 L665,178 L668,195 L652,205 L630,200 L618,190 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- Japan -->
-        <path d="M688,85 L698,80 L708,88 L705,105 L694,110 L684,102 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- Australia -->
-        <path d="M640,270 L678,262 L712,268 L728,285 L730,310 L715,328 L688,335 L660,330 L640,315 L630,295 L632,276 Z" fill="#d4e8c0" stroke="#b0cc90" stroke-width="0.8"/>
-        <!-- Bubbles -->
+    <div class="vis-card-desc">Company HQs plotted on real geography. Bubble size = number of companies at that location.${missing.length?' Not yet mapped: '+missing.join(', ')+' (add lat/lon in renderGeoMap).':''}</div>
+    <div id="geo-inner" style="background:#1a7fc4;border-radius:7px;overflow:hidden;position:relative">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">
+        <image href="./worldmap.png" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>
         ${bubbles}
-        <!-- Legend -->
-        <rect x="10" y="${H-58}" width="215" height="52" fill="white" opacity=".88" rx="5"/>
+        <rect x="10" y="${H-58}" width="215" height="52" fill="white" opacity=".9" rx="5"/>
         <circle cx="24" cy="${H-42}" r="7" fill="#e07535" opacity=".9"/><text x="36" y="${H-38}" font-size="9" fill="#333">Precision Nutrition</text>
         <circle cx="24" cy="${H-24}" r="7" fill="#2563eb" opacity=".9"/><text x="36" y="${H-20}" font-size="9" fill="#333">Intelligent Health</text>
         <circle cx="128" cy="${H-42}" r="7" fill="#16a34a" opacity=".9"/><text x="140" y="${H-38}" font-size="9" fill="#333">Food and Medicine</text>
@@ -754,11 +784,75 @@ function renderGeoMap(data,vc){
     </div>
   </div>`;
 }
-
 function renderArchitecture(data,vc){
   vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Platform Architecture</span><button class="btn-dl-vis" onclick="dlVis('arch-inner')">Download PNG</button></div><div class="vis-card-desc">How data flows from web sources through the platform to deliver investment intelligence.</div><div id="arch-inner" style="background:var(--white);padding:20px;border-radius:7px"><svg viewBox="0 0 900 320" style="width:100%;height:auto"><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e07535"/></marker></defs><text x="450" y="22" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7a9ab0" font-weight="600">DATA SOURCES</text><rect x="40" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="110" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Startup Website</text><text x="110" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Jina AI Scraper</text><text x="110" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">AI fills form</text><rect x="260" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="330" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">LinkedIn Profile</text><text x="330" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Jina AI Reader</text><text x="330" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Founder Pedigree</text><rect x="480" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="550" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Google Sheet</text><text x="550" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">CSV Sync</text><text x="550" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Manual entry</text><line x1="110" y1="82" x2="110" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="330" y1="82" x2="330" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="550" y1="82" x2="550" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="110" y1="115" x2="550" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="330" y1="115" x2="330" y2="128" stroke="#e07535" stroke-width="1.5" marker-end="url(#arr)"/><rect x="200" y="128" width="260" height="48" rx="8" fill="#ff8000" opacity=".9"/><text x="330" y="149" text-anchor="middle" font-family="sans-serif" font-size="13" fill="white">Firebase Firestore</text><text x="330" y="165" text-anchor="middle" font-family="sans-serif" font-size="9" fill="rgba(255,255,255,.8)">Real-time - Shared across all 5 teammates</text><line x1="230" y1="176" x2="140" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="280" y1="176" x2="320" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="380" y1="176" x2="500" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="430" y1="176" x2="680" y2="210" stroke="#dde4ec" stroke-width="1.2"/><rect x="70" y="210" width="140" height="48" rx="7" fill="#162535"/><text x="140" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Dashboard Charts</text><text x="140" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">17 Visual types</text><rect x="250" y="210" width="140" height="48" rx="7" fill="#7a3fd0"/><text x="320" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">AI Analysis</text><text x="320" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Claude / Gemini</text><rect x="430" y="210" width="140" height="48" rx="7" fill="#2a7f5f"/><text x="500" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">CSV Export</text><text x="500" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Google Sheets backup</text><rect x="610" y="210" width="140" height="48" rx="7" fill="#e07535"/><text x="680" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Newsletter PNGs</text><text x="680" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Visuals tab</text><rect x="210" y="268" width="220" height="34" rx="6" fill="#f0e8fe" stroke="#7a3fd0" stroke-width="1.5"/><text x="320" y="283" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#5a1a9a" font-weight="600">Send to Claude connector</text><text x="320" y="296" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a3fd0">Query your landscape from Claude chat</text><line x1="320" y1="258" x2="320" y2="268" stroke="#7a3fd0" stroke-width="1.2"/></svg></div></div>`;
 }
 
+function renderWhyNow(data,vc){
+  const W=1000,H=680;
+  const rows=[
+    {color:'#7c3aed',title:'Demographic Shift',sub:'The addressable market is expanding structurally, not cyclically.',milestones:[
+      {y:'2020',t:'Global 60+ population passes 1 billion'},
+      {y:'2024',t:'Healthy aging becomes the #1 consumer health priority'},
+      {y:'2035E',t:'$14.5T projected food and health market'}]},
+    {color:'#e07535',title:'GLP-1 Revolution',sub:'A single drug class rewired consumer behavior around metabolic health.',milestones:[
+      {y:'2021',t:'FDA approves Ozempic for chronic weight management'},
+      {y:'2023',t:'$1.5B Poppi acquisition signals functional-beverage repricing'},
+      {y:'2024',t:'Food companies reformulate around GLP-1 users'}]},
+    {color:'#2563eb',title:'AI-Enabled Discovery',sub:'Small teams can now do what only large pharma R&D budgets could before.',milestones:[
+      {y:'2022',t:'AlphaFold2 solves protein structure prediction at scale'},
+      {y:'2023',t:'AI-driven bioactive discovery runs 10 to 100x faster'},
+      {y:'2024',t:'Small teams match large pharma R&D output'}]},
+    {color:'#16a34a',title:'Data and Biomarkers',sub:'Personalization finally has the measurement layer to back it up.',milestones:[
+      {y:'2021',t:'Continuous glucose monitoring goes mainstream consumer'},
+      {y:'2022',t:'Microbiome sequencing costs fall roughly 90%'},
+      {y:'2024',t:'100+ biomarker panels available for under $500 a year'}]},
+    {color:'#db2777',title:'Capital Formation',sub:'Investors are already voting with checks, ahead of the category label.',milestones:[
+      {y:'2021',t:'Longevity VC investment hits a record $4B'},
+      {y:'2023',t:'Danone acquires Kate Farms, validating functional nutrition'},
+      {y:'2025',t:'TMG thesis holds across all three focus verticals'}]},
+  ];
+  const rowH=108, topPad=96, nodeX=54, chipStartX=104, chipW=272, chipGap=10;
+  const rowsSvg=rows.map((row,i)=>{
+    const y=topPad+i*rowH;
+    const chips=row.milestones.map((m,j)=>{
+      const cx=chipStartX+j*(chipW+chipGap);
+      return `<g>
+        <rect x="${cx}" y="${y-30}" width="${chipW}" height="64" rx="8" fill="${row.color}0d" stroke="${row.color}55" stroke-width="1"/>
+        <rect x="${cx}" y="${y-30}" width="44" height="64" rx="8" fill="${row.color}"/>
+        <rect x="${cx+22}" y="${y-30}" width="22" height="64" fill="${row.color}"/>
+        <text x="${cx+22}" y="${y+5}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="white">${m.y}</text>
+        <foreignObject x="${cx+54}" y="${y-27}" width="${chipW-64}" height="58">
+          <div xmlns="http://www.w3.org/1999/xhtml" style="font-family:'DM Sans',sans-serif;font-size:11px;line-height:1.35;color:#1a2530;font-weight:500">${m.t}</div>
+        </foreignObject>
+      </g>`;
+    }).join('');
+    return `<g>
+      <circle cx="${nodeX}" cy="${y}" r="19" fill="${row.color}"/>
+      <text x="${nodeX}" y="${y+5}" text-anchor="middle" font-family="DM Serif Display,serif" font-size="16" fill="white">${i+1}</text>
+      <text x="${chipStartX}" y="${y-42}" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#162535">${row.title}</text>
+      <text x="${chipStartX}" y="${y-42+15}" font-family="DM Sans,sans-serif" font-size="9.5" fill="#4a6070" font-style="italic">${row.sub}</text>
+      ${chips}
+    </g>`;
+  }).join('');
+  const lineTop=topPad, lineBottom=topPad+(rows.length-1)*rowH;
+
+  vc.innerHTML=`<div class="vis-card">
+    <div class="vis-card-hdr"><span class="vis-card-title">Why Now - Converging Catalysts</span><button class="btn-dl-vis" onclick="dlVis('wn-inner')">Download PNG</button></div>
+    <div class="vis-card-desc">5 independent forces converging on the same window. Framework pre-populated with known milestones - extend with your own as new evidence lands.</div>
+    <div id="wn-inner" style="background:var(--white);padding:22px 20px;border-radius:8px">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">
+        <text x="0" y="34" font-family="DM Serif Display,serif" font-size="21" fill="#162535">The Healthspan Investment Window Is Open Now</text>
+        <text x="0" y="58" font-family="DM Sans,sans-serif" font-size="11.5" fill="#4a6070">Five structural shifts, each independently sufficient to justify attention - together, a conviction-level thesis.</text>
+        <line x1="${nodeX}" y1="${lineTop}" x2="${nodeX}" y2="${lineBottom}" stroke="#dde4ec" stroke-width="3"/>
+        ${rowsSvg}
+        <rect x="0" y="${H-64}" width="${W}" height="48" rx="6" fill="#fef3ec"/>
+        <rect x="0" y="${H-64}" width="5" height="48" fill="#e07535"/>
+        <text x="20" y="${H-35}" font-family="DM Serif Display,serif" font-size="13.5" fill="#162535">All five forces reinforce each other - an exceptional entry point across Precision Nutrition, Intelligent Health, and Food &amp; Medicine.</text>
+      </svg>
+    </div>
+  </div>`;
+}
 function dlVis(innerId){
   const el=document.getElementById(innerId);if(!el)return;
   const go=()=>window.html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true}).then(canvas=>{const a=document.createElement('a');a.download='TMG_Visual.png';a.href=canvas.toDataURL('image/png');a.click();});
@@ -786,44 +880,107 @@ function copyForClaude(){
 function openClaude(){navigator.clipboard.writeText(claudePayload).catch(()=>{});window.open('https://claude.ai/new','_blank');}
 
 function updateKeyLabel(){
-  const p=document.getElementById('aiProvider')?.value||'gemini';
-  const lbl=document.getElementById('aiKeyLbl');if(lbl)lbl.textContent=p==='gemini'?'Gemini API Key:':'Anthropic API Key:';
+  const p=document.getElementById('aiProvider')?.value||'groq';
+  const lbl=document.getElementById('aiKeyLbl');
+  if(lbl)lbl.textContent=p==='groq'?'Groq API Key:':p==='gemini'?'Gemini API Key:':'Anthropic API Key:';
   const inp=document.getElementById('apiKeyInput');
-  if(inp){inp.placeholder=p==='gemini'?'AIza...':'sk-ant-...';inp.value=localStorage.getItem(p==='gemini'?'tmg_geminiKey':'tmg_claudeKey')||'';}
+  if(inp){
+    inp.placeholder=p==='groq'?'gsk_...':p==='gemini'?'AIza...':'sk-ant-...';
+    inp.value=localStorage.getItem(p==='groq'?'tmg_groqKey':p==='gemini'?'tmg_geminiKey':'tmg_claudeKey')||'';
+  }
 }
-function saveKey(){const p=document.getElementById('aiProvider')?.value||'gemini';const k=document.getElementById('apiKeyInput').value.trim();if(k){localStorage.setItem(p==='gemini'?'tmg_geminiKey':'tmg_claudeKey',k);alert('API key saved!');}}
+function saveKey(){
+  const p=document.getElementById('aiProvider')?.value||'groq';
+  const k=document.getElementById('apiKeyInput').value.trim();
+  if(k){localStorage.setItem(p==='groq'?'tmg_groqKey':p==='gemini'?'tmg_geminiKey':'tmg_claudeKey',k);alert('API key saved!');}
+}
 function selPrompt(btn,type){document.querySelectorAll('.ai-panel .ai-opt').forEach(b=>b.classList.remove('active'));btn.classList.add('active');curPrompt=type;}
 
+function safeParseJSON(raw){
+  const s=raw.replace(/```json|```/g,'').trim();
+  try{return JSON.parse(s);}catch(e){}
+  // Truncated response repair: walk the string tracking string/brace depth and
+  // roll back to the last complete top-level "key":value pair, then close it out.
+  let depth=0,inStr=false,esc=false,lastGoodEnd=-1,firstBrace=s.indexOf('{');
+  if(firstBrace===-1)return null;
+  for(let i=firstBrace;i<s.length;i++){
+    const c=s[i];
+    if(esc){esc=false;continue;}
+    if(c==='\\'){esc=true;continue;}
+    if(c==='"'){inStr=!inStr;continue;}
+    if(inStr)continue;
+    if(c==='{')depth++;
+    else if(c==='}')depth--;
+    else if(c===','&&depth===1)lastGoodEnd=i;
+  }
+  if(lastGoodEnd>0){
+    try{return JSON.parse(s.slice(firstBrace,lastGoodEnd)+'}');}catch(e2){}
+  }
+  return null;
+}
 async function callAI(prompt){
-  const provider=document.getElementById('aiProvider')?.value||localStorage.getItem('tmg_provider')||'gemini';
+  const provider=document.getElementById('aiProvider')?.value||localStorage.getItem('tmg_provider')||'groq';
+
+  // GROQ - most reliable free option. llama-3.3-70b-versatile was deprecated by Groq
+  // (Aug 2026) - gpt-oss-120b is their recommended replacement, with a smaller fallback.
+  // IMPORTANT: gpt-oss models spend part of max_completion_tokens on hidden reasoning
+  // tokens before the real answer. At a low cap that reasoning ate the whole budget,
+  // leaving nothing for content = truncated JSON or "No response.". reasoning_effort:'low'
+  // plus a generous token cap fixes both.
+  if(provider==='groq'){
+    const key=localStorage.getItem('tmg_groqKey')||document.getElementById('apiKeyInput')?.value.trim();
+    if(!key)return'Add your Groq API key in Settings. Free at console.groq.com';
+    const MODELS=['openai/gpt-oss-120b','openai/gpt-oss-20b'];
+    let lastErr='';
+    for(const m of MODELS){
+      try{
+        const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
+          body:JSON.stringify({model:m,messages:[{role:'user',content:prompt}],max_completion_tokens:4096,reasoning_effort:'low'})
+        });
+        const d=await r.json();
+        if(d.error){lastErr=d.error.message;continue;}
+        const content=d.choices?.[0]?.message?.content;
+        if(content&&content.trim())return content;
+        lastErr='empty response (finish_reason: '+(d.choices?.[0]?.finish_reason||'unknown')+')';
+      }catch(e){lastErr=e.message;continue;}
+    }
+    return'Groq error: '+lastErr;
+  }
+
+  // GEMINI - free but model names change, try a couple of fallbacks
   if(provider==='gemini'){
     const key=localStorage.getItem('tmg_geminiKey')||document.getElementById('apiKeyInput')?.value.trim();
-    if(!key)return'Please add your Gemini API key in Settings. Free key at aistudio.google.com/app/apikey';
-    const ENDPOINTS=[
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-8b:generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent',
-      'https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
-    ];
+    if(!key)return'Add your Gemini API key in Settings. Free at aistudio.google.com/app/apikey';
+    const MODELS=['gemini-1.5-flash-8b','gemini-1.5-flash'];
     let lastErr='';
-    for(const endpoint of ENDPOINTS){
+    for(const m of MODELS){
       try{
-        const r=await fetch(endpoint+'?key='+key,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}]})});
+        const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+m+':generateContent?key='+key,{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{maxOutputTokens:2048}})
+        });
         const d=await r.json();
         if(d.error){lastErr=d.error.message;continue;}
         return d.candidates?.[0]?.content?.parts?.[0]?.text||'No response.';
       }catch(e){lastErr=e.message;continue;}
     }
-    return 'Gemini error: '+lastErr+'. Check your API key in Settings - get a free key at aistudio.google.com/app/apikey';
-  }else{
-    const key=localStorage.getItem('tmg_claudeKey')||document.getElementById('apiKeyInput')?.value.trim();
-    if(!key)return'Please add your Claude API key in Settings.';
-    const w=localStorage.getItem('tmg_workspaceId');
-    const headers={'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
-    if(w)headers['anthropic-workspace-id']=w;
-    try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});const data=await res.json();if(data.error)throw new Error(data.error.message);return data.content?.[0]?.text||'No response.';}catch(e){return'Claude error: '+e.message;}
+    return'Gemini error: '+lastErr;
   }
+
+  // CLAUDE
+  const key=localStorage.getItem('tmg_claudeKey')||document.getElementById('apiKeyInput')?.value.trim();
+  if(!key)return'Add your Claude API key in Settings.';
+  const w=localStorage.getItem('tmg_workspaceId');
+  const headers={'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
+  if(w)headers['anthropic-workspace-id']=w;
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2048,messages:[{role:'user',content:prompt}]})});
+    const d=await r.json();
+    if(d.error)throw new Error(d.error.message);
+    return d.content?.[0]?.text||'No response.';
+  }catch(e){return'Claude error: '+e.message;}
 }
 
 function buildPrompt(type){
@@ -842,15 +999,15 @@ function copyAI(){navigator.clipboard.writeText(document.getElementById('aiOutpu
 
 function openSettings(){
   const load=(id,key)=>{const v=localStorage.getItem(key);const el=document.getElementById(id);if(el&&v)el.value=v;};
-  load('s_geminiKey','tmg_geminiKey');load('s_claudeKey','tmg_claudeKey');load('s_workspaceId','tmg_workspaceId');
-  const p=localStorage.getItem('tmg_provider')||'gemini';const el=document.getElementById('s_provider');if(el)el.value=p;
+  load('s_geminiKey','tmg_geminiKey');load('s_claudeKey','tmg_claudeKey');load('s_workspaceId','tmg_workspaceId');load('s_groqKey','tmg_groqKey');
+  const p=localStorage.getItem('tmg_provider')||'groq';const el=document.getElementById('s_provider');if(el)el.value=p;
   document.getElementById('settingsModal').classList.add('open');
 }
 function closeSettings(){document.getElementById('settingsModal').classList.remove('open');}
 function saveSettings(){
   const save=(id,key)=>{const el=document.getElementById(id);if(el&&el.value.trim())localStorage.setItem(key,el.value.trim());};
-  save('s_geminiKey','tmg_geminiKey');save('s_claudeKey','tmg_claudeKey');save('s_workspaceId','tmg_workspaceId');
-  const p=document.getElementById('s_provider')?.value||'gemini';localStorage.setItem('tmg_provider',p);
+  save('s_geminiKey','tmg_geminiKey');save('s_claudeKey','tmg_claudeKey');save('s_workspaceId','tmg_workspaceId');save('s_groqKey','tmg_groqKey');
+  const p=document.getElementById('s_provider')?.value||'groq';localStorage.setItem('tmg_provider',p);
   const ai=document.getElementById('aiProvider');if(ai)ai.value=p;updateKeyLabel();
   const u=document.getElementById('s_csvUrl')?.value;if(u)localStorage.setItem('tmg_csvUrl',u);
   closeSettings();alert('Settings saved!');
