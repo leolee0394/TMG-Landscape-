@@ -260,38 +260,60 @@ function closeAddModal(){document.getElementById('addModal').classList.remove('o
 async function scrapeAndFill(){
   const url=document.getElementById('scrapeUrl').value.trim();
   if(!url){alert('Paste a URL first');return;}
+  const overwrite=document.getElementById('scrapeOverwrite')?.checked||false;
   const btn=document.getElementById('btnScrape');
   const status=document.getElementById('scrapeStatus');
   btn.disabled=true;btn.textContent='Reading...';
-  status.textContent='Fetching via Jina AI reader...';
+  status.textContent='Fetching homepage via Jina AI reader...';
 
-  let pageText='';
-  // r.jina.ai is built for AI text extraction - no CORS issues
-  const jinaUrl='https://r.jina.ai/'+url;
-  try{
-    const r=await fetch(jinaUrl,{
-      headers:{'Accept':'text/plain','X-Return-Format':'text','X-No-Cache':'true'},
-      signal:AbortSignal.timeout(20000)
-    });
-    if(r.ok){
-      pageText=(await r.text()).replace(/\s+/g,' ').trim();
-      status.textContent='Got '+pageText.length+' characters. Extracting info...';
-    }
-  }catch(e){
-    // try without custom headers (avoids CORS preflight)
+  const fetchPage=async(u)=>{
     try{
-      const r2=await fetch(jinaUrl,{signal:AbortSignal.timeout(15000)});
-      if(r2.ok){pageText=(await r2.text()).replace(/\s+/g,' ').trim();}
+      const r=await fetch('https://r.jina.ai/'+u,{headers:{'X-No-Cache':'true'},signal:AbortSignal.timeout(18000)});
+      if(r.ok)return(await r.text()).replace(/[ \t]+/g,' ').trim();
+    }catch(e){}
+    try{
+      const r2=await fetch('https://r.jina.ai/'+u,{signal:AbortSignal.timeout(12000)});
+      if(r2.ok)return(await r2.text()).replace(/[ \t]+/g,' ').trim();
     }catch(e2){}
-  }
+    return'';
+  };
 
-  if(!pageText||pageText.length<80){
+  // Homepage fetched in Jina's default markdown format so [label](url) links survive -
+  // we use those to find About/Company/Team pages, since a homepage alone usually has
+  // no funding/team/patent info (marketing sites keep that on separate pages).
+  const homeMd=await fetchPage(url);
+  if(!homeMd||homeMd.length<80){
     btn.disabled=false;btn.textContent='AI Scrape and Fill';
-    status.textContent='Could not read page ('+pageText.length+' chars). Some sites block scrapers. Try: ensure URL starts with https://, or use the company Crunchbase/LinkedIn page instead.';
+    status.textContent='Could not read page ('+homeMd.length+' chars). Some sites block scrapers. Try: ensure URL starts with https://, or use the company Crunchbase/LinkedIn page instead.';
     return;
   }
 
-  const prompt='You are a VC analyst assistant. Extract company info from this webpage text. Return ONLY a valid JSON object - no markdown, no explanation - with these keys (empty string if unknown): Company_Name, One_liner, Sub_category, Geography, Stage (Pre-seed/Seed/Series A/Series B/Public), Funding_Raised (e.g. $10M), Last_Funded_Date (e.g. Q2 2024), Number_of_Founders, Founder_Pedigree (Repeat Founder/Ex-FAANG/PhD-Researcher/First-time/Mixed or empty), Key_Investors, Key_Technology, IP_Patent_Status (None/Applied/Granted/Trade Secret or empty), Pricing_Model, Target_Customer, Core_Moat, Key_Competitors, Execution_Risk, Website_URL, TMG_Focus_Area (Precision Nutrition/Intelligent Health/Food and Medicine), Healthspan_Target (Metabolic Control/Gut Health/Cardiovascular Health/Neurological Health/Inflammation/Musculoskeletal/Multiple), Ecosystem_Position (Ingredient / Science/Platform/Brand/Distribution / Channel), Business_Model (B2C/B2B/B2B2C/Marketplace/SaaS), Company_Type (Startup/Incumbent/Acquirer).\n\nAlso suggest a score from 1 to 5 for each of these dimensions, based ONLY on evidence actually present in the page text (customer numbers, press mentions, clinical/study language, technology claims, pricing/model structure) - if the page gives no real signal for a dimension, return an empty string for it rather than guessing: Market_Traction, Product_Differentiation, Capital_Efficiency, Clinical_Validation, AI_Actionability, Regulatory_Complexity, Personalization_Depth, Data_Moat, Scalability.\n\nWebpage text ('+pageText.length+' chars):\n'+pageText.slice(0,5000);
+  let baseHost='';try{baseHost=new URL(url).hostname;}catch(e){}
+  const KEYWORDS=['about','company','our-story','story','team','who-we-are','leadership','founders','press','investors','news'];
+  const seen=new Set();const subpages=[];
+  const linkRe=/\[([^\]]{1,40})\]\((https?:\/\/[^\s)]+)\)/g;
+  let m;
+  while((m=linkRe.exec(homeMd))&&subpages.length<3){
+    const label=m[1].toLowerCase(),href=m[2];
+    let host='';try{host=new URL(href).hostname;}catch(e){continue;}
+    if(host!==baseHost)continue;
+    const hay=(label+' '+href).toLowerCase();
+    if(!KEYWORDS.some(k=>hay.includes(k)))continue;
+    if(seen.has(href))continue;
+    seen.add(href);subpages.push({label:m[1],href});
+  }
+
+  let combined='--- Homepage ---\n'+homeMd.replace(/\s+/g,' ').trim().slice(0,4000);
+  if(subpages.length){
+    status.textContent='Homepage read. Checking '+subpages.length+' related page(s): '+subpages.map(s=>s.label).join(', ')+'...';
+    for(const sp of subpages){
+      const txt=await fetchPage(sp.href);
+      if(txt&&txt.length>50)combined+='\n\n--- '+sp.label+' page ---\n'+txt.replace(/\s+/g,' ').trim().slice(0,2500);
+    }
+  }
+  status.textContent='Got '+combined.length+' characters from '+(1+subpages.length)+' page(s). Extracting info...';
+
+  const prompt='You are a VC analyst assistant. Extract company info from this webpage text (may span multiple pages of the same site). Return ONLY a valid JSON object - no markdown, no explanation - with these keys (empty string if unknown): Company_Name, One_liner, Sub_category, Geography, Stage (Pre-seed/Seed/Series A/Series B/Public), Funding_Raised (e.g. $10M), Last_Funded_Date (e.g. Q2 2024), Number_of_Founders, Founder_Pedigree (Repeat Founder/Ex-FAANG/PhD-Researcher/First-time/Mixed or empty), Key_Investors, Key_Technology, IP_Patent_Status (None/Applied/Granted/Trade Secret or empty), Pricing_Model, Target_Customer, Core_Moat, Key_Competitors, Execution_Risk, Website_URL, TMG_Focus_Area (Precision Nutrition/Intelligent Health/Food and Medicine), Healthspan_Target (Metabolic Control/Gut Health/Cardiovascular Health/Neurological Health/Inflammation/Musculoskeletal/Multiple), Ecosystem_Position (Ingredient / Science/Platform/Brand/Distribution / Channel), Business_Model (B2C/B2B/B2B2C/Marketplace/SaaS), Company_Type (Startup/Incumbent/Acquirer).\n\nAlso suggest a score from 1 to 5 for each of these dimensions, based ONLY on evidence actually present in the text (customer numbers, press mentions, clinical/study language, technology claims, pricing/model structure) - if there is no real signal for a dimension, return an empty string for it rather than guessing: Market_Traction, Product_Differentiation, Capital_Efficiency, Clinical_Validation, AI_Actionability, Regulatory_Complexity, Personalization_Depth, Data_Moat, Scalability.\n\nWebsite text ('+combined.length+' chars):\n'+combined.slice(0,9000);
 
   status.textContent='AI analysing page content...';
   const result=await callAI(prompt);
@@ -302,12 +324,14 @@ async function scrapeAndFill(){
     const textMap={Company_Name:'f_name',One_liner:'f_oneliner',Sub_category:'f_sub',Geography:'f_geo',Stage:'f_stage',Funding_Raised:'f_funding',Last_Funded_Date:'f_lastfunded',Number_of_Founders:'f_founders',Founder_Pedigree:'f_pedigree',Key_Investors:'f_investors',Key_Technology:'f_tech',Pricing_Model:'f_pricing',Target_Customer:'f_customer',Core_Moat:'f_moat',Key_Competitors:'f_competitors',Execution_Risk:'f_risk'};
     const selMap={TMG_Focus_Area:'f_focus',Healthspan_Target:'f_health',Ecosystem_Position:'f_eco',Business_Model:'f_biz',Company_Type:'f_type',Founder_Pedigree:'f_pedigree',IP_Patent_Status:'f_ip'};
     const scoreMap={Market_Traction:'f_traction',Product_Differentiation:'f_diff',Capital_Efficiency:'f_capeff',Clinical_Validation:'f_cv',AI_Actionability:'f_ai',Regulatory_Complexity:'f_reg',Personalization_Depth:'f_pers',Data_Moat:'f_dm',Scalability:'f_sc'};
-    let filled=0,scoresFilled=0;
-    Object.entries(textMap).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&data[k]&&data[k].trim()){el.value=data[k];filled++;}});
-    Object.entries(selMap).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&data[k]&&data[k].trim()){el.value=data[k];filled++;}});
-    Object.entries(scoreMap).forEach(([k,id])=>{const el=document.getElementById(id);if(el&&data[k]&&String(data[k]).trim()&&[1,2,3,4,5].includes(+data[k])){el.value=data[k];el.style.outline='2px solid #e07535';el.style.outlineOffset='1px';el.title='AI-suggested from page content - verify before saving';filled++;scoresFilled++;}});
+    let filled=0,scoresFilled=0,skipped=0;
+    // Default (overwrite unchecked) = only fill fields that are currently blank, so
+    // editing an existing company and re-scraping a link never clobbers verified data.
+    Object.entries(textMap).forEach(([k,id])=>{const el=document.getElementById(id);if(!el||!data[k]||!data[k].trim())return;if(!overwrite&&el.value.trim()){skipped++;return;}el.value=data[k];filled++;});
+    Object.entries(selMap).forEach(([k,id])=>{const el=document.getElementById(id);if(!el||!data[k]||!data[k].trim())return;if(!overwrite&&el.value.trim()){skipped++;return;}el.value=data[k];filled++;});
+    Object.entries(scoreMap).forEach(([k,id])=>{const el=document.getElementById(id);if(!el||!data[k]||!String(data[k]).trim()||![1,2,3,4,5].includes(+data[k]))return;if(!overwrite&&el.value.trim()){skipped++;return;}el.value=data[k];el.style.outline='2px solid #e07535';el.style.outlineOffset='1px';el.title='AI-suggested from page content - verify before saving';filled++;scoresFilled++;});
     const web=document.getElementById('f_website');if(web&&!web.value){web.value=data.Website_URL||url;}
-    status.textContent=filled>0?'Filled '+filled+' fields'+(scoresFilled?' ('+scoresFilled+' scores suggested by AI - highlighted orange, please verify)':'')+'. Review and adjust before saving.':'AI could not extract structured data from this page. The page may be mostly JavaScript-rendered or behind a login.';
+    status.textContent=filled>0?'Filled '+filled+' fields'+(scoresFilled?' ('+scoresFilled+' scores suggested by AI - highlighted orange, please verify)':'')+(skipped?'. Skipped '+skipped+' field(s) that already had a value (check "Overwrite" above to replace them).':'. Review and adjust before saving.'):(skipped?'Found data for '+skipped+' field(s) but all already had values - check "Overwrite" above to replace them.':'AI could not extract structured data from this page. The page may be mostly JavaScript-rendered or behind a login.');
   }catch(e){
     status.textContent='Parse error. Raw AI response: '+result.slice(0,120)+'...';
   }
@@ -794,76 +818,28 @@ function renderArchitecture(data,vc){
   vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Platform Architecture</span><button class="btn-dl-vis" onclick="dlVis('arch-inner')">Download PNG</button></div><div class="vis-card-desc">How data flows from web sources through the platform to deliver investment intelligence.</div><div id="arch-inner" style="background:var(--white);padding:20px;border-radius:7px"><svg viewBox="0 0 900 320" style="width:100%;height:auto"><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e07535"/></marker></defs><text x="450" y="22" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7a9ab0" font-weight="600">DATA SOURCES</text><rect x="40" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="110" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Startup Website</text><text x="110" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Jina AI Scraper</text><text x="110" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">AI fills form</text><rect x="260" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="330" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">LinkedIn Profile</text><text x="330" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Jina AI Reader</text><text x="330" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Founder Pedigree</text><rect x="480" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="550" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Google Sheet</text><text x="550" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">CSV Sync</text><text x="550" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Manual entry</text><line x1="110" y1="82" x2="110" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="330" y1="82" x2="330" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="550" y1="82" x2="550" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="110" y1="115" x2="550" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="330" y1="115" x2="330" y2="128" stroke="#e07535" stroke-width="1.5" marker-end="url(#arr)"/><rect x="200" y="128" width="260" height="48" rx="8" fill="#ff8000" opacity=".9"/><text x="330" y="149" text-anchor="middle" font-family="sans-serif" font-size="13" fill="white">Firebase Firestore</text><text x="330" y="165" text-anchor="middle" font-family="sans-serif" font-size="9" fill="rgba(255,255,255,.8)">Real-time - Shared across all 5 teammates</text><line x1="230" y1="176" x2="140" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="280" y1="176" x2="320" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="380" y1="176" x2="500" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="430" y1="176" x2="680" y2="210" stroke="#dde4ec" stroke-width="1.2"/><rect x="70" y="210" width="140" height="48" rx="7" fill="#162535"/><text x="140" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Dashboard Charts</text><text x="140" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">17 Visual types</text><rect x="250" y="210" width="140" height="48" rx="7" fill="#7a3fd0"/><text x="320" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">AI Analysis</text><text x="320" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Claude / Gemini</text><rect x="430" y="210" width="140" height="48" rx="7" fill="#2a7f5f"/><text x="500" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">CSV Export</text><text x="500" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Google Sheets backup</text><rect x="610" y="210" width="140" height="48" rx="7" fill="#e07535"/><text x="680" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Newsletter PNGs</text><text x="680" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Visuals tab</text><rect x="210" y="268" width="220" height="34" rx="6" fill="#f0e8fe" stroke="#7a3fd0" stroke-width="1.5"/><text x="320" y="283" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#5a1a9a" font-weight="600">Send to Claude connector</text><text x="320" y="296" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a3fd0">Query your landscape from Claude chat</text><line x1="320" y1="258" x2="320" y2="268" stroke="#7a3fd0" stroke-width="1.2"/></svg></div></div>`;
 }
 
-function wrapLines(text,maxChars){
-  const words=text.split(' ');const lines=[];let cur='';
-  words.forEach(w=>{
-    if((cur+' '+w).trim().length<=maxChars)cur=(cur+' '+w).trim();
-    else{if(cur)lines.push(cur);cur=w;}
-  });
-  if(cur)lines.push(cur);
-  return lines;
-}
 function renderWhyNow(data,vc){
-  const W=1000,H=700;
-  const rows=[
-    {color:'#7c3aed',title:'Demographic Shift',sub:'The market is expanding structurally, not cyclically.',milestones:[
-      {y:'2020',t:'Global 60+ population passes 1 billion'},
-      {y:'2024',t:'Healthy aging becomes the #1 consumer health priority'},
-      {y:'2035E',t:'$14.5T projected food and health market'}]},
-    {color:'#e07535',title:'GLP-1 Revolution',sub:'One drug class rewired consumer behavior around metabolic health.',milestones:[
-      {y:'2021',t:'FDA approves Ozempic for chronic weight management'},
-      {y:'2023',t:'$1.5B Poppi acquisition reprices functional beverages'},
-      {y:'2024',t:'Food companies reformulate around GLP-1 users'}]},
-    {color:'#2563eb',title:'AI-Enabled Discovery',sub:'Small teams now match what only big pharma R&D could do.',milestones:[
-      {y:'2022',t:'AlphaFold2 solves protein structure prediction at scale'},
-      {y:'2023',t:'AI-driven bioactive discovery runs 10 to 100x faster'},
-      {y:'2024',t:'Small teams match large pharma R&D output'}]},
-    {color:'#16a34a',title:'Data and Biomarkers',sub:'Personalization finally has a measurement layer behind it.',milestones:[
-      {y:'2021',t:'Continuous glucose monitoring goes mainstream'},
-      {y:'2022',t:'Microbiome sequencing costs fall roughly 90%'},
-      {y:'2024',t:'100+ biomarker panels available under $500 a year'}]},
-    {color:'#db2777',title:'Capital Formation',sub:'Investors are voting with checks ahead of the category label.',milestones:[
-      {y:'2021',t:'Longevity VC investment hits a record $4B'},
-      {y:'2023',t:'Danone acquires Kate Farms, validating the space'},
-      {y:'2025',t:'TMG thesis holds across all three focus verticals'}]},
-  ];
-  const rowH=118, topPad=90, nodeX=44, chipStartX=94, chipW=278, chipGap=12, chipH=78;
-  const rowsSvg=rows.map((row,i)=>{
-    const y=topPad+i*rowH;
-    const chips=row.milestones.map((m,j)=>{
-      const cx=chipStartX+j*(chipW+chipGap);
-      const lines=wrapLines(m.t,34).slice(0,3);
-      const textLines=lines.map((ln,k)=>`<text x="${cx+56}" y="${y-chipH/2+22+k*13}" font-family="DM Sans,sans-serif" font-size="10.5" fill="#1a2530" font-weight="500">${ln}</text>`).join('');
-      return `<g>
-        <rect x="${cx}" y="${y-chipH/2}" width="${chipW}" height="${chipH}" rx="7" fill="${row.color}10" stroke="${row.color}45" stroke-width="1"/>
-        <rect x="${cx}" y="${y-chipH/2}" width="46" height="${chipH}" rx="7" fill="${row.color}"/>
-        <rect x="${cx+23}" y="${y-chipH/2}" width="23" height="${chipH}" fill="${row.color}"/>
-        <text x="${cx+23}" y="${y+5}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="12" font-weight="700" fill="white">${m.y}</text>
-        ${textLines}
-      </g>`;
-    }).join('');
-    return `<g>
-      <circle cx="${nodeX}" cy="${y}" r="20" fill="${row.color}"/>
-      <text x="${nodeX}" y="${y+6}" text-anchor="middle" font-family="DM Serif Display,serif" font-size="17" fill="white">${i+1}</text>
-      <text x="${chipStartX}" y="${y-chipH/2-16}" font-family="DM Sans,sans-serif" font-size="14" font-weight="700" fill="#162535">${row.title}</text>
-      <text x="${chipStartX}" y="${y-chipH/2-3}" font-family="DM Sans,sans-serif" font-size="10" fill="#4a6070" font-style="italic">${row.sub}</text>
-      ${chips}
-    </g>`;
-  }).join('');
-  const lineTop=topPad, lineBottom=topPad+(rows.length-1)*rowH;
-
+  const W=860,H=480;
   vc.innerHTML=`<div class="vis-card">
     <div class="vis-card-hdr"><span class="vis-card-title">Why Now - Converging Catalysts</span><button class="btn-dl-vis" onclick="dlVis('wn-inner')">Download PNG</button></div>
-    <div class="vis-card-desc">5 independent forces converging on the same window. Framework pre-populated with known milestones - extend with your own as new evidence lands.</div>
-    <div id="wn-inner" style="background:var(--white);padding:24px 22px;border-radius:8px">
+    <div class="vis-card-desc">5 converging forces making the Consumer Healthspan Economy investable right now. Based on TMG thesis and market evidence.</div>
+    <div id="wn-inner" style="background:var(--white);padding:16px;border-radius:8px">
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto">
-        <text x="0" y="30" font-family="DM Serif Display,serif" font-size="22" fill="#162535">The Healthspan Investment Window Is Open Now</text>
-        <text x="0" y="52" font-family="DM Sans,sans-serif" font-size="11.5" fill="#4a6070">Five structural shifts, each independently sufficient to justify attention - together, a conviction-level thesis.</text>
-        <line x1="${nodeX}" y1="${lineTop}" x2="${nodeX}" y2="${lineBottom}" stroke="#dde4ec" stroke-width="3"/>
-        ${rowsSvg}
-        <rect x="0" y="${H-58}" width="${W}" height="44" rx="6" fill="#fef3ec"/>
-        <rect x="0" y="${H-58}" width="5" height="44" fill="#e07535"/>
-        <text x="20" y="${H-31}" font-family="DM Serif Display,serif" font-size="13.5" fill="#162535">All five forces reinforce each other - an exceptional entry point across Precision Nutrition, Intelligent Health, and Food &amp; Medicine.</text>
+        <text x="${W/2}" y="28" text-anchor="middle" font-family="DM Serif Display,serif" font-size="16" fill="#162535">The Healthspan Investment Window is Open Now</text>
+        ${[
+          {y:55,color:'#7c3aed',icon:'\u{1F465}',title:'Demographic Shift',milestones:['2020: Global 60+ population hits 1B','2024: Healthy aging top consumer priority','2035: $14.5T food and health market projected']},
+          {y:135,color:'#e07535',icon:'\u{1F48A}',title:'GLP-1 Revolution',milestones:['2021: FDA approves Ozempic for obesity','2023: $1.5B Poppi acquisition signals shift','2024: Food cos. reformulating for GLP-1 users']},
+          {y:215,color:'#2563eb',icon:'\u{1F9EC}',title:'AI-Enabled Discovery',milestones:['2022: AlphaFold2 protein structure breakthrough','2023: AI bioactive discovery 10-100x faster','2024: Small teams match large pharma R&D']},
+          {y:295,color:'#16a34a',icon:'\u{1F4CA}',title:'Data and Biomarkers',milestones:['2021: CGM becomes consumer mainstream','2022: Microbiome sequencing costs fall 90%','2024: 100+ biomarker panels for $499/year']},
+          {y:375,color:'#db2777',icon:'\u{1F4B0}',title:'Capital Formation',milestones:['2021: Longevity VC hits record $4B invested','2023: Danone acquires Kate Farms','2025: TMG thesis validated across all 3 verticals']},
+        ].map(({y,color,icon,title,milestones})=>`
+          <rect x="10" y="${y}" width="${W-20}" height="72" rx="8" fill="${color}11" stroke="${color}" stroke-width="1"/>
+          <text x="30" y="${y+22}" font-family="sans-serif" font-size="11">${icon}</text>
+          <text x="50" y="${y+24}" font-family="DM Sans,sans-serif" font-size="12" fill="${color}" font-weight="700">${title}</text>
+          ${milestones.map((m,i)=>`<text x="${200+i*210}" y="${y+22}" font-family="sans-serif" font-size="9" fill="#162535" font-weight="500">${m.split(':')[0]}:</text><text x="${200+i*210}" y="${y+36}" font-family="sans-serif" font-size="9" fill="#4a6070">${m.split(':').slice(1).join(':').trim()}</text>`).join('')}
+          <text x="${W-80}" y="${y+46}" font-family="sans-serif" font-size="9" fill="${color}" font-weight="600">ACTIVE NOW &#8594;</text>
+        `).join('')}
+        <text x="${W/2}" y="${H-18}" text-anchor="middle" font-family="DM Serif Display,serif" font-size="13" fill="#162535">All 5 forces converge - exceptional entry point for Precision Nutrition, Intelligent Health, Food &amp; Medicine</text>
       </svg>
     </div>
   </div>`;
