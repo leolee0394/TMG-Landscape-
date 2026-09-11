@@ -291,16 +291,19 @@ async function scrapeAndFill(){
   let baseHost='';try{baseHost=new URL(url).hostname;}catch(e){}
   const KEYWORDS=['about','company','our-story','story','team','who-we-are','leadership','founders','press','investors','news'];
   const seen=new Set();const subpages=[];
-  const linkRe=/\[([^\]]{1,40})\]\((https?:\/\/[^\s)]+)\)/g;
+  // Matches BOTH absolute (https://...) and relative (/about, ./team) links -
+  // most site nav uses relative hrefs, which the old https?:// only regex missed entirely.
+  const linkRe=/\[([^\]]{1,40})\]\(([^\s)]+)\)/g;
   let m;
   while((m=linkRe.exec(homeMd))&&subpages.length<3){
-    const label=m[1].toLowerCase(),href=m[2];
-    let host='';try{host=new URL(href).hostname;}catch(e){continue;}
+    const label=m[1].toLowerCase(),rawHref=m[2];
+    let abs='';try{abs=new URL(rawHref,url).href;}catch(e){continue;}
+    let host='';try{host=new URL(abs).hostname;}catch(e){continue;}
     if(host!==baseHost)continue;
-    const hay=(label+' '+href).toLowerCase();
+    const hay=(label+' '+abs).toLowerCase();
     if(!KEYWORDS.some(k=>hay.includes(k)))continue;
-    if(seen.has(href))continue;
-    seen.add(href);subpages.push({label:m[1],href});
+    if(seen.has(abs))continue;
+    seen.add(abs);subpages.push({label:m[1],href:abs});
   }
 
   let combined='--- Homepage ---\n'+homeMd.replace(/\s+/g,' ').trim().slice(0,4000);
@@ -815,9 +818,62 @@ function renderGeoMap(data,vc){
   </div>`;
 }
 function renderArchitecture(data,vc){
-  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Platform Architecture</span><button class="btn-dl-vis" onclick="dlVis('arch-inner')">Download PNG</button></div><div class="vis-card-desc">How data flows from web sources through the platform to deliver investment intelligence.</div><div id="arch-inner" style="background:var(--white);padding:20px;border-radius:7px"><svg viewBox="0 0 900 320" style="width:100%;height:auto"><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e07535"/></marker></defs><text x="450" y="22" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7a9ab0" font-weight="600">DATA SOURCES</text><rect x="40" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="110" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Startup Website</text><text x="110" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Jina AI Scraper</text><text x="110" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">AI fills form</text><rect x="260" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="330" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">LinkedIn Profile</text><text x="330" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Jina AI Reader</text><text x="330" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Founder Pedigree</text><rect x="480" y="30" width="140" height="52" rx="7" fill="#162535"/><text x="550" y="50" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Google Sheet</text><text x="550" y="63" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">CSV Sync</text><text x="550" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Manual entry</text><line x1="110" y1="82" x2="110" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="330" y1="82" x2="330" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="550" y1="82" x2="550" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="110" y1="115" x2="550" y2="115" stroke="#e07535" stroke-width="1.5"/><line x1="330" y1="115" x2="330" y2="128" stroke="#e07535" stroke-width="1.5" marker-end="url(#arr)"/><rect x="200" y="128" width="260" height="48" rx="8" fill="#ff8000" opacity=".9"/><text x="330" y="149" text-anchor="middle" font-family="sans-serif" font-size="13" fill="white">Firebase Firestore</text><text x="330" y="165" text-anchor="middle" font-family="sans-serif" font-size="9" fill="rgba(255,255,255,.8)">Real-time - Shared across all 5 teammates</text><line x1="230" y1="176" x2="140" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="280" y1="176" x2="320" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="380" y1="176" x2="500" y2="210" stroke="#dde4ec" stroke-width="1.2"/><line x1="430" y1="176" x2="680" y2="210" stroke="#dde4ec" stroke-width="1.2"/><rect x="70" y="210" width="140" height="48" rx="7" fill="#162535"/><text x="140" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Dashboard Charts</text><text x="140" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">17 Visual types</text><rect x="250" y="210" width="140" height="48" rx="7" fill="#7a3fd0"/><text x="320" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">AI Analysis</text><text x="320" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Claude / Gemini</text><rect x="430" y="210" width="140" height="48" rx="7" fill="#2a7f5f"/><text x="500" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">CSV Export</text><text x="500" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Google Sheets backup</text><rect x="610" y="210" width="140" height="48" rx="7" fill="#e07535"/><text x="680" y="231" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Newsletter PNGs</text><text x="680" y="245" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Visuals tab</text><rect x="210" y="268" width="220" height="34" rx="6" fill="#f0e8fe" stroke="#7a3fd0" stroke-width="1.5"/><text x="320" y="283" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#5a1a9a" font-weight="600">Send to Claude connector</text><text x="320" y="296" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a3fd0">Query your landscape from Claude chat</text><line x1="320" y1="258" x2="320" y2="268" stroke="#7a3fd0" stroke-width="1.2"/></svg></div></div>`;
-}
+  vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Platform Architecture</span><button class="btn-dl-vis" onclick="dlVis('arch-inner')">Download PNG</button></div><div class="vis-card-desc">How data flows from web sources through the platform to deliver investment intelligence.</div><div id="arch-inner" style="background:var(--white);padding:20px;border-radius:7px"><svg viewBox="0 0 900 340" style="width:100%;height:auto">
+  <defs><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e07535"/></marker></defs>
+  <text x="450" y="22" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#7a9ab0" font-weight="600">DATA SOURCES</text>
 
+  <rect x="40" y="30" width="150" height="58" rx="7" fill="#162535"/>
+  <text x="115" y="49" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Startup Website</text>
+  <text x="115" y="62" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Jina AI Reader - home + About/Team pages</text>
+  <text x="115" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">AI fills form + suggests scores</text>
+
+  <rect x="270" y="30" width="150" height="58" rx="7" fill="#162535"/>
+  <text x="345" y="49" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Google Sheet</text>
+  <text x="345" y="62" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Published CSV link</text>
+  <text x="345" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Sync from Sheet - merges, no overwrite</text>
+
+  <rect x="500" y="30" width="150" height="58" rx="7" fill="#162535"/>
+  <text x="575" y="49" text-anchor="middle" font-family="sans-serif" font-size="10" fill="white" font-weight="500">Manual Entry</text>
+  <text x="575" y="62" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a9ab0">Add / Edit form</text>
+  <text x="575" y="75" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#e07535">Direct team input</text>
+
+  <line x1="115" y1="88" x2="115" y2="118" stroke="#e07535" stroke-width="1.5"/>
+  <line x1="345" y1="88" x2="345" y2="118" stroke="#e07535" stroke-width="1.5"/>
+  <line x1="575" y1="88" x2="575" y2="118" stroke="#e07535" stroke-width="1.5"/>
+  <line x1="115" y1="118" x2="575" y2="118" stroke="#e07535" stroke-width="1.5"/>
+  <line x1="345" y1="118" x2="345" y2="132" stroke="#e07535" stroke-width="1.5" marker-end="url(#arr)"/>
+
+  <rect x="215" y="132" width="260" height="50" rx="8" fill="#ff8000" opacity=".9"/>
+  <text x="345" y="153" text-anchor="middle" font-family="sans-serif" font-size="13" fill="white">Firebase Firestore</text>
+  <text x="345" y="169" text-anchor="middle" font-family="sans-serif" font-size="9" fill="rgba(255,255,255,.8)">Real-time - shared across the team</text>
+
+  <line x1="255" y1="182" x2="150" y2="216" stroke="#dde4ec" stroke-width="1.2"/>
+  <line x1="305" y1="182" x2="330" y2="216" stroke="#dde4ec" stroke-width="1.2"/>
+  <line x1="385" y1="182" x2="520" y2="216" stroke="#dde4ec" stroke-width="1.2"/>
+  <line x1="435" y1="182" x2="700" y2="216" stroke="#dde4ec" stroke-width="1.2"/>
+
+  <rect x="80" y="216" width="140" height="52" rx="7" fill="#162535"/>
+  <text x="150" y="237" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Dashboard Charts</text>
+  <text x="150" y="251" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">15 visual types</text>
+
+  <rect x="260" y="216" width="140" height="52" rx="7" fill="#7a3fd0"/>
+  <text x="330" y="237" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">AI Analysis</text>
+  <text x="330" y="251" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Groq / Gemini / Claude</text>
+
+  <rect x="440" y="216" width="140" height="52" rx="7" fill="#2a7f5f"/>
+  <text x="510" y="237" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">CSV Export</text>
+  <text x="510" y="251" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Local backup file</text>
+
+  <rect x="620" y="216" width="140" height="52" rx="7" fill="#e07535"/>
+  <text x="690" y="237" text-anchor="middle" font-family="sans-serif" font-size="9" fill="white" font-weight="600">Visual PNG Export</text>
+  <text x="690" y="251" text-anchor="middle" font-family="sans-serif" font-size="8" fill="rgba(255,255,255,.7)">Any chart, for decks</text>
+
+  <rect x="215" y="286" width="260" height="38" rx="6" fill="#f0e8fe" stroke="#7a3fd0" stroke-width="1.5"/>
+  <text x="345" y="304" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#5a1a9a" font-weight="600">Send to Claude connector</text>
+  <text x="345" y="317" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#7a3fd0">Query your landscape from Claude chat</text>
+  <line x1="330" y1="268" x2="330" y2="286" stroke="#7a3fd0" stroke-width="1.2"/>
+</svg></div></div>`;
+}
 function renderWhyNow(data,vc){
   const W=860,H=480;
   vc.innerHTML=`<div class="vis-card">
@@ -837,7 +893,6 @@ function renderWhyNow(data,vc){
           <text x="30" y="${y+22}" font-family="sans-serif" font-size="11">${icon}</text>
           <text x="50" y="${y+24}" font-family="DM Sans,sans-serif" font-size="12" fill="${color}" font-weight="700">${title}</text>
           ${milestones.map((m,i)=>`<text x="${200+i*210}" y="${y+22}" font-family="sans-serif" font-size="9" fill="#162535" font-weight="500">${m.split(':')[0]}:</text><text x="${200+i*210}" y="${y+36}" font-family="sans-serif" font-size="9" fill="#4a6070">${m.split(':').slice(1).join(':').trim()}</text>`).join('')}
-          <text x="${W-80}" y="${y+46}" font-family="sans-serif" font-size="9" fill="${color}" font-weight="600">ACTIVE NOW &#8594;</text>
         `).join('')}
         <text x="${W/2}" y="${H-18}" text-anchor="middle" font-family="DM Serif Display,serif" font-size="13" fill="#162535">All 5 forces converge - exceptional entry point for Precision Nutrition, Intelligent Health, Food &amp; Medicine</text>
       </svg>
