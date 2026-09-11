@@ -306,17 +306,17 @@ async function scrapeAndFill(){
     seen.add(abs);subpages.push({label:m[1],href:abs});
   }
 
-  let combined='--- Homepage ---\n'+homeMd.replace(/\s+/g,' ').trim().slice(0,4000);
+  let combined='--- Homepage ---\n'+homeMd.replace(/\s+/g,' ').trim().slice(0,6000);
   if(subpages.length){
     status.textContent='Homepage read. Checking '+subpages.length+' related page(s): '+subpages.map(s=>s.label).join(', ')+'...';
     for(const sp of subpages){
       const txt=await fetchPage(sp.href);
-      if(txt&&txt.length>50)combined+='\n\n--- '+sp.label+' page ---\n'+txt.replace(/\s+/g,' ').trim().slice(0,2500);
+      if(txt&&txt.length>50)combined+='\n\n--- '+sp.label+' page ---\n'+txt.replace(/\s+/g,' ').trim().slice(0,4000);
     }
   }
   status.textContent='Got '+combined.length+' characters from '+(1+subpages.length)+' page(s). Extracting info...';
 
-  const prompt='You are a VC analyst assistant. Extract company info from this webpage text (may span multiple pages of the same site). Return ONLY a valid JSON object - no markdown, no explanation - with these keys (empty string if unknown): Company_Name, One_liner, Sub_category, Geography, Stage (Pre-seed/Seed/Series A/Series B/Public), Funding_Raised (e.g. $10M), Last_Funded_Date (e.g. Q2 2024), Number_of_Founders, Founder_Pedigree (Repeat Founder/Ex-FAANG/PhD-Researcher/First-time/Mixed or empty), Key_Investors, Key_Technology, IP_Patent_Status (None/Applied/Granted/Trade Secret or empty), Pricing_Model, Target_Customer, Core_Moat, Key_Competitors, Execution_Risk, Website_URL, TMG_Focus_Area (Precision Nutrition/Intelligent Health/Food and Medicine), Healthspan_Target (Metabolic Control/Gut Health/Cardiovascular Health/Neurological Health/Inflammation/Musculoskeletal/Multiple), Ecosystem_Position (Ingredient / Science/Platform/Brand/Distribution / Channel), Business_Model (B2C/B2B/B2B2C/Marketplace/SaaS), Company_Type (Startup/Incumbent/Acquirer).\n\nAlso suggest a score from 1 to 5 for each of these dimensions, based ONLY on evidence actually present in the text (customer numbers, press mentions, clinical/study language, technology claims, pricing/model structure) - if there is no real signal for a dimension, return an empty string for it rather than guessing: Market_Traction, Product_Differentiation, Capital_Efficiency, Clinical_Validation, AI_Actionability, Regulatory_Complexity, Personalization_Depth, Data_Moat, Scalability.\n\nWebsite text ('+combined.length+' chars):\n'+combined.slice(0,9000);
+  const prompt='You are a VC analyst assistant. Extract company info from this webpage text (may span multiple pages of the same site). Return ONLY a valid JSON object - no markdown, no explanation - with these keys (empty string if unknown): Company_Name, One_liner, Sub_category, Geography, Stage (Pre-seed/Seed/Series A/Series B/Public), Funding_Raised (e.g. $10M), Last_Funded_Date (e.g. Q2 2024), Number_of_Founders, Founder_Pedigree (Repeat Founder/Ex-FAANG/PhD-Researcher/First-time/Mixed or empty), Key_Investors, Key_Technology, IP_Patent_Status (None/Applied/Granted/Trade Secret or empty), Pricing_Model, Target_Customer, Core_Moat, Key_Competitors, Execution_Risk, Website_URL, TMG_Focus_Area (Precision Nutrition/Intelligent Health/Food and Medicine), Healthspan_Target (Metabolic Control/Gut Health/Cardiovascular Health/Neurological Health/Inflammation/Musculoskeletal/Multiple), Ecosystem_Position (Ingredient / Science/Platform/Brand/Distribution / Channel), Business_Model (B2C/B2B/B2B2C/Marketplace/SaaS), Company_Type (Startup/Incumbent/Acquirer).\n\nAlso suggest a score from 1 to 5 for each of these dimensions, based ONLY on evidence actually present in the text (customer numbers, press mentions, clinical/study language, technology claims, pricing/model structure) - if there is no real signal for a dimension, return an empty string for it rather than guessing: Market_Traction, Product_Differentiation, Capital_Efficiency, Clinical_Validation, AI_Actionability, Regulatory_Complexity, Personalization_Depth, Data_Moat, Scalability.\n\nWebsite text ('+combined.length+' chars):\n'+combined.slice(0,15000);
 
   status.textContent='AI analysing page content...';
   const result=await callAI(prompt);
@@ -370,7 +370,24 @@ async function importFromSheet(){
   btn.textContent='Sync from Sheet';btn.disabled=false;
   alert('Sync complete: '+updated+' updated, '+created+' created. No duplicates.');
 }
-function parseCSV(txt){const lines=txt.trim().split('\n');const hdrs=splitLine(lines[0]);return lines.slice(1).map(l=>{const v=splitLine(l),obj={};hdrs.forEach((h,i)=>obj[h.trim()]=(v[i]||'').trim());return obj;}).filter(r=>r['Company Name']);}
+const CSV_HEADER_ALIASES=(()=>{
+  const canon=['Company Name','One-liner','TMG Focus Area','Sub-category','Healthspan Target','Ecosystem Position','Business Model','Company Type','Geography','Stage','Funding Raised','Last Funded Date','Estimated Runway (months)','Number of Founders','Founder Pedigree','Key Investors','Key Technology','IP / Patent Status','Pricing Model','Target Customer','Core Moat','Key Competitors','Execution Risk','Website','Market Traction','Product Differentiation','Capital Efficiency','Clinical Validation','AI Actionability','Regulatory Complexity','Personalization Depth','Data Moat','Scalability','TMG Interest Level','Last Updated'];
+  const norm=s=>s.toLowerCase().replace(/[^a-z0-9]/g,'');
+  const map={};
+  canon.forEach(c=>{map[norm(c)]=c;});
+  // Extra common variants people actually type in a Sheet header, mapped to the canonical field name.
+  Object.assign(map,{
+    ipstatus:'IP / Patent Status',patentstatus:'IP / Patent Status',ip:'IP / Patent Status',
+    runway:'Estimated Runway (months)',runwaymonths:'Estimated Runway (months)',runwaymo:'Estimated Runway (months)',
+    oneliner:'One-liner',subcategory:'Sub-category',focusarea:'TMG Focus Area',
+    interestlevel:'TMG Interest Level',interest:'TMG Interest Level',
+    lastfunded:'Last Funded Date',funding:'Funding Raised',investors:'Key Investors',
+    founders:'Number of Founders',pedigree:'Founder Pedigree',technology:'Key Technology',
+    moat:'Core Moat',competitors:'Key Competitors',risk:'Execution Risk',customer:'Target Customer'
+  });
+  return {map,norm};
+})();
+function parseCSV(txt){const lines=txt.trim().split('\n');const hdrs=splitLine(lines[0]).map(h=>{const t=h.trim();const n=CSV_HEADER_ALIASES.norm(t);return CSV_HEADER_ALIASES.map[n]||t;});return lines.slice(1).map(l=>{const v=splitLine(l),obj={};hdrs.forEach((h,i)=>obj[h]=(v[i]||'').trim());return obj;}).filter(r=>r['Company Name']);}
 function splitLine(line){const v=[];let cur='',inQ=false;for(let i=0;i<line.length;i++){if(line[i]==='"')inQ=!inQ;else if(line[i]===','&&!inQ){v.push(cur);cur='';}else cur+=line[i];}v.push(cur);return v;}
 
 function exportCSV(){
@@ -983,7 +1000,7 @@ async function callAI(prompt){
         const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{
           method:'POST',
           headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},
-          body:JSON.stringify({model:m,messages:[{role:'user',content:prompt}],max_completion_tokens:4096,reasoning_effort:'medium',temperature:0.2})
+          body:JSON.stringify({model:m,messages:[{role:'user',content:prompt}],max_completion_tokens:3000,reasoning_effort:'medium',temperature:0.2})
         });
         const d=await r.json();
         if(d.error){lastErr=d.error.message;continue;}
