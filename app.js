@@ -8,12 +8,12 @@ const COL = 'companies';
 const SCORE_COLS = ['Market Traction','Product Differentiation','Capital Efficiency','Clinical Validation','AI Actionability','Regulatory Complexity','Personalization Depth','Data Moat','Scalability'];
 
 let allData=[], filteredData=[], curView='targets', curSection='dashboard';
-let sortCol='', sortDir=1, curPrompt='newsletter', curVis='architecture', cmpPrompt='compare', numCmpSlots=3;
+let sortCol='', sortDir=1, curPrompt='newsletter', curVis='ecosystem', cmpPrompt='compare', numCmpSlots=3;
 let charts={}, visCharts={}, claudePromptType='overview', claudePayload='';
 
 const exp = {setView,showSection,openAddModal,closeAddModal,saveCompany,openSettings,closeSettings,saveSettings,applyFilters,srt,openPanel,closePanel,editCompany,deleteCompany,addLink,delLink,saveNotes,renderCompare,addCmpSlot,selPrompt,selCmpPrompt,generateAI,generateCmpAI,copyAI,copyCmpAI,saveKey,updateKeyLabel,setVis,exportCSV,importFromSheet,dlVis,dlChart,updateMatrix,updateBubble,updateRadar,dlRadarChart,renderVis,scrapeAndFill,openClaudeModal,closeClaudeModal,setClaude,copyForClaude,openClaude,loadData};
 Object.entries(exp).forEach(([k,v])=>window[k]=v);
-window.updateRadar=updateRadar;window.dlRadarChart=dlRadarChart;window.updateVCStyle=updateVCStyle;
+window.updateRadar=updateRadar;window.dlRadarChart=dlRadarChart;window.updateVCStyle=updateVCStyle;window.toggleEcoLabels=toggleEcoLabels;window.toggleEcoInvestors=toggleEcoInvestors;window.toggleEcoStageRings=toggleEcoStageRings;window.setEcoMinInvestor=setEcoMinInvestor;window.checkTblScroll=checkTblScroll;
 
 onSnapshot(collection(db,COL),(snap)=>{
   // Deduplicate by Company Name - keep most recent if dupes exist
@@ -53,11 +53,19 @@ function showSection(id){
   document.querySelectorAll('.section-wrap').forEach(s=>s.classList.remove('active'));
   document.getElementById('sec-'+id)?.classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const map={dashboard:0,companies:1,compare:2,visuals:3};
+  const map={dashboard:0,companies:1,compare:2,visuals:3,guide:4};
   document.querySelectorAll('.nav-btn')[map[id]]?.classList.add('active');
   if(id==='visuals')renderVis();
   if(id==='compare')renderCompare();
+  if(id==='companies')setTimeout(checkTblScroll,50);
+  if(id==='guide'){const g=document.getElementById('guideArch');if(g)renderArchitecture(allData,g);}
 }
+function checkTblScroll(){
+  const wrap=document.getElementById('tblWrap'),hint=document.getElementById('tblScrollHint');
+  if(!wrap||!hint)return;
+  hint.classList.toggle('show',wrap.scrollWidth>wrap.clientWidth+4);
+}
+window.addEventListener('resize',()=>{if(curSection==='companies')checkTblScroll();});
 
 function renderStats(data){
   const s=data.filter(r=>r['Company Type']==='Startup').length;
@@ -150,7 +158,7 @@ function sbar(v){const n=parseFloat(v)||0,p=(n/5)*100;return `<div class="sbar">
 
 function renderTable(){
   const tb=document.getElementById('tBody');if(!tb)return;
-  if(!filteredData.length){tb.innerHTML='<tr><td colspan="13" style="text-align:center;padding:28px;color:var(--ink-muted)">No companies match filters</td></tr>';return;}
+  if(!filteredData.length){tb.innerHTML='<tr><td colspan="13" style="text-align:center;padding:28px;color:var(--ink-muted)">No companies match filters</td></tr>';setTimeout(checkTblScroll,0);return;}
   tb.innerHTML=filteredData.map(r=>`
     <tr onclick="openPanel('${(r['Company Name']||'').replace(/'/g,"\\'")}')">
       <td><div class="co-name">${r['Company Name']||''}</div><div class="co-sub">${r['One-liner']||''}</div></td>
@@ -162,11 +170,12 @@ function renderTable(){
       <td>${r['Founder Pedigree']?`<span class="badge b-pedigree">${r['Founder Pedigree']}</span>`:'—'}</td>
       <td style="font-size:10px">${r['IP / Patent Status']||'-'}</td>
       <td style="font-size:10px">${r['Last Funded Date']||'-'}</td>
-      <td style="font-size:10px">${r['Estimated Runway (months)']?r['Estimated Runway (months)']+'mo':'-'}</td>
+      <td style="font-size:10px">${fmtRunway(r['Estimated Runway (months)'])||'-'}</td>
       <td>${sbar(r['Market Traction'])}</td>
       <td>${sbar(r['Data Moat'])}</td>
       <td><span class="badge ${iBadge(r['TMG Interest Level'])}">${r['TMG Interest Level']||'-'}</span></td>
     </tr>`).join('');
+  setTimeout(checkTblScroll,0);
 }
 
 function openPanel(name){
@@ -195,7 +204,7 @@ function openPanel(name){
         <div class="dp-grid">${fld('Sub-category',r['Sub-category'])}${fld('Healthspan Target',r['Healthspan Target'])}${fld('Geography',r['Geography'])}${fld('Stage',r['Stage'])}</div>
       </div>
       <div class="dp-section"><div class="dp-section-title">Financials and Team</div>
-        <div class="dp-grid">${fld('Funding Raised',r['Funding Raised'])}${fld('Last Funded',r['Last Funded Date'])}${fld('Runway',r['Estimated Runway (months)']?r['Estimated Runway (months)']+'months':'')}${fld('Business Model',r['Business Model'])}${fld('Pricing Model',r['Pricing Model']||'-')}${fld('Key Investors',r['Key Investors'])}${fld('No. of Founders',r['Number of Founders'])}${fld('Founder Pedigree',r['Founder Pedigree'])}</div>
+        <div class="dp-grid">${fld('Funding Raised',r['Funding Raised'])}${fld('Last Funded',r['Last Funded Date'])}${fld('Runway',fmtRunway(r['Estimated Runway (months)']))}${fld('Business Model',r['Business Model'])}${fld('Pricing Model',r['Pricing Model']||'-')}${fld('Key Investors',r['Key Investors'])}${fld('No. of Founders',r['Number of Founders'])}${fld('Founder Pedigree',r['Founder Pedigree'])}</div>
       </div>
       <div class="dp-section"><div class="dp-section-title">Technology and Moat</div>
         <div class="dp-grid">${fld('Ecosystem Position',r['Ecosystem Position'])}${fld('IP / Patent Status',r['IP / Patent Status'])}${fld('Key Technology',r['Key Technology'],true)}${fld('Core Moat',r['Core Moat']||'Not assessed',true)}</div>
@@ -370,6 +379,17 @@ async function importFromSheet(){
   btn.textContent='Sync from Sheet';btn.disabled=false;
   alert('Sync complete: '+updated+' updated, '+created+' created. No duplicates.');
 }
+// "Estimated Runway (months)" often holds a range ("18-24") or a plain
+// placeholder ("Unknown"/"N/A") rather than a bare number - only append the
+// "mo" unit when the value is actually numeric, so it never renders as
+// "Unknownmo" / "N/Amo".
+function fmtRunway(v){
+  if(!v)return'';
+  const t=(''+v).trim();
+  if(!t||t==='-')return'';
+  return /^[\d.]+(\s*[-–]\s*[\d.]+)?$/.test(t)?t+' mo':t;
+}
+window.fmtRunway=fmtRunway;
 const CSV_HEADER_ALIASES=(()=>{
   const canon=['Company Name','One-liner','TMG Focus Area','Sub-category','Healthspan Target','Ecosystem Position','Business Model','Company Type','Geography','Stage','Funding Raised','Last Funded Date','Estimated Runway (months)','Number of Founders','Founder Pedigree','Key Investors','Key Technology','IP / Patent Status','Pricing Model','Target Customer','Core Moat','Key Competitors','Execution Risk','Website','Market Traction','Product Differentiation','Capital Efficiency','Clinical Validation','AI Actionability','Regulatory Complexity','Personalization Depth','Data Moat','Scalability','TMG Interest Level','Last Updated'];
   const norm=s=>s.toLowerCase().replace(/[^a-z0-9]/g,'');
@@ -540,121 +560,213 @@ function updateBubble(data){
 }
 function dlBubbleChart(){if(bubbleChart){const a=document.createElement('a');a.download='TMG_Bubble.png';a.href=bubbleChart.toBase64Image('image/png',1);a.click();}}
 
+let ecoShowLabels=false;
+let ecoShowInvestors=true;
+let ecoShowStageRings=true;
+let ecoMinInvestor=2;
+function toggleEcoLabels(cb){ecoShowLabels=cb.checked;renderVis();}
+function toggleEcoInvestors(cb){ecoShowInvestors=cb.checked;renderVis();}
+function toggleEcoStageRings(cb){ecoShowStageRings=cb.checked;renderVis();}
+function setEcoMinInvestor(sel){ecoMinInvestor=+sel.value;renderVis();}
+
+// Maturity axis used for radial placement - shared by startups AND
+// incumbents/acquirers, so a Public incumbent naturally lands at the outer
+// edge while an early-stage startup sits near the hub. Company TYPE (shape)
+// is a separate encoding from stage (radius), since e.g. an "Incumbent"
+// tagged company can still carry an early funding stage on record.
+const ECO_STAGE_TIERS=[['Pre-seed'],['Seed'],['Series A'],['Series B'],['Series C'],['Series D'],['Series E'],['Public','Acquired']];
+function ecoStageTier(stage){
+  const i=ECO_STAGE_TIERS.findIndex(t=>t.includes((stage||'').trim()));
+  return i<0?ECO_STAGE_TIERS.length-2:i;
+}
+const ECO_INV_EXCLUDE=new Set(['—','-','','unknown','n/a','tbd','public markets']);
+
 function renderEcosystem(data,vc){
+  const aColors={'Precision Nutrition':'#e07535','Intelligent Health':'#2563eb','Food & Medicine':'#16a34a'};
+  const areas=['Precision Nutrition','Intelligent Health','Food & Medicine'].filter(a=>data.some(r=>r['TMG Focus Area']===a));
+  const nonStartups=data.filter(r=>r['Company Type']&&r['Company Type']!=='Startup');
+
+  // Investor frequency across the CURRENT dataset (respects the Investment
+  // Targets / Full Landscape toggle upstream) - this is real signal, not a
+  // hardcoded list: who is backing multiple companies in this landscape.
+  const investorMap={};
+  data.forEach(r=>{
+    const v=(r['Key Investors']||'').trim();if(!v)return;
+    v.split(',').forEach(part=>{
+      const name=part.trim();
+      if(!name||ECO_INV_EXCLUDE.has(name.toLowerCase()))return;
+      (investorMap[name]=investorMap[name]||[]).push(r);
+    });
+  });
+  const investorsAll=Object.entries(investorMap).sort((a,b)=>b[1].length-a[1].length);
+
   vc.innerHTML=`<div class="vis-card">
     <div class="vis-card-hdr"><span class="vis-card-title">Ecosystem Map</span><button class="btn-dl-vis" onclick="dlVis('eco-wrap')">Download PNG</button></div>
-    <div class="vis-card-desc">Concentric rings showing the Consumer Healthspan ecosystem — companies positioned by focus area and ecosystem role, with investor and market context in the outer ring.</div>
-    <div id="eco-wrap" style="background:#f8faff;border-radius:8px;overflow:hidden;padding:10px"></div>
+    <div class="vis-card-desc">The full landscape across all 3 focus areas: sector (colour) x maturity (distance from centre) x company type (shape) x TMG Interest Level (border). Sparse gaps in a sector/stage are where white space likely sits. Hover a node for detail, click to open its profile.</div>
+    <div class="vis-controls" style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+      <label><input type="checkbox" id="ecoLabels" ${ecoShowLabels?'checked':''} onchange="toggleEcoLabels(this)"> Name labels</label>
+      <label><input type="checkbox" id="ecoStageRings" ${ecoShowStageRings?'checked':''} onchange="toggleEcoStageRings(this)"> Stage rings</label>
+      <label><input type="checkbox" id="ecoInvestors" ${ecoShowInvestors?'checked':''} onchange="toggleEcoInvestors(this)"> Investor layer</label>
+      <label style="display:flex;align-items:center;gap:5px">Min. shared investor count
+        <select onchange="setEcoMinInvestor(this)" style="font-size:10.5px;padding:2px 5px;border-radius:5px;border:1px solid var(--border)">
+          ${[2,3,4,5].map(n=>`<option value="${n}" ${ecoMinInvestor===n?'selected':''}>${n}+</option>`).join('')}
+        </select>
+      </label>
+    </div>
+    <div id="eco-wrap" style="background:#f8faff;border-radius:8px;overflow:hidden;padding:10px;position:relative"></div>
+    <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;font-size:9.5px;color:var(--ink-muted)">
+      <div><strong style="color:var(--ink-soft)">Colour</strong> = focus area</div>
+      <div><strong style="color:var(--ink-soft)">Shape</strong> = &#9679; startup &nbsp; &#9670; incumbent &nbsp; &#9632; acquirer</div>
+      <div><strong style="color:var(--ink-soft)">Border</strong> = &#128993; priority &nbsp; white/thick = interested &nbsp; faint = watch</div>
+      <div><strong style="color:var(--ink-soft)">Distance from centre</strong> = funding stage / maturity (early &#8594; public)</div>
+      <div><strong style="color:var(--ink-soft)">Outer amber nodes</strong> = investors backing ${ecoMinInvestor}+ companies here</div>
+    </div>
+    ${nonStartups.length?`<div style="margin-top:14px;background:var(--slate);border:1px solid var(--border);border-radius:8px;padding:12px 16px">
+      <div style="font-size:10px;font-weight:700;color:var(--ink);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Incumbents &amp; Acquirers in this landscape (${nonStartups.length})</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        ${nonStartups.map(r=>`<span onclick="showSection('companies');openPanel('${(r['Company Name']||'').replace(/'/g,"\\'")}')" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px;background:var(--white);border:1px solid var(--border);border-radius:20px;padding:4px 10px 4px 8px;font-size:10.5px;color:var(--ink)"><span style="width:8px;height:8px;border-radius:${r['Company Type']==='Acquirer'?'2px':'50%'};background:${aColors[r['TMG Focus Area']]||'#888'};display:inline-block;transform:${r['Company Type']==='Incumbent'?'rotate(45deg)':'none'}"></span><strong>${r['Company Name']}</strong><span style="color:var(--ink-muted)">${r['Company Type']} · ${r['Stage']||'-'}</span></span>`).join('')}
+      </div>
+    </div>`:''}
+    <div style="margin-top:14px;display:flex;gap:22px;flex-wrap:wrap">
+      ${areas.map(a=>`<div style="min-width:200px;flex:1">
+        <div style="font-size:11px;font-weight:700;color:${aColors[a]};margin-bottom:6px;display:flex;align-items:center;gap:6px"><span style="width:9px;height:9px;border-radius:50%;background:${aColors[a]};display:inline-block"></span>${a} <span style="font-weight:400;color:var(--ink-muted)">(${data.filter(r=>r['TMG Focus Area']===a).length})</span></div>
+        ${data.filter(r=>r['TMG Focus Area']===a).map(r=>`<div onclick="showSection('companies');openPanel('${(r['Company Name']||'').replace(/'/g,"\\'")}')" style="cursor:pointer;font-size:10.5px;color:var(--ink-soft);padding:3px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:6px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r['Company Name']}${r['Company Type']&&r['Company Type']!=='Startup'?' <span style="color:var(--ink-muted)">('+r['Company Type']+')</span>':''}</span><span style="flex-shrink:0;color:${r['TMG Interest Level']==='Priority'?'#b8860b':'var(--ink-muted)'};font-weight:${r['TMG Interest Level']==='Priority'?'700':'400'}">${r['TMG Interest Level']||'-'}</span></div>`).join('')||'<div style="font-size:10px;color:var(--ink-muted);font-style:italic">None yet</div>'}
+      </div>`).join('')}
+    </div>
   </div>`;
+
   setTimeout(()=>{
-    const W=860,H=760,cx=W/2,cy=H/2;
-    const R={center:55,inner:130,mid:230,outer:320,label:370};
-    const aColors={'Precision Nutrition':'#e07535','Intelligent Health':'#2563eb','Food & Medicine':'#16a34a'};
-    const ecoColors={'Ingredient / Science':'#7c3aed','Platform':'#0891b2','Brand':'#db2777','Distribution / Channel':'#92400e'};
-    const areas=['Precision Nutrition','Intelligent Health','Food & Medicine'];
+    const showLabels=ecoShowLabels;
+    const tiers=ECO_STAGE_TIERS;
+    const R={center:60,inner:150,stageStep:52};
+    const baseR=R.inner+68;
+    const maxStageR=baseR+(tiers.length-1)*R.stageStep;
+    const investorsShown=ecoShowInvestors?investorsAll.filter(([,cos])=>cos.length>=ecoMinInvestor).slice(0,18):[];
+    const investorR=maxStageR+ (investorsShown.length?95:30);
+    const pad=60;
+    const canvasR=investorR+pad;
+    const W=canvasR*2,H=canvasR*2,cx=canvasR,cy=canvasR;
 
-    // Build investor list from data
-    const investorSet=new Set();
-    data.forEach(r=>{if(r['Key Investors']){r['Key Investors'].split(/[,\/]/).slice(0,1).forEach(inv=>{const i=inv.trim();if(i&&i.length>2&&i.length<30)investorSet.add(i);});}});
-    const investors=[...investorSet].slice(0,8);
+    const svg=d3.select('#eco-wrap').append('svg').attr('viewBox',`0 0 ${W} ${H}`).attr('style','width:100%;height:auto;max-height:900px');
+    const tip=d3.select('#eco-wrap').append('div').attr('style','position:fixed;pointer-events:none;background:var(--navy);color:white;font-family:DM Sans,sans-serif;font-size:10.5px;padding:7px 11px;border-radius:6px;opacity:0;z-index:50;max-width:230px;line-height:1.55;transition:opacity .1s');
 
-    const svg=d3.select('#eco-wrap').append('svg').attr('viewBox',`0 0 ${W} ${H}`).attr('style','width:100%;height:auto');
+    // Background zone + stage rings (the "maturity" axis - empty rings in a
+    // sector wedge are the white-space signal)
+    svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',investorR-20).attr('fill','#eef4ff');
+    svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',maxStageR+10).attr('fill','#f5f9ff');
+    svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',R.inner).attr('fill','#f0fdf4').attr('stroke','#cbd5e1').attr('stroke-width',1);
 
-    // Background rings
-    [R.outer+60,R.outer,R.mid,R.inner].forEach((r,i)=>{
-      svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',r).attr('fill',['#e8f0fe','#dbeafe','#eff6ff','#f0fdf4'][i]).attr('stroke','#cbd5e1').attr('stroke-width',1).attr('stroke-dasharray',i===0?'4,4':'none');
+    if(ecoShowStageRings){
+      tiers.forEach((t,i)=>{
+        const r=baseR+i*R.stageStep;
+        svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',r).attr('fill','none').attr('stroke','#c7d5e6').attr('stroke-width',1).attr('stroke-dasharray','3,4');
+        svg.append('text').attr('x',cx+3).attr('y',cy-r-3).attr('text-anchor','start').attr('font-family','DM Sans,sans-serif').attr('font-size',8).attr('fill','#8ca3bd').text(t[0]==='Public'?'Public / Acquired':t[0]);
+      });
+    }
+
+    // Sector wedge divider lines
+    const nAreas=Math.max(areas.length,1);
+    areas.forEach((area,i)=>{
+      const a=(i/nAreas)*2*Math.PI-Math.PI/2;
+      svg.append('line').attr('x1',cx+R.inner*Math.cos(a)).attr('y1',cy+R.inner*Math.sin(a)).attr('x2',cx+maxStageR*Math.cos(a)).attr('y2',cy+maxStageR*Math.sin(a)).attr('stroke','#c7d5e6').attr('stroke-width',1);
     });
 
-    // Ring labels
-    const ringLabels=[{r:R.mid+75,text:'MARKET CONTEXT'},{r:R.mid+10,text:'COMPANIES'},{r:R.inner+15,text:'FOCUS AREAS'},{r:28,text:'VALUE HUB'}];
-    // Centre label
-    svg.append('text').attr('x',cx).attr('y',cy-8).attr('text-anchor','middle').attr('font-family','DM Serif Display,serif').attr('font-size',12).attr('fill','#162535').attr('font-weight','400').text('Consumer');
-    svg.append('text').attr('x',cx).attr('y',cy+8).attr('text-anchor','middle').attr('font-family','DM Serif Display,serif').attr('font-size',12).attr('fill','#162535').attr('font-weight','400').text('Healthspan');
-    svg.append('text').attr('x',cx).attr('y',cy+22).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',9).attr('fill','#7a9ab0').text('Economy');
-    svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',R.center).attr('fill','#162535').attr('opacity',.9);
-    svg.append('text').attr('x',cx).attr('y',cy-8).attr('text-anchor','middle').attr('font-family','DM Serif Display,serif').attr('font-size',12).attr('fill','white').text('Consumer');
-    svg.append('text').attr('x',cx).attr('y',cy+6).attr('text-anchor','middle').attr('font-family','DM Serif Display,serif').attr('font-size',12).attr('fill','white').text('Healthspan');
-    svg.append('text').attr('x',cx).attr('y',cy+20).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',8).attr('fill','rgba(255,255,255,.7)').text('Economy');
+    svg.append('circle').attr('cx',cx).attr('cy',cy).attr('r',R.center).attr('fill','#162535').attr('opacity',.92);
+    svg.append('text').attr('x',cx).attr('y',cy-8).attr('text-anchor','middle').attr('font-family','DM Serif Display,serif').attr('font-size',13).attr('fill','white').text('Consumer');
+    svg.append('text').attr('x',cx).attr('y',cy+8).attr('text-anchor','middle').attr('font-family','DM Serif Display,serif').attr('font-size',13).attr('fill','white').text('Healthspan');
+    svg.append('text').attr('x',cx).attr('y',cy+22).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',8.5).attr('fill','rgba(255,255,255,.7)').text('Economy');
 
-    // Inner ring: Focus areas as segments
+    // Inner ring: focus area hubs
+    const hubPos={};
     areas.forEach((area,i)=>{
-      const angle=(i/areas.length)*2*Math.PI - Math.PI/2;
-      const ax=cx+(R.inner-18)*Math.cos(angle);
-      const ay=cy+(R.inner-18)*Math.sin(angle);
+      const angle=(i/nAreas)*2*Math.PI - Math.PI/2 + Math.PI/nAreas;
+      const ax=cx+(R.inner-40)*Math.cos(angle),ay=cy+(R.inner-40)*Math.sin(angle);
+      hubPos[area]={x:ax,y:ay};
       const color=aColors[area];
-      svg.append('circle').attr('cx',ax).attr('cy',ay).attr('r',34).attr('fill',color).attr('opacity',.85);
-      const words=area.split(' ');
-      words.forEach((w,wi)=>{
-        svg.append('text').attr('x',ax).attr('y',ay+(wi-words.length/2+0.6)*12).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',9).attr('fill','white').attr('font-weight','600').text(w);
+      svg.append('circle').attr('cx',ax).attr('cy',ay).attr('r',34).attr('fill',color).attr('opacity',.92);
+      area.split(' ').forEach((w,wi,arr)=>{
+        svg.append('text').attr('x',ax).attr('y',ay+(wi-arr.length/2+0.6)*11).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',9.5).attr('fill','white').attr('font-weight','700').text(w);
       });
     });
 
-    // Mid ring: Companies positioned by focus area sector + ecosystem position
-    const ecoPositions=['Ingredient / Science','Platform','Brand','Distribution / Channel'];
+    function interestStyle(lvl){
+      if(lvl==='Priority')return{stroke:'#d4af37',w:3.5,op:1};
+      if(lvl==='Interested')return{stroke:'#ffffff',w:2.25,op:.95};
+      return{stroke:'#ffffff',w:1,op:.55};
+    }
+    function symbolPath(type){
+      const t=type==='Incumbent'?d3.symbolDiamond:type==='Acquirer'?d3.symbolSquare:d3.symbolCircle;
+      const sz=type==='Startup'?300:520;
+      return d3.symbol().type(t).size(sz)();
+    }
+
+    const companyPos={};
     areas.forEach((area,ai)=>{
       const companies=data.filter(r=>r['TMG Focus Area']===area);
-      const sectorAngleStart=(ai/areas.length)*2*Math.PI - Math.PI/2;
-      const sectorAngleEnd=((ai+1)/areas.length)*2*Math.PI - Math.PI/2;
+      const sectorStart=(ai/nAreas)*2*Math.PI - Math.PI/2;
+      const sectorEnd=((ai+1)/nAreas)*2*Math.PI - Math.PI/2;
+      const wedgePad=(sectorEnd-sectorStart)*0.09;
       const color=aColors[area];
-      companies.forEach((comp,ci)=>{
-        const t=(ci+0.5)/Math.max(companies.length,1);
-        const angle=sectorAngleStart+(sectorAngleEnd-sectorAngleStart)*t;
-        const radVar=R.mid-20+Math.sin(ci*1.7)*25;
-        const nx=cx+radVar*Math.cos(angle);
-        const ny=cy+radVar*Math.sin(angle);
-        // Eco position determines inner border color
-        const ecoBorder=ecoColors[comp['Ecosystem Position']]||'#888';
-        svg.append('circle').attr('cx',nx).attr('cy',ny).attr('r',18).attr('fill',color).attr('opacity',.75).attr('stroke',ecoBorder).attr('stroke-width',2.5);
-        const n=comp['Company Name']||'';
-        const short=n.length>9?n.slice(0,8)+'…':n;
-        svg.append('text').attr('x',nx).attr('y',ny+3).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',7).attr('fill','white').attr('font-weight','600').text(short);
-        svg.append('text').attr('x',nx).attr('y',ny+28).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',7).attr('fill','#4a6070').text(comp['Stage']||'');
-        // Connection line from focus area hub
-        const aAngle=(ai/areas.length)*2*Math.PI - Math.PI/2;
-        const ax=cx+(R.inner-18)*Math.cos(aAngle);
-        const ay=cy+(R.inner-18)*Math.sin(aAngle);
-        svg.insert('line','circle').attr('x1',ax).attr('y1',ay).attr('x2',nx).attr('y2',ny).attr('stroke',color).attr('stroke-width',0.8).attr('stroke-opacity',.3);
+      const hub=hubPos[area];
+
+      // bucket by stage tier so companies at the same maturity land on the
+      // same ring, spread across the sector's angular slice
+      const buckets={};
+      companies.forEach(c=>{const ti=ecoStageTier(c['Stage']);(buckets[ti]=buckets[ti]||[]).push(c);});
+
+      Object.entries(buckets).forEach(([tierStr,comps])=>{
+        const ti=+tierStr;
+        const radius=baseR+ti*R.stageStep;
+        comps.forEach((comp,j)=>{
+          const t=(j+0.5)/comps.length;
+          const angle=sectorStart+wedgePad+(sectorEnd-sectorStart-2*wedgePad)*t;
+          const jitter=comps.length>1?((j%2===0?1:-1)*Math.min(14,comps.length*1.6)):0;
+          const nx=cx+(radius+jitter)*Math.cos(angle),ny=cy+(radius+jitter)*Math.sin(angle);
+          companyPos[comp['Company Name']]={x:nx,y:ny};
+
+          svg.insert('line','circle').attr('x1',hub.x).attr('y1',hub.y).attr('x2',nx).attr('y2',ny).attr('stroke',color).attr('stroke-width',0.6).attr('stroke-opacity',.18);
+
+          const style=interestStyle(comp['TMG Interest Level']);
+          const node=svg.append('g').attr('class','eco-co-node').attr('transform',`translate(${nx},${ny})`).attr('style',`cursor:pointer;opacity:${style.op}`)
+            .on('click',()=>{showSection('companies');openPanel(comp['Company Name']);})
+            .on('mousemove',(ev)=>{
+              tip.style('opacity',1).style('left',(ev.clientX+14)+'px').style('top',(ev.clientY+10)+'px')
+                .html(`<strong>${comp['Company Name']||''}</strong><br>${comp['Company Type']||'Startup'} · ${comp['Stage']||'stage unknown'}<br>${comp['Ecosystem Position']||'Role unknown'}<br>TMG Interest: <strong>${comp['TMG Interest Level']||'-'}</strong>`);
+            }).on('mouseleave',()=>tip.style('opacity',0));
+          node.append('path').attr('d',symbolPath(comp['Company Type'])).attr('fill',color).attr('stroke',style.stroke).attr('stroke-width',style.w);
+          if(showLabels){
+            const n=comp['Company Name']||'';
+            const short=n.length>11?n.slice(0,10)+'…':n;
+            node.append('text').attr('y',18).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',7.5).attr('fill','#162535').attr('font-weight','700').style('paint-order','stroke').attr('stroke','white').attr('stroke-width',2.5).text(short);
+          }
+        });
       });
     });
 
-    // Outer ring: Investors + market context nodes
-    const outerNodes=[
-      ...investors.map(inv=>({label:inv,type:'investor',color:'#d97706'})),
-      {label:'GLP-1 Trend',type:'trend',color:'#7c3aed'},
-      {label:'AI in Health',type:'trend',color:'#7c3aed'},
-      {label:'FDA Regulation',type:'context',color:'#64748b'},
-      {label:'Incumbents',type:'context',color:'#64748b'},
-    ];
-    outerNodes.forEach((node,i)=>{
-      const angle=(i/outerNodes.length)*2*Math.PI - Math.PI/2;
-      const nx=cx+R.outer*Math.cos(angle);
-      const ny=cy+R.outer*Math.sin(angle);
-      svg.append('circle').attr('cx',nx).attr('cy',ny).attr('r',node.type==='investor'?22:18).attr('fill',node.color).attr('opacity',.8);
-      const words=node.label.split(' ');
-      words.forEach((w,wi)=>{
-        svg.append('text').attr('x',nx).attr('y',ny+(wi-words.length/2+0.6)*10).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',7).attr('fill','white').attr('font-weight','500').text(w);
+    // Outer investor layer - real co-investment signal from the dataset.
+    // Lines stay faint by default and light up on hover so the ring itself
+    // doesn't drown out the company map.
+    investorsShown.forEach(([name,cos],i)=>{
+      const angle=(i/investorsShown.length)*2*Math.PI - Math.PI/2;
+      const ix=cx+investorR*Math.cos(angle),iy=cy+investorR*Math.sin(angle);
+      const r=Math.min(24,9+Math.sqrt(cos.length)*5);
+      const cls='inv-'+i;
+      cos.forEach(c=>{
+        const p=companyPos[c['Company Name']];if(!p)return;
+        svg.insert('line','.eco-co-node').attr('class',cls).attr('x1',ix).attr('y1',iy).attr('x2',p.x).attr('y2',p.y).attr('stroke','#d4af37').attr('stroke-width',1).attr('stroke-opacity',.12);
       });
+      const inode=svg.append('g').attr('style','cursor:pointer')
+        .on('mouseenter',()=>{svg.selectAll('.'+cls).attr('stroke-opacity',.8).attr('stroke-width',1.5);})
+        .on('mouseleave',()=>{svg.selectAll('.'+cls).attr('stroke-opacity',.12).attr('stroke-width',1);tip.style('opacity',0);})
+        .on('mousemove',(ev)=>{
+          tip.style('opacity',1).style('left',(ev.clientX+14)+'px').style('top',(ev.clientY+10)+'px')
+            .html(`<strong>${name}</strong><br>${cos.length} companies in this landscape:<br>${cos.map(c=>c['Company Name']).join(', ')}`);
+        });
+      inode.append('circle').attr('cx',ix).attr('cy',iy).attr('r',r).attr('fill','#b8860b').attr('opacity',.88).attr('stroke','white').attr('stroke-width',1.5);
+      inode.append('text').attr('x',ix).attr('y',iy+3).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',r>16?9:7.5).attr('fill','white').attr('font-weight','700').text(cos.length);
+      inode.append('text').attr('x',ix).attr('y',iy+r+11).attr('text-anchor','middle').attr('font-family','DM Sans,sans-serif').attr('font-size',7.5).attr('fill','#8a6200').attr('font-weight','600').text(name.length>16?name.slice(0,15)+'…':name);
     });
-
-    // Legend
-    const leg=svg.append('g').attr('transform','translate(14,14)');
-    const legItems=[
-      {color:'#e07535',label:'Precision Nutrition'},{color:'#2563eb',label:'Intelligent Health'},{color:'#16a34a',label:'Food & Medicine'},
-      {color:'#d97706',label:'Investor (outer)'},{color:'#7c3aed',label:'Market Trend'},
-    ];
-    legItems.forEach(({color,label},i)=>{
-      leg.append('circle').attr('cx',8).attr('cy',i*18+8).attr('r',6).attr('fill',color).attr('opacity',.85);
-      leg.append('text').attr('x',18).attr('y',i*18+12).attr('font-family','DM Sans,sans-serif').attr('font-size',9).attr('fill','#4a6070').text(label);
-    });
-    // Eco position legend (border colors)
-    const leg2=svg.append('g').attr('transform',`translate(${W-160},14)`);
-    leg2.append('text').attr('x',0).attr('y',10).attr('font-family','DM Sans,sans-serif').attr('font-size',9).attr('fill','#7a9ab0').attr('font-weight','600').text('Border = Ecosystem Role');
-    Object.entries(ecoColors).forEach(([eco,color],i)=>{
-      const short={'Ingredient / Science':'Ingredient/Science','Platform':'Platform','Brand':'Brand','Distribution / Channel':'Distribution'}[eco]||eco;
-      leg2.append('rect').attr('x',0).attr('y',i*16+16).attr('width',20).attr('height',4).attr('rx',2).attr('fill',color);
-      leg2.append('text').attr('x',24).attr('y',i*16+23).attr('font-family','DM Sans,sans-serif').attr('font-size',8).attr('fill','#4a6070').text(short);
-    });
-  },100);
+  },50);
 }
 
 // FUNDING COMPARISON
@@ -783,12 +895,14 @@ function renderFunding(data,vc){
 }
 
 function renderGeoMap(data,vc){
-  // Real lat/lon projected onto the actual world map image (worldmap.png must
-  // sit alongside index.html/app.js). Projection is calibrated to that image:
-  // x = (180 - lon) / 360 * W   (map's left edge is the Pacific split, ~lon +180)
-  // y = (LAT_TOP - lat) / (LAT_TOP - LAT_BOTTOM) * H
-  const W=1600,H=794,LAT_TOP=83,LAT_BOTTOM=-58;
-  const proj=(lat,lon)=>({x:(180-lon)/360*W, y:(LAT_TOP-lat)/(LAT_TOP-LAT_BOTTOM)*H});
+  // Real lat/lon projected onto the actual world map image (worldmap.jpg must
+  // sit alongside index.html/app.js). This image is a standard Greenwich-
+  // centered equirectangular map (lon -180 at the left edge, +180 at the
+  // right, 0 at centre; lat +90 at the top, -90 at the bottom), cropped to a
+  // 16:9 frame - the viewBox below matches that aspect ratio exactly so the
+  // image isn't sliced/cropped on render.
+  const W=1600,H=900,LAT_TOP=90,LAT_BOTTOM=-90;
+  const proj=(lat,lon)=>({x:(lon+180)/360*W, y:(LAT_TOP-lat)/(LAT_TOP-LAT_BOTTOM)*H});
   const geo={
     'US':{lat:39.8,lon:-98.6,label:'United States'},'USA':{lat:39.8,lon:-98.6,label:'United States'},'United States':{lat:39.8,lon:-98.6,label:'United States'},
     'UK':{lat:54.0,lon:-2.0,label:'UK'},'United Kingdom':{lat:54.0,lon:-2.0,label:'UK'},
@@ -804,35 +918,63 @@ function renderGeoMap(data,vc){
   const locGroups={};
   companies.forEach(r=>{const g=r['Geography'].trim();if(!locGroups[g])locGroups[g]=[];locGroups[g].push(r);});
 
-  const bubbles=Object.entries(locGroups).map(([geoKey,comps])=>{
+  // Sqrt scale keeps bubbles proportional to area rather than radius, so a
+  // location with 2x the companies doesn't look 2x as wide - it looks 2x the
+  // ink. Capped so a hub location (e.g. many US companies) doesn't swallow
+  // the map.
+  const sizeOf=n=>Math.min(38,10+Math.sqrt(n)*9);
+
+  const sortedGroups=Object.entries(locGroups).sort((a,b)=>b[1].length-a[1].length);
+
+  const bubbles=sortedGroups.map(([geoKey,comps])=>{
     const info=geo[geoKey];if(!info)return'';
     const {x,y}=proj(info.lat,info.lon);
-    const r=Math.max(14,comps.length*11);
-    const names=comps.map(c=>c['Company Name']).join(', ');
+    const r=sizeOf(comps.length);
     const focusCounts={};comps.forEach(c=>{focusCounts[c['TMG Focus Area']]=(focusCounts[c['TMG Focus Area']]||0)+1;});
     const dominant=Object.entries(focusCounts).sort((a,b)=>b[1]-a[1])[0][0];
-    return `<circle cx="${x}" cy="${y}" r="${r}" fill="${colors[dominant]||'#888'}" opacity=".85" stroke="white" stroke-width="2"/><text x="${x}" y="${y+3}" text-anchor="middle" font-size="${r>20?10:9}" fill="white" font-weight="700">${comps.length}</text><text x="${x}" y="${y+r+12}" text-anchor="middle" font-size="9" fill="#162535" font-weight="600" style="paint-order:stroke;stroke:white;stroke-width:3px">${info.label}</text><title>${geoKey}: ${names}</title>`;
+    return `<g class="geo-bubble" data-geo="${geoKey.replace(/"/g,'&quot;')}" style="cursor:pointer">
+      <circle cx="${x}" cy="${y}" r="${r}" fill="${colors[dominant]||'#888'}" opacity=".88" stroke="white" stroke-width="2"/>
+      <text x="${x}" y="${y+4}" text-anchor="middle" font-size="${r>22?12:10}" fill="white" font-weight="700" style="pointer-events:none">${comps.length}</text>
+      <text x="${x}" y="${y+r+13}" text-anchor="middle" font-size="10" fill="#162535" font-weight="700" style="paint-order:stroke;stroke:white;stroke-width:3px;pointer-events:none">${info.label}</text>
+    </g>`;
   }).join('');
 
   const missing=[...new Set(data.filter(r=>r['Geography']&&!geo[r['Geography'].trim()]).map(r=>r['Geography'].trim()))];
 
+  // Full breakdown list beneath the map - hover/tooltip alone hides info on
+  // touch devices, so every location's companies are also spelled out here.
+  const listRows=sortedGroups.map(([geoKey,comps])=>{
+    const info=geo[geoKey];
+    const chips=comps.map(c=>`<span onclick="showSection('companies');openPanel('${(c['Company Name']||'').replace(/'/g,"\\'")}');" style="cursor:pointer;display:inline-flex;align-items:center;gap:5px;background:var(--slate);border:1px solid var(--border);border-radius:20px;padding:3px 9px 3px 6px;font-size:10px;color:var(--ink);margin:2px 4px 2px 0"><span style="width:7px;height:7px;border-radius:50%;background:${colors[c['TMG Focus Area']]||'#888'};display:inline-block;flex-shrink:0"></span>${c['Company Name']}</span>`).join('');
+    return `<div style="padding:9px 0;border-bottom:1px solid var(--border)"><div style="font-size:11px;font-weight:600;color:var(--ink);margin-bottom:5px">${info?info.label:geoKey} <span style="font-weight:400;color:var(--ink-muted)">(${comps.length})</span></div><div>${chips}</div></div>`;
+  }).join('');
+
   vc.innerHTML=`<div class="vis-card">
     <div class="vis-card-hdr"><span class="vis-card-title">Geographic Map</span><button class="btn-dl-vis" onclick="dlVis('geo-inner')">Download PNG</button></div>
-    <div class="vis-card-desc">Company HQs plotted on real geography. Bubble size = number of companies at that location.${missing.length?' Not yet mapped: '+missing.join(', ')+' (add lat/lon in renderGeoMap).':''}</div>
+    <div class="vis-card-desc">Company HQs plotted on real geography. Bubble size = number of companies at that location (area-scaled, not linear); colour = dominant focus area there. Click a bubble or a chip below to open that company.${missing.length?' Not yet mapped: '+missing.join(', ')+' (add lat/lon in renderGeoMap).':''}</div>
     <div id="geo-inner" style="background:#1a7fc4;border-radius:7px;overflow:hidden;position:relative">
       <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;display:block">
-        <image href="./worldmap.png" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>
+        <image href="./worldmap.jpg" x="0" y="0" width="${W}" height="${H}" preserveAspectRatio="xMidYMid slice"/>
         ${bubbles}
-        <rect x="12" y="${H-116}" width="172" height="104" fill="white" opacity=".92" rx="6"/>
-        <text x="24" y="${H-97}" font-size="9" font-weight="700" fill="#162535" style="text-transform:uppercase;letter-spacing:.04em">Dominant Focus</text>
-        <circle cx="24" cy="${H-79}" r="6" fill="#e07535"/><text x="36" y="${H-76}" font-size="9.5" fill="#333">Precision Nutrition</text>
-        <circle cx="24" cy="${H-59}" r="6" fill="#2563eb"/><text x="36" y="${H-56}" font-size="9.5" fill="#333">Intelligent Health</text>
-        <circle cx="24" cy="${H-39}" r="6" fill="#16a34a"/><text x="36" y="${H-36}" font-size="9.5" fill="#333">Food &amp; Medicine</text>
-        <line x1="24" y1="${H-28}" x2="172" y2="${H-28}" stroke="#dde4ec" stroke-width="1"/>
-        <text x="24" y="${H-16}" font-size="8.5" fill="#7a9ab0">Bubble size/number = companies</text>
+        <rect x="12" y="${H-96}" width="172" height="84" fill="white" opacity=".92" rx="6"/>
+        <text x="24" y="${H-77}" font-size="9" font-weight="700" fill="#162535" style="text-transform:uppercase;letter-spacing:.04em">Dominant Focus</text>
+        <circle cx="24" cy="${H-59}" r="6" fill="#e07535"/><text x="36" y="${H-56}" font-size="9.5" fill="#333">Precision Nutrition</text>
+        <circle cx="24" cy="${H-39}" r="6" fill="#2563eb"/><text x="36" y="${H-36}" font-size="9.5" fill="#333">Intelligent Health</text>
+        <circle cx="24" cy="${H-19}" r="6" fill="#16a34a"/><text x="36" y="${H-16}" font-size="9.5" fill="#333">Food &amp; Medicine</text>
       </svg>
     </div>
+    <div style="margin-top:14px">
+      <div style="font-size:10px;font-weight:600;color:var(--ink-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Full breakdown by location</div>
+      ${listRows||'<div style="font-size:11px;color:var(--ink-muted)">No mapped geographies yet.</div>'}
+    </div>
   </div>`;
+  vc.querySelectorAll('.geo-bubble').forEach(g=>{
+    g.addEventListener('click',()=>{
+      const comps=locGroups[g.dataset.geo]||[];
+      if(comps.length===1){showSection('companies');openPanel(comps[0]['Company Name']);}
+      else{const el=[...vc.querySelectorAll('div')].find(d=>d.textContent.startsWith((geo[g.dataset.geo]||{}).label||g.dataset.geo));el?.scrollIntoView({behavior:'smooth',block:'center'});}
+    });
+  });
 }
 function renderArchitecture(data,vc){
   vc.innerHTML=`<div class="vis-card"><div class="vis-card-hdr"><span class="vis-card-title">Platform Architecture</span><button class="btn-dl-vis" onclick="dlVis('arch-inner')">Download PNG</button></div><div class="vis-card-desc">How data flows from web sources through the platform to deliver investment intelligence.</div><div id="arch-inner" style="background:var(--white);padding:20px;border-radius:7px"><svg viewBox="0 0 900 340" style="width:100%;height:auto">
@@ -932,7 +1074,7 @@ function setClaude(btn,type,data){
   claudePromptType=type;
   if(btn){document.querySelectorAll('.claude-prompt-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');}
   const d=data||(curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData);
-  const table=d.map(r=>`- ${r['Company Name']} (${r['TMG Focus Area']}, ${r['Stage']}) - ${r['One-liner']}\n  Scores: Traction ${r['Market Traction']}/5 | Data Moat ${r['Data Moat']}/5 | Diff ${r['Product Differentiation']}/5 | Pedigree: ${r['Founder Pedigree']||'Unknown'} | IP: ${r['IP / Patent Status']||'Unknown'} | Last funded: ${r['Last Funded Date']||'Unknown'} | Runway: ${r['Estimated Runway (months)']||'?'}mo`).join('\n');
+  const table=d.map(r=>`- ${r['Company Name']} (${r['TMG Focus Area']}, ${r['Stage']}) - ${r['One-liner']}\n  Scores: Traction ${r['Market Traction']}/5 | Data Moat ${r['Data Moat']}/5 | Diff ${r['Product Differentiation']}/5 | Pedigree: ${r['Founder Pedigree']||'Unknown'} | IP: ${r['IP / Patent Status']||'Unknown'} | Last funded: ${r['Last Funded Date']||'Unknown'} | Runway: ${fmtRunway(r['Estimated Runway (months)'])||'Unknown'}`).join('\n');
   const prompts={overview:`I am an analyst at The March Group (TMG), a VC fund focused on the Consumer Healthspan Economy. Here is our current investment landscape:\n\n${table}\n\nPlease give me a strategic overview - key themes, strongest companies, and top observations.`,priority:`I am an analyst at The March Group. Based on this landscape data, which 3 companies should we call first and why? Consider founder pedigree, IP status, runway, and scores.\n\n${table}`,runway:`Based on this landscape, which companies are most likely approaching their next fundraise? Flag anyone with low runway or last funded over 18 months ago.\n\n${table}`,whitespace:`Based on this landscape, what are the most compelling white space opportunities - areas with few or no companies - that TMG should explore?\n\n${table}`,newsletter:`Write a 200-word newsletter paragraph about the Consumer Healthspan Economy based on this landscape data. Reference specific companies and trends.\n\n${table}`};
   claudePayload=prompts[type]||prompts.overview;
   document.getElementById('claudeDataBox').textContent=claudePayload;
@@ -1048,7 +1190,7 @@ async function callAI(prompt){
 
 function buildPrompt(type){
   const data=curView==='targets'?allData.filter(r=>r['Company Type']==='Startup'):allData;
-  const summary=data.map(r=>`${r['Company Name']} (${r['TMG Focus Area']}, ${r['Stage']}, Pedigree:${r['Founder Pedigree']||'?'}, IP:${r['IP / Patent Status']||'?'}, Runway:${r['Estimated Runway (months)']||'?'}mo, Traction:${r['Market Traction']}/5, DataMoat:${r['Data Moat']}/5): ${r['One-liner']}`).join('\n');
+  const summary=data.map(r=>`${r['Company Name']} (${r['TMG Focus Area']}, ${r['Stage']}, Pedigree:${r['Founder Pedigree']||'?'}, IP:${r['IP / Patent Status']||'?'}, Runway:${fmtRunway(r['Estimated Runway (months)'])||'?'}, Traction:${r['Market Traction']}/5, DataMoat:${r['Data Moat']}/5): ${r['One-liner']}`).join('\n');
   const p={newsletter:`You are a senior analyst at The March Group. Write a 180-word investor newsletter paragraph covering key trends in Precision Nutrition, Intelligent Health, and Food and Medicine. Reference specific companies.\n\n${summary}`,whitespace:`Identify 3 specific white spaces in this landscape. For each: name the gap, explain why it exists, describe a winning company.\n\n${summary}`,priority:`Write a 200-word investment memo with TMG top 3 priority targets. For each: strategic fit, key differentiator, main risk.\n\n${summary}`,thesis:`Assess how this landscape validates TMG shifts: (1) Calories to Health Outcomes, (2) Brands to Platforms, (3) Reactive to Preventative. 180 words.\n\n${summary}`,diligence:`Identify top competitive dynamics, platform risks, and biggest execution risks. 200 words.\n\n${summary}`,runway:`Which companies are most likely to need their next round in the next 6-12 months based on last funded dates and runway? Flag them for TMG to proactively engage.\n\n${summary}`};
   return p[type]||p.newsletter;
 }
