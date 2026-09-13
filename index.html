@@ -106,6 +106,7 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle;white-space:nowrap;over
 .badge{display:inline-block;padding:2px 6px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap}
 .b-pn{background:#fce0cc;color:#a04000}.b-ih{background:#ddeaf4;color:#1d4d6e}.b-fm{background:var(--rose-light);color:var(--rose)}
 .b-startup{background:#e8f0fe;color:#1a56a0}.b-incumbent{background:var(--purple-light);color:var(--purple)}.b-acquirer{background:#fee8e8;color:#9a1a1a}
+.b-regulator{background:#fef3c7;color:#92400e}.b-distribution{background:#e0f2fe;color:#075985}.b-research{background:#ede9fe;color:#5b21b6}
 .b-priority{background:var(--green-light);color:var(--green)}.b-interested{background:#fce0cc;color:#a04000}.b-watch{background:#f0f4f8;color:#7a9ab0}
 .b-pedigree{background:#f0e8fe;color:#5a1a9a;font-size:9px}
 .sbar{display:flex;align-items:center;gap:4px}
@@ -334,7 +335,7 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle;white-space:nowrap;over
       <select class="f-select" id="fFocus" onchange="applyFilters()"><option value="">All Focus Areas</option><option>Precision Nutrition</option><option>Intelligent Health</option><option>Food and Medicine</option></select>
       <select class="f-select" id="fStage" onchange="applyFilters()"><option value="">All Stages</option><option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Public</option></select>
       <select class="f-select" id="fInterest" onchange="applyFilters()"><option value="">All Interest</option><option>Priority</option><option>Interested</option><option>Watch</option></select>
-      <select class="f-select" id="fType" onchange="applyFilters()"><option value="">All Types</option><option>Startup</option><option>Incumbent</option><option>Acquirer</option></select>
+      <select class="f-select" id="fType" onchange="applyFilters()"><option value="">All Types</option><option>Startup</option><option>Incumbent</option><option>Acquirer</option><option>Regulator</option><option>Distribution</option><option>Research Institution</option></select>
       <select class="f-select" id="fPedigree" onchange="applyFilters()"><option value="">All Pedigree</option><option>Repeat Founder</option><option>Ex-FAANG</option><option>PhD-Researcher</option><option>First-time</option><option>Mixed</option></select>
       <span class="f-count" id="fCount"></span>
     </div>
@@ -591,7 +592,7 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle;white-space:nowrap;over
           <table class="lvl-tbl">
             <tr><td class="lvl-num" style="font-family:inherit;font-size:10.5px;font-weight:700;color:var(--ink)">Priority</td><td>Top-tier fit - TMG should actively pursue engagement (a call or meeting) soon.</td></tr>
             <tr><td class="lvl-num" style="font-family:inherit;font-size:10.5px;font-weight:700;color:var(--ink)">Interested</td><td>Worth tracking closely and re-evaluating as new information emerges - not an immediate priority.</td></tr>
-            <tr><td class="lvl-num" style="font-family:inherit;font-size:10.5px;font-weight:700;color:var(--ink)">Watch</td><td>Relevant landscape context (this covers most Incumbents/Acquirers) but not currently an active investment target.</td></tr>
+            <tr><td class="lvl-num" style="font-family:inherit;font-size:10.5px;font-weight:700;color:var(--ink)">Watch</td><td>Relevant landscape context (Incumbents, Acquirers, Regulators, Distribution, Research Institutions) but not currently an active investment target.</td></tr>
           </table>
         </div></details>
         <div class="guide-note">This is a working rubric for quick reference inside the platform. The source of truth for exact scoring definitions and edge cases is the <strong>Meta tab of the team Google Sheet</strong> - check there (and keep it updated) if a score's meaning is ambiguous or this summary looks out of date.</div>
@@ -639,7 +640,7 @@ td{padding:8px 11px;font-size:11px;vertical-align:middle;white-space:nowrap;over
         <div class="form-field"><label>Healthspan Target</label><select id="f_health"><option value="">-</option><option>Metabolic Control</option><option>Gut Health</option><option>Cardiovascular Health</option><option>Neurological Health</option><option>Inflammation</option><option>Musculoskeletal</option><option>Multiple</option></select></div>
         <div class="form-field"><label>Ecosystem Position</label><select id="f_eco"><option value="">-</option><option>Ingredient / Science</option><option>Platform</option><option>Brand</option><option>Distribution / Channel</option></select></div>
         <div class="form-field"><label>Business Model</label><select id="f_biz"><option value="">-</option><option>B2C</option><option>B2B</option><option>B2B2C</option><option>Marketplace</option><option>SaaS</option></select></div>
-        <div class="form-field"><label>Company Type</label><select id="f_type"><option value="">-</option><option>Startup</option><option>Incumbent</option><option>Acquirer</option></select></div>
+        <div class="form-field"><label>Company Type</label><select id="f_type"><option value="">-</option><option>Startup</option><option>Incumbent</option><option>Acquirer</option><option>Regulator</option><option>Distribution</option><option>Research Institution</option></select></div>
         <div class="form-section-title">Financials and Team</div>
         <div class="form-field"><label>Geography</label><input id="f_geo" type="text"></div>
         <div class="form-field"><label>Stage</label><select id="f_stage"><option value="">-</option><option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Public</option></select></div>
